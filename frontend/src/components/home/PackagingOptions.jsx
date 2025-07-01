@@ -48,7 +48,7 @@ const PackagingOptions = () => {
   ];
 
   return (
-    <section className="bg-[#faf9f7] py-24 px-6 md:px-16 lg:px-24 relative overflow-hidden">
+    <section className="bg-[#faf9f7] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden">
       {/* Luxury texture overlay */}
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/7130555/pexels-photo-7130555.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')] opacity-5 mix-blend-overlay pointer-events-none"></div>
 

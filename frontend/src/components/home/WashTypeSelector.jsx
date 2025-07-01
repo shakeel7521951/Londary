@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const WashTypeSelector = () => {
   return (
-    <section className="bg-white py-24 px-6 md:px-20 overflow-hidden">
+    <section className="bg-white py-12 px-6 md:px-20 overflow-hidden">
       {/* Decorative Blurs */}
       <div className="absolute inset-0 -z-10 opacity-10">
         <div className="absolute w-60 h-60 bg-[#D4AF37] rounded-full blur-3xl top-20 left-10"></div>

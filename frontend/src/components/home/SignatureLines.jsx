@@ -23,7 +23,7 @@ const collections = [
 
 const SignatureLines = () => {
   return (
-    <section className="bg-[#faf9f7] py-24 px-6 md:px-16 lg:px-24 relative overflow-hidden">
+    <section className="bg-[#faf9f7] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
         <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-xl"></div>
