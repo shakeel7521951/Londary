@@ -100,7 +100,7 @@ const PickupProcess = () => {
   ];
 
   return (
-    <section className="bg-[#f8f5f2] py-24 px-6 md:px-16 lg:px-24 relative overflow-hidden">
+    <section className="bg-[#f8f5f2] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl"></div>
