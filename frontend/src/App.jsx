@@ -1,10 +1,10 @@
-import './App.css';
-import Footer from './components/common/Footer';
-import Navbar from './components/common/Navbar';
-import Home from './pages/Home';
-import Aboutus from './pages/Aboutus';
-import Contactus from './pages/Contactus';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import "./App.css";
+import Footer from "./components/common/Footer";
+import Navbar from "./components/common/Navbar";
+import Home from "./pages/Home";
+import Aboutus from "./pages/Aboutus";
+import Contactus from "./pages/Contactus";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
 const MainFunction = () => {
   return (
@@ -22,15 +22,13 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Home /> },
       { path: "/about", element: <Aboutus /> },
-      { path: "/contact", element: <Contactus /> }
-    ]
-  }
+      { path: "/contact", element: <Contactus /> },
+    ],
+  },
 ]);
 
 function App() {
-  return (
-    <RouterProvider router={router} />
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
