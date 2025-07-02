@@ -1,10 +1,13 @@
-import './App.css';
-import Footer from './components/common/Footer';
-import Navbar from './components/common/Navbar';
-import Home from './pages/Home';
-import Aboutus from './pages/Aboutus';
-import Contactus from './pages/Contactus';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import "./App.css";
+import Footer from "./components/common/Footer";
+import Navbar from "./components/common/Navbar";
+import Home from "./pages/Home";
+import Aboutus from "./pages/Aboutus";
+import Services from "./pages/Services";
+import Contactus from "./pages/Contactus";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import Login from "./components/common/Login";
+import Signup from "./components/common/Signup";
 
 const MainFunction = () => {
   return (
@@ -23,10 +26,13 @@ const router = createBrowserRouter([
       { path: "", element: <Home /> },
       { path: "/home", element: <Home /> },
       { path: "/about", element: <Aboutus /> },
-      { path: "/contact", element: <Contactus /> }
-    ]
-  }
-]);
+      { path: "/contact", element: <Contactus /> },
+      { path: "/services", element: <Services /> },
+    ],
+  },
+  { path: "/login", element: <Login /> },
+  { path: "/signup", element: <Signup /> },
+]); 
 
 function App() {
   return <RouterProvider router={router} />;

@@ -24,7 +24,7 @@ const PickupProcess = () => {
         </svg>
       ),
       image:
-        "https://images.pexels.com/photos/8293778/pexels-photo-8293778.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/sehedulePickup.jpg",
     },
     {
       id: 2,
@@ -48,7 +48,7 @@ const PickupProcess = () => {
         </svg>
       ),
       image:
-        "https://images.pexels.com/photos/5691690/pexels-photo-5691690.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/professionalCollection.jpg",
     },
     {
       id: 3,
@@ -72,7 +72,7 @@ const PickupProcess = () => {
         </svg>
       ),
       image:
-        "https://images.pexels.com/photos/6527063/pexels-photo-6527063.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/expertProcessing.jpg",
     },
     {
       id: 4,

@@ -4,19 +4,19 @@ const collections = [
   {
     title: "The Platinum Care",
     desc: "Our highest tier service for your most precious garments. Hand-washed, steamed, and wrapped in protective tissue.",
-    image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80",
+    image: "./home/luxuryDelivery.jpg",
     icon: "✨"
   },
   {
     title: "Executive Collection",
     desc: "Precision care for business attire. Perfect creases, stain removal, and fabric revitalization for your professional image.",
-    image: "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1024&q=80",
+    image: "./home/expertProcessing.jpg",
     icon: "👔"
   },
   {
     title: "Couture Preservation",
     desc: "Specialized care for designer pieces and delicate fabrics. Museum-quality cleaning to maintain texture and color integrity.",
-    image: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80",
+    image: "./home/professionalCollection.jpg",
     icon: "🧵"
   }
 ];

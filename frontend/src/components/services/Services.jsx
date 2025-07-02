@@ -15,7 +15,7 @@ const Services = () => {
       price: "From 50 QAR",
       icon: "🧥",
       image:
-        "https://images.pexels.com/photos/325876/pexels-photo-325876.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/professionalCollection.jpg",
     },
     {
       id: 2,
@@ -26,7 +26,7 @@ const Services = () => {
       price: "From 35 QAR",
       icon: "👔",
       image:
-        "https://images.pexels.com/photos/428338/pexels-photo-428338.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/luxuryDelivery.jpg",
     },
     {
       id: 3,
@@ -36,7 +36,7 @@ const Services = () => {
       price: "From 120 QAR",
       icon: "👗",
       image:
-        "https://images.pexels.com/photos/934070/pexels-photo-934070.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/care.jpg",
     },
     {
       id: 4,
@@ -46,7 +46,7 @@ const Services = () => {
       price: "From 80 QAR",
       icon: "🕌",
       image:
-        "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/resturation.jpg",
     },
     {
       id: 5,
@@ -56,7 +56,7 @@ const Services = () => {
       price: "+30% Premium",
       icon: "⚡",
       image:
-        "https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/sehedulePickup.jpg",
     },
     {
       id: 6,
@@ -66,7 +66,7 @@ const Services = () => {
       price: "20 QAR",
       icon: "🌸",
       image:
-        "https://images.pexels.com/photos/3985322/pexels-photo-3985322.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "./home/card.jpg",
     },
   ];
 
