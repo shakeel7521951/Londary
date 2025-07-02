@@ -10,7 +10,7 @@ const MainFunction = () => {
   return (
     <div>
       <Navbar />
-      <Outlet />
+      <Outlet />``
       <Footer />
     </div>
   );
