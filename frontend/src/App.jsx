@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
 import Contactus from "./pages/Contactus";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
+import Services from "./pages/Services";
 
 const MainFunction = () => {
   return (
@@ -22,8 +22,13 @@ const router = createBrowserRouter([
     element: <MainFunction />,
     children: [
       { path: "", element: <Home /> },
+      { path: "/home", element: <Home /> },
       { path: "/about", element: <Aboutus /> },
       { path: "/contact", element: <Contactus /> },
+    ],
+  },
+      { path: "/contact", element: <Contactus /> },
+      { path: "/services", element: <Services /> },
     ],
   },
 ]);

@@ -5,7 +5,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const navLinks = ["Home", "Services", "Pricing", "About", "Contact"];
+  const navLinks = ["Home", "Services", "About", "Contact"];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +41,7 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <motion.a
                 key={link}
-                href="#"
+                href={link}
                 className="relative text-white/80 hover:text-white text-sm font-medium uppercase tracking-wider transition-colors"
                 whileHover={{ scale: 1.05 }}
               >
