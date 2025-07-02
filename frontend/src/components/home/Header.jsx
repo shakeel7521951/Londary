@@ -6,7 +6,7 @@ const Header = () => {
   
   const slides = [
     {
-      image: "https://images.pexels.com/photos/2147029/pexels-photo-2147029.jpeg?auto=compress&cs=tinysrgb&w=1920",
+      image: "./home/cur3.jpg",
       title: "Premium Garment Care",
       description: "Expert cleaning for your most delicate fabrics"
     },
@@ -16,12 +16,12 @@ const Header = () => {
       description: "Sustainable methods without compromising quality"
     },
     {
-      image: "https://images.pexels.com/photos/4066293/pexels-photo-4066293.jpeg?auto=compress&cs=tinysrgb&w=1920",
+      image: "./home/cur1.avif",
       title: "Express Service",
       description: "Same-day luxury care for urgent needs"
     },
     {
-      image: "https://images.pexels.com/photos/6348123/pexels-photo-6348123.jpeg?auto=compress&cs=tinysrgb&w=1920",
+      image: "./home/cur33.jpg",
       title: "Precision Pressing",
       description: "Impeccable finishes for business and formalwear"
     }

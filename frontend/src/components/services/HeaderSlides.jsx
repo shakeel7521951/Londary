@@ -7,19 +7,19 @@ const HeaderSlides = () => {
   const headerSlides = [
     {
       image:
-        "https://images.pexels.com/photos/821365/pexels-photo-821365.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "https://images.pexels.com/photos/6461517/pexels-photo-6461517.jpeg?_gl=1*1uzl48o*_ga*MTcwNDU2MzgzLjE3NDM3NDk5NTY.*_ga_8JE65Q40S6*czE3NTE0NDc4NzMkbzEwJGcxJHQxNzUxNDUwNjk5JGoxNiRsMCRoMA..",
       title: "Premium Garment Care",
       subtitle: "Experience the Akoya difference",
     },
     {
       image:
-        "https://images.pexels.com/photos/6069530/pexels-photo-6069530.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "https://images.pexels.com/photos/6466227/pexels-photo-6466227.jpeg?_gl=1*1y7lxid*_ga*MTcwNDU2MzgzLjE3NDM3NDk5NTY.*_ga_8JE65Q40S6*czE3NTE0NDc4NzMkbzEwJGcxJHQxNzUxNDUwMzU0JGo2JGwwJGgw",
       title: "Luxury Laundry Services",
       subtitle: "For the most discerning clients",
     },
     {
       image:
-        "https://images.pexels.com/photos/6348123/pexels-photo-6348123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        "https://images.pexels.com/photos/8483488/pexels-photo-8483488.jpeg?_gl=1*1sc7qzm*_ga*MTcwNDU2MzgzLjE3NDM3NDk5NTY.*_ga_8JE65Q40S6*czE3NTE0NDc4NzMkbzEwJGcxJHQxNzUxNDUxMDk1JGo1OSRsMCRoMA..",
       title: "Precision Fabric Care",
       subtitle: "Tailored to your garment's needs",
     },
