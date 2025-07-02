@@ -101,9 +101,8 @@ const HeaderSlides = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                currentSlide === index ? "bg-[#D4AF37] w-6" : "bg-white/50"
-              }`}
+              className={`w-3 h-3 rounded-full transition-all ${currentSlide === index ? "bg-[#D4AF37] w-6" : "bg-white/50"
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
