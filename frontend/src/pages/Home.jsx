@@ -3,6 +3,7 @@ import PackagingOptions from '../components/home/PackagingOptions';
 import PickupProcess from '../components/home/PickupProcess';
 import SignatureLines from '../components/home/SignatureLines';
 import Testimonials from '../components/home/Testimonials';
+import VIPClubTeaser from '../components/home/VIPClubTeaser';
 import WashTypeSelector from '../components/home/WashTypeSelector';
 
 const Home = () => {
@@ -14,6 +15,7 @@ const Home = () => {
         <PackagingOptions />
         <PickupProcess />
         <Testimonials />
+        <VIPClubTeaser />
     </div>
   )
 }

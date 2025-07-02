@@ -130,7 +130,7 @@ const Testimonials = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6 }}
-          className="text-center mt-16"
+          className="text-center"
         >
           <motion.button
             whileHover={{ 
