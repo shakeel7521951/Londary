@@ -37,12 +37,12 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
 
   return (
     <motion.div
-      className="h-screen bg-gradient-to-b from-slate-900 to-slate-800 shadow-xl flex flex-col"
+      className="h-screen bg-gradient-to-b from-[#1C1C1C] to-[#2C2C2C] shadow-2xl flex flex-col border-r border-[#D4AF37]/20"
       variants={sidebarVariants}
       animate={isCollapsed ? "collapsed" : "expanded"}
       transition={{ duration: 0.3, ease: "easeInOut" }}
     >
-      <div className="p-4 border-b border-slate-700">
+      <div className="p-4 border-b border-[#D4AF37]/30">
         <div className="flex items-center justify-between">
           <motion.div
             className="flex items-center space-x-3"
@@ -50,12 +50,29 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
             transition={{ delay: isCollapsed ? 0 : 0.2 }}
           >
             {!isCollapsed && (
-              <h1 className="text-xl font-semibold text-white">Londary</h1>
+              <>
+                <svg
+                  className="w-8 h-8 text-[#D4AF37]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  />
+                </svg>
+                <h1 className="text-xl font-light tracking-wider text-white">
+                  LONDARY
+                </h1>
+              </>
             )}
           </motion.div>
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 rounded-lg hover:bg-slate-700 transition-colors text-slate-300 hover:text-white"
+            className="p-2 rounded-lg hover:bg-[#D4AF37]/20 transition-colors text-[#D4AF37] hover:text-white"
           >
             {isCollapsed ? <FiMenu size={20} /> : <FiX size={20} />}
           </button>
@@ -78,16 +95,16 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
                 }}
                 className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 group ${
                   activeComponent === item.label
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                    ? "bg-[#D4AF37] text-[#1C1C1C] shadow-lg shadow-[#D4AF37]/25"
+                    : "text-white/80 hover:bg-[#D4AF37]/20 hover:text-white"
                 }`}
               >
                 <item.icon
                   size={20}
                   className={`${
                     activeComponent === item.label
-                      ? "text-white"
-                      : "text-slate-400 group-hover:text-white"
+                      ? "text-[#1C1C1C]"
+                      : "text-[#D4AF37] group-hover:text-white"
                   }`}
                 />
                 <motion.span
@@ -104,7 +121,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-slate-700">
+      <div className="p-4 border-t border-[#D4AF37]/30">
         <motion.div
           className="flex items-center space-x-3 px-3 py-2"
           animate={{ opacity: isCollapsed ? 0 : 1 }}
@@ -112,12 +129,12 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
         >
           {!isCollapsed && (
             <>
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">A</span>
+              <div className="w-8 h-8 bg-gradient-to-r from-[#D4AF37] to-[#BFA134] rounded-full flex items-center justify-center">
+                <span className="text-[#1C1C1C] text-sm font-semibold">A</span>
               </div>
               <div>
                 <p className="text-white text-sm font-medium">Admin</p>
-                <p className="text-slate-400 text-xs">Administrator</p>
+                <p className="text-white/60 text-xs">Administrator</p>
               </div>
             </>
           )}

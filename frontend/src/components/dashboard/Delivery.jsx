@@ -191,35 +191,35 @@ const Delivery = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "scheduled":
-        return "text-blue-600 bg-blue-100";
+        return "text-[#BFA134] bg-[#BFA134]/10 border border-[#BFA134]/20";
       case "in-transit":
-        return "text-yellow-600 bg-yellow-100";
+        return "text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20";
       case "delivered":
-        return "text-green-600 bg-green-100";
+        return "text-[#F5E1DA] bg-[#F5E1DA]/10 border border-[#F5E1DA]/20";
       case "failed":
-        return "text-red-600 bg-red-100";
+        return "text-white/60 bg-white/5 border border-white/10";
       default:
-        return "text-gray-600 bg-gray-100";
+        return "text-white/70 bg-white/10 border border-white/20";
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "text-red-600 bg-red-100";
+        return "text-white/80 bg-white/10 border border-white/20";
       case "normal":
-        return "text-blue-600 bg-blue-100";
+        return "text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20";
       case "low":
-        return "text-gray-600 bg-gray-100";
+        return "text-white/60 bg-white/5 border border-white/10";
       default:
-        return "text-gray-600 bg-gray-100";
+        return "text-white/70 bg-white/10 border border-white/20";
     }
   };
 
   const getDeliveryTypeColor = (type) => {
     return type === "pickup"
-      ? "text-orange-600 bg-orange-100"
-      : "text-purple-600 bg-purple-100";
+      ? "text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20"
+      : "text-[#BFA134] bg-[#BFA134]/10 border border-[#BFA134]/20";
   };
 
   const updateDeliveryStatus = (deliveryId, newStatus) => {
@@ -258,7 +258,7 @@ const Delivery = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-transparent min-h-screen">
       {/* Header */}
       <motion.div
         className="mb-8"
@@ -266,10 +266,10 @@ const Delivery = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-2xl font-semibold text-gray-800 mb-2">
+        <h1 className="text-3xl font-light text-white mb-2 tracking-wide">
           Delivery Management
         </h1>
-        <p className="text-gray-600">
+        <p className="text-white/70">
           Track and manage all delivery operations
         </p>
       </motion.div>
@@ -277,18 +277,20 @@ const Delivery = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <motion.div
-          className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] p-6 rounded-xl shadow-lg border border-[#D4AF37]/20 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 mr-4">
-              <FiCalendar className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiCalendar className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Scheduled</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
+                Scheduled
+              </p>
+              <p className="text-2xl font-light text-white">
                 {
                   deliveries.filter(
                     (delivery) => delivery.status === "scheduled"
@@ -300,18 +302,20 @@ const Delivery = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white p-6 rounded-xl shadow-sm  hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] p-6 rounded-xl shadow-lg border border-[#D4AF37]/20 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 mr-4">
-              <FiTruck className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiTruck className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">In Transit</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
+                In Transit
+              </p>
+              <p className="text-2xl font-light text-white">
                 {
                   deliveries.filter(
                     (delivery) => delivery.status === "in-transit"
@@ -323,18 +327,20 @@ const Delivery = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white p-6 rounded-xl shadow-sm  hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] p-6 rounded-xl shadow-lg border border-[#D4AF37]/20 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 mr-4">
-              <FiCheckCircle className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiCheckCircle className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Delivered</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
+                Delivered
+              </p>
+              <p className="text-2xl font-light text-white">
                 {
                   deliveries.filter(
                     (delivery) => delivery.status === "delivered"
@@ -346,18 +352,20 @@ const Delivery = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white p-6 rounded-xl shadow-sm  hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] p-6 rounded-xl shadow-lg border border-[#D4AF37]/20 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-red-500 to-red-600 mr-4">
-              <FiAlertCircle className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiAlertCircle className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Failed</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
+                Failed
+              </p>
+              <p className="text-2xl font-light text-white">
                 {
                   deliveries.filter((delivery) => delivery.status === "failed")
                     .length
@@ -370,27 +378,27 @@ const Delivery = () => {
 
       {/* Filters and Search */}
       <motion.div
-        className="bg-white rounded-xl shadow-sm p-6 mb-8"
+        className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6 mb-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="relative flex-1 max-w-md">
-            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4AF37]" />
             <input
               type="text"
               placeholder="Search deliveries..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4AF37]" />
               <select
-                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white min-w-[150px]"
+                className="pl-10 pr-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none min-w-[150px]"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -407,42 +415,42 @@ const Delivery = () => {
 
       {/* Deliveries Table */}
       <motion.div
-        className="bg-white rounded-xl shadow-sm overflow-hidden"
+        className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">
+        <div className="px-6 py-4 border-b border-[#D4AF37]/30">
+          <h2 className="text-lg font-light text-white tracking-wide">
             Deliveries ({filteredDeliveries.length})
           </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+              <tr className="border-b border-[#D4AF37]/30">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Delivery ID
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Customer
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Driver
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Type
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Status
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Priority
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Time
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Actions
                 </th>
               </tr>
@@ -454,28 +462,28 @@ const Delivery = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * index }}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  className="border-b border-[#D4AF37]/10 hover:bg-[#D4AF37]/5 transition-colors"
                 >
                   <td className="py-4 px-6">
                     <div>
-                      <span className="font-semibold text-gray-800">
+                      <span className="font-medium text-white">
                         {delivery.id}
                       </span>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-white/70">
                         {delivery.orderId}
                       </p>
                     </div>
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <FiUser className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#BFA134] rounded-full flex items-center justify-center shadow-lg">
+                        <FiUser className="w-5 h-5 text-[#1C1C1C]" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-800">
+                        <p className="font-medium text-white">
                           {delivery.customerName}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-white/70">
                           {delivery.customerPhone}
                         </p>
                       </div>
@@ -483,10 +491,10 @@ const Delivery = () => {
                   </td>
                   <td className="py-4 px-6">
                     <div>
-                      <p className="font-medium text-gray-800">
+                      <p className="font-medium text-white">
                         {delivery.driverName}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-white/70">
                         {delivery.vehicleNumber}
                       </p>
                     </div>
@@ -521,10 +529,10 @@ const Delivery = () => {
                   </td>
                   <td className="py-4 px-6">
                     <div>
-                      <p className="text-sm font-medium text-gray-800">
+                      <p className="text-sm font-medium text-white">
                         {delivery.estimatedTime}
                       </p>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-white/70">
                         {new Date(delivery.scheduledDate).toLocaleDateString()}
                       </p>
                     </div>
@@ -533,13 +541,13 @@ const Delivery = () => {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => viewDeliveryDetails(delivery)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-2 text-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-lg transition-colors"
                         title="View Details"
                       >
                         <FiEye className="w-4 h-4" />
                       </button>
                       <select
-                        className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="text-sm bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg px-2 py-1 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none"
                         value={delivery.status}
                         onChange={(e) =>
                           updateDeliveryStatus(delivery.id, e.target.value)

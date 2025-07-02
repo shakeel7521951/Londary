@@ -24,12 +24,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-[#1C1C1C]">
       <Sidebar
         activeComponent={activeComponent}
         setActiveComponent={setActiveComponent}
       />
-      <div className="flex-1 overflow-auto">{renderActiveComponent()}</div>
+      <div className="flex-1 overflow-auto bg-gradient-to-br from-[#1C1C1C] to-[#2C2C2C]">
+        {renderActiveComponent()}
+      </div>
     </div>
   );
 };

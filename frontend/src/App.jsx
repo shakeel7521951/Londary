@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
 import Contactus from "./pages/Contactus";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
 
 const MainFunction = () => {
   return (

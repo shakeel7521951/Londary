@@ -148,22 +148,22 @@ const Order = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-white/10 text-white/80 border border-white/20";
       case "in-progress":
-        return "bg-blue-100 text-blue-800";
+        return "bg-[#BFA134]/10 text-[#BFA134] border border-[#BFA134]/20";
       case "completed":
-        return "bg-green-100 text-green-800";
+        return "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20";
       case "delivered":
-        return "bg-purple-100 text-purple-800";
+        return "bg-[#F5E1DA]/10 text-[#F5E1DA] border border-[#F5E1DA]/20";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-white/5 text-white/60 border border-white/10";
     }
   };
 
   const getPaymentStatusColor = (status) => {
     return status === "paid"
-      ? "bg-green-100 text-green-800"
-      : "bg-red-100 text-red-800";
+      ? "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20"
+      : "bg-white/10 text-white/80 border border-white/20";
   };
 
   const updateOrderStatus = (orderId, newStatus) => {
@@ -185,7 +185,7 @@ const Order = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-transparent min-h-screen">
       {/* Header */}
       <motion.div
         className="mb-8"
@@ -193,10 +193,10 @@ const Order = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-2xl font-semibold text-gray-800 mb-2">
+        <h1 className="text-3xl font-light text-white mb-2 tracking-wide">
           Order Management
         </h1>
-        <p className="text-gray-600">
+        <p className="text-white/70">
           Manage and track all laundry orders efficiently
         </p>
       </motion.div>
@@ -204,20 +204,20 @@ const Order = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <motion.div
-          className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 mr-4">
-              <FiClock className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiClock className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
                 Pending Orders
               </p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-2xl font-light text-white">
                 {orders.filter((order) => order.status === "pending").length}
               </p>
             </div>
@@ -225,18 +225,20 @@ const Order = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 mr-4">
-              <FiPackage className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiPackage className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">In Progress</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
+                In Progress
+              </p>
+              <p className="text-2xl font-light text-white">
                 {
                   orders.filter((order) => order.status === "in-progress")
                     .length
@@ -247,18 +249,20 @@ const Order = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 mr-4">
-              <FiCheckCircle className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiCheckCircle className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Completed</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
+                Completed
+              </p>
+              <p className="text-2xl font-light text-white">
                 {orders.filter((order) => order.status === "completed").length}
               </p>
             </div>
@@ -266,18 +270,20 @@ const Order = () => {
         </motion.div>
 
         <motion.div
-          className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow"
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6 hover:shadow-xl hover:shadow-[#D4AF37]/10 transition-all duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
           <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 mr-4">
-              <FiDollarSign className="w-6 h-6 text-white" />
+            <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
+              <FiDollarSign className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-gray-800">
+              <p className="text-sm font-medium text-white/70 tracking-wide">
+                Total Revenue
+              </p>
+              <p className="text-2xl font-light text-white">
                 ${orders.reduce((sum, order) => sum + order.total, 0)}
               </p>
             </div>
@@ -287,27 +293,27 @@ const Order = () => {
 
       {/* Filters and Search */}
       <motion.div
-        className="bg-white rounded-xl shadow-sm p-6 mb-8"
+        className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6 mb-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
       >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="relative flex-1 max-w-md">
-            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4AF37]" />
             <input
               type="text"
               placeholder="Search orders..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full pl-10 pr-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FiFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4AF37]" />
               <select
-                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white min-w-[150px]"
+                className="pl-10 pr-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none min-w-[150px]"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -324,39 +330,39 @@ const Order = () => {
 
       {/* Orders Table */}
       <motion.div
-        className="bg-white rounded-xl shadow-sm overflow-hidden"
+        className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
       >
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">
+        <div className="px-6 py-4 border-b border-[#D4AF37]/30">
+          <h2 className="text-lg font-light text-white tracking-wide">
             Orders ({filteredOrders.length})
           </h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+              <tr className="border-b border-[#D4AF37]/30">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Order ID
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Customer
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Date
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Total
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Status
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Payment
                 </th>
-                <th className="text-left py-3 px-6 font-medium text-gray-600">
+                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                   Actions
                 </th>
               </tr>
@@ -368,35 +374,33 @@ const Order = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * index }}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  className="border-b border-[#D4AF37]/10 hover:bg-[#D4AF37]/5 transition-colors"
                 >
                   <td className="py-4 px-6">
-                    <span className="font-semibold text-gray-800">
-                      {order.id}
-                    </span>
+                    <span className="font-medium text-white">{order.id}</span>
                   </td>
                   <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                        <FiUser className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#BFA134] rounded-full flex items-center justify-center shadow-lg">
+                        <FiUser className="w-5 h-5 text-[#1C1C1C]" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-800">
+                        <p className="font-medium text-white">
                           {order.customerName}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-white/70">
                           {order.customerPhone}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="text-gray-600">
+                    <span className="text-white/70">
                       {new Date(order.orderDate).toLocaleDateString()}
                     </span>
                   </td>
                   <td className="py-4 px-6">
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-[#D4AF37]">
                       ${order.total}
                     </span>
                   </td>
@@ -422,13 +426,13 @@ const Order = () => {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => viewOrderDetails(order)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-2 text-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-lg transition-colors"
                         title="View Details"
                       >
                         <FiEye className="w-4 h-4" />
                       </button>
                       <select
-                        className="text-sm border border-gray-200 rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                        className="text-sm bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg px-2 py-1 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none"
                         value={order.status}
                         onChange={(e) =>
                           updateOrderStatus(order.id, e.target.value)
