@@ -1,78 +1,144 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const navLinks = ["Home", "About", "Services", "Contact"];
+  const navLinks = ["Home", "Services", "Pricing", "About", "Contact"];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <nav className="bg-[#D4AF37] py-2.5">
-      <div className="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto relative">
-        {/* Logo */}
-        <a href="#" className="flex items-center">
-          <span className="self-center text-xl font-bold text-white">Londary</span>
-        </a>
-
-        {/* Right side buttons */}
-        <div className="flex items-center lg:order-2">
-          <a
-            href="#"
-            className="text-white bg-white/10 hover:bg-white/20 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 transition-colors"
+    <motion.nav 
+      className={`fixed w-full z-50 transition-colors duration-300 ${scrolled ? "bg-[#1a1a1a] shadow-lg" : "bg-transparent"}`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <motion.a 
+            href="#" 
+            className="flex items-center gap-2"
+            whileHover={{ scale: 1.05 }}
           >
-            Login
-          </a>
+            <svg className="w-8 h-8 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <span className="text-2xl font-light tracking-wider text-white">AKOYA</span>
+          </motion.a>
 
-          {/* Mobile toggle button */}
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-8">
+            {navLinks.map((link) => (
+              <motion.a
+                key={link}
+                href="#"
+                className="relative text-white/80 hover:text-white text-sm font-medium uppercase tracking-wider transition-colors"
+                whileHover={{ scale: 1.05 }}
+              >
+                {link}
+                <motion.span 
+                  className="absolute bottom-0 left-0 w-0 h-px bg-[#D4AF37] transition-all duration-300"
+                  whileHover={{ width: "100%" }}
+                />
+              </motion.a>
+            ))}
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="hidden lg:flex items-center gap-4">
+            <motion.a
+              href="#"
+              className="px-6 py-2.5 text-sm font-medium text-white border border-[#D4AF37] rounded-full hover:bg-[#D4AF37]/10 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Client Login
+            </motion.a>
+            <motion.a
+              href="#"
+              className="px-6 py-2.5 text-sm font-medium text-[#1a1a1a] bg-[#D4AF37] rounded-full hover:bg-[#c9a227] transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Book Now
+            </motion.a>
+          </div>
+
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            type="button"
-            className="inline-flex items-center p-2 text-sm text-white rounded-lg lg:hidden hover:bg-white/20 focus:outline-none"
-            aria-controls="mobile-menu-2"
-            aria-expanded={isOpen}
+            className="lg:hidden text-white focus:outline-none"
+            aria-label="Toggle menu"
           >
-            <span className="sr-only">Open main menu</span>
-            {isOpen ? (
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            )}
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
           </button>
         </div>
 
-        {/* Navigation links */}
-        <div
-          className={`
-            ${isOpen ? "flex" : "hidden"} 
-            flex-col items-center space-y-4
-            absolute top-full right-0 w-1/2 bg-[#D4AF37] h-screen p-4 z-50 font-bold text-md text-center 
-            lg:static lg:flex lg:flex-row lg:space-y-0 lg:space-x-8 lg:w-auto lg:p-0 lg:bg-transparent lg:h-auto
-          `}
-          id="mobile-menu-2"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link}
-              href="#"
-              className="text-white hover:bg-white/20 rounded px-4 py-2 transition top-28"
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="lg:hidden overflow-hidden"
             >
-              {link}
-            </a>
-          ))}
-        </div>
+              <div className="pt-4 pb-8 space-y-4">
+                {navLinks.map((link) => (
+                  <motion.a
+                    key={link}
+                    href="#"
+                    className="block px-3 py-3 text-white hover:bg-[#D4AF37]/10 rounded-lg transition-colors"
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {link}
+                  </motion.a>
+                ))}
+                <div className="pt-4 mt-4 border-t border-[#D4AF37]/20 space-y-4">
+                  <motion.a
+                    href="#"
+                    className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                  >
+                    Client Login
+                  </motion.a>
+                  <motion.a
+                    href="#"
+                    className="block px-3 py-3 text-center text-[#1a1a1a] bg-[#D4AF37] rounded-lg hover:bg-[#c9a227] transition-colors"
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.15 }}
+                  >
+                    Book Now
+                  </motion.a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 
