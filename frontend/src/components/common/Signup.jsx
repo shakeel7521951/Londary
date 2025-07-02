@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-
+import { motion } from "framer-motion";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -17,19 +17,23 @@ export default function Signup() {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required.';
+      newErrors.username = 'Username is required';
+    } else if (formData.username.length < 3) {
+      newErrors.username = 'Username must be at least 3 characters';
     }
 
     if (!formData.email.trim() || !emailPattern.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email.';
+      newErrors.email = 'Please enter a valid email';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required.';
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match.';
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
@@ -42,80 +46,152 @@ export default function Signup() {
       [e.target.id]: e.target.value,
     });
 
-    setErrors({
-      ...errors,
-      [e.target.id]: '',
-    });
+    // Clear error when user types
+    if (errors[e.target.id]) {
+      setErrors({
+        ...errors,
+        [e.target.id]: '',
+      });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log('Form Data:', formData); // ✅ Log filled form data
-      alert('Form submitted successfully!');
-      setFormData({
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-      });
+      console.log('Form Data:', formData);
+      // Here you would typically call your signup API
     }
   };
 
+  const inputFields = [
+    {
+      id: "username",
+      label: "Full Name",
+      type: "text",
+      placeholder: "Enter your full name",
+      icon: (
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      )
+    },
+    {
+      id: "email",
+      label: "Email Address",
+      type: "email",
+      placeholder: "your@email.com",
+      icon: (
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+      )
+    },
+    {
+      id: "password",
+      label: "Password",
+      type: "password",
+      placeholder: "••••••••",
+      icon: (
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      )
+    },
+    {
+      id: "confirmPassword",
+      label: "Confirm Password",
+      type: "password",
+      placeholder: "••••••••",
+      icon: (
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        </svg>
+      )
+    }
+  ];
+
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 ">
-      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full  border-2 border-amber-200">
-        <h2 className="text-2xl font-bold text-center text-black mb-8">
-          Create an Account
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-          {['username', 'email', 'password', 'confirmPassword'].map((field) => (
-            <div key={field}>
-              <label
-                htmlFor={field}
-                className="block text-black font-semibold mb-2 capitalize"
-              >
-                {field === 'confirmPassword' ? 'Confirm Password' : field}
-              </label>
-              <input
-                type={field.includes('password') ? 'password' : field}
-                id={field}
-                value={formData[field]}
-                onChange={handleChange}
-                placeholder={
-                  field === 'confirmPassword'
-                    ? 'Confirm your password'
-                    : `Enter your ${field}`
-                }
-                className={`w-full px-4 py-2 border ${
-                  errors[field] ? 'border-red-500' : 'border-gray-200'
-                } rounded-lg  transition-all duration-300`}
-                required
-              />
-              {errors[field] && (
-                <p className="text-red-500 text-sm mt-2">{errors[field]}</p>
-              )}
-            </div>
-          ))}
-
-          <button
-            type="submit"
-            className="w-full bg-[#D4AF37] text-white py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-all duration-300 transform hover:scale-[1.02] cursor-pointer"
-          >
-            Register
-          </button>
-        </form>
-
-        <p className="text-center text-gray-600 mt-6">
-          Already have an account?{' '}
-          <Link
-            to="/login"
-            className="text-[#D4AF37] hover:text-yellow-500 hover:underline font-semibold  transition-colors duration-300"
-          >
-            Login 
-          </Link>
-        </p>
+    <div className="min-h-screen bg-gradient-to-b from-[#f9f7f4] to-[#f1ece5] flex items-center justify-center p-4">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
       </div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100"
+      >
+        {/* Luxury header */}
+        <div className="bg-[#1C1C1C] p-6 text-center">
+          <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">AKOYA PREMIUM LAUNDRY</h2>
+          <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+          <p className="mt-2 text-gray-300 text-sm">Create your premium account</p>
+        </div>
+
+        <div className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {inputFields.map(({ id, label, type, placeholder, icon }) => (
+              <div key={id}>
+                <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={id}>
+                  {label}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    {icon}
+                  </div>
+                  <input
+                    id={id}
+                    type={type}
+                    placeholder={placeholder}
+                    value={formData[id]}
+                    onChange={handleChange}
+                    className={`block w-full pl-10 pr-4 py-3 border ${
+                      errors[id] ? 'border-red-500' : 'border-gray-300'
+                    } rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition duration-200`}
+                  />
+                </div>
+                {errors[id] && (
+                  <p className="mt-1 text-sm text-red-600">{errors[id]}</p>
+                )}
+              </div>
+            ))}
+
+            <div className="flex items-center mt-1">
+              <input
+                id="terms"
+                type="checkbox"
+                className="h-4 w-4 text-[#D4AF37] focus:ring-[#D4AF37] border-gray-300 rounded"
+              />
+              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                I agree to the <a href="#" className="text-[#D4AF37] hover:underline">terms and conditions</a>
+              </label>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              className="w-full flex justify-center py-3 px-4 mt-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200"
+            >
+              Create Account
+            </motion.button>
+          </form>
+
+          <div className="mt-6 text-center text-sm">
+            <p className="text-gray-600">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                className="font-medium text-[#D4AF37] hover:text-yellow-600 border-b border-transparent hover:border-[#D4AF37] transition duration-200"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }

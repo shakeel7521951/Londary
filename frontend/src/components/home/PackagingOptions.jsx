@@ -17,7 +17,7 @@ const PackagingOptions = () => {
         "Recyclable material",
         "Tamper-evident closure"
       ],
-      image: "https://images.pexels.com/photos/6634372/pexels-photo-6634372.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+      image: "./home/professionalCollection.jpg"
     },
     {
       id: "fabric",
@@ -30,7 +30,7 @@ const PackagingOptions = () => {
         "Magnetic seal",
         "Reusable design"
       ],
-      image: "https://images.pexels.com/photos/6069530/pexels-photo-6069530.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+      image: "./home/expertProcessing.jpg"
     },
     {
       id: "box",
@@ -43,7 +43,7 @@ const PackagingOptions = () => {
         "Integrated scent capsule",
         "Heirloom quality"
       ],
-      image: "https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+      image: "./home/sehedulePickup.jpg"
     }
   ];
 
