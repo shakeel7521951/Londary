@@ -16,7 +16,7 @@ const MainFunction = () => {
     <div>
       <RouteMiddleware />
       <Navbar />
-      <Outlet />
+      <Outlet />``
       <Footer />
     </div>
   );
