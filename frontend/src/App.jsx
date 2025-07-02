@@ -8,10 +8,13 @@ import Contactus from "./pages/Contactus";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Login from "./components/common/Login";
 import Signup from "./components/common/Signup";
+import OrderPage from "./pages/Order";
+import RouteMiddleware from "./components/common/RouteMiddleware";
 
 const MainFunction = () => {
   return (
     <div>
+      <RouteMiddleware />
       <Navbar />
       <Outlet />``
       <Footer />
@@ -28,6 +31,7 @@ const router = createBrowserRouter([
       { path: "/about", element: <Aboutus /> },
       { path: "/contact", element: <Contactus /> },
       { path: "/services", element: <Services /> },
+      { path: "/book-now", element: <OrderPage /> },
     ],
   },
   { path: "/login", element: <Login /> },

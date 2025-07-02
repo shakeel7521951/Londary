@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Services = () => {
   const [activeTab, setActiveTab] = useState("all");
@@ -8,14 +9,13 @@ const Services = () => {
   const services = [
     {
       id: 1,
-      title: "Premium Dry Cleaning",
+      title: "Dry Cleaning",
       category: "dry-cleaning",
       description:
-        "Expert care for suits, dresses, and delicate fabrics using eco-friendly solvents",
+        "Expert care for suits and delicate fabrics using eco-friendly solvents",
       price: "From 50 QAR",
       icon: "🧥",
-      image:
-        "./home/professionalCollection.jpg",
+      image: "./home/professionalCollection.jpg",
     },
     {
       id: 2,
@@ -25,8 +25,7 @@ const Services = () => {
         "Crisp finishes for business attire with precision steam technology",
       price: "From 35 QAR",
       icon: "👔",
-      image:
-        "./home/luxuryDelivery.jpg",
+      image: "./home/luxuryDelivery.jpg",
     },
     {
       id: 3,
@@ -35,8 +34,7 @@ const Services = () => {
       description: "Hand-cleaning for designer garments and delicate fabrics",
       price: "From 120 QAR",
       icon: "👗",
-      image:
-        "./home/care.jpg",
+      image: "./home/care.jpg",
     },
     {
       id: 4,
@@ -45,8 +43,7 @@ const Services = () => {
       description: "Traditional cleaning and pressing for Qatari formal wear",
       price: "From 80 QAR",
       icon: "🕌",
-      image:
-        "./home/resturation.jpg",
+      image: "./home/resturation.jpg",
     },
     {
       id: 5,
@@ -55,8 +52,7 @@ const Services = () => {
       description: "3-hour turnaround for urgent garment needs",
       price: "+30% Premium",
       icon: "⚡",
-      image:
-        "./home/sehedulePickup.jpg",
+      image: "./home/sehedulePickup.jpg",
     },
     {
       id: 6,
@@ -65,8 +61,7 @@ const Services = () => {
       description: "Luxury scent options for your garments",
       price: "20 QAR",
       icon: "🌸",
-      image:
-        "./home/card.jpg",
+      image: "./home/card.jpg",
     },
   ];
 
@@ -179,31 +174,32 @@ const Services = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="h-px bg-[#D4AF37]/30 my-4"
                   />
-
-                  <motion.button
-                    whileHover={{
-                      backgroundColor: "#1C1C1C",
-                      color: "#D4AF37",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-full px-4 py-2.5 bg-[#D4AF37] text-[#1C1C1C] rounded-lg font-medium flex items-center justify-center gap-2"
-                  >
-                    Add to Order
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                  <Link to="/book-now">
+                    <motion.button
+                      whileHover={{
+                        backgroundColor: "#1C1C1C",
+                        color: "#D4AF37",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full px-4 py-2.5 bg-[#D4AF37] text-[#1C1C1C] rounded-lg font-medium flex items-center justify-center gap-2"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                  </motion.button>
+                      Add to Order
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                    </motion.button>
+                  </Link>
                 </div>
               </motion.div>
             ))}

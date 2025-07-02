@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const WashTypeSelector = () => {
   return (
@@ -72,13 +73,15 @@ const WashTypeSelector = () => {
         transition={{ delay: 0.4 }}
         className="mt-12 text-center"
       >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="bg-[#D4AF37] text-[#1C1C1C] font-semibold px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
-        >
-          Continue to Garment Selection
-        </motion.button>
+        <Link to="/services">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-[#D4AF37] text-[#1C1C1C] font-semibold px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            Continue to Garment Selection
+          </motion.button>
+        </Link>
       </motion.div>
     </section>
   );
