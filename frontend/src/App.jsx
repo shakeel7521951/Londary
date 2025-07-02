@@ -1,10 +1,12 @@
 import './App.css';
-import Footer from './components/common/Footer';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Home from './pages/Home';
 import Aboutus from './pages/Aboutus';
 import Contactus from './pages/Contactus';
-import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import Login from './components/common/Login';
+import Signup from './components/common/Signup';
+import Footer from './components/common/Footer';
 
 const MainFunction = () => {
   return (
@@ -22,7 +24,9 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Home /> },
       { path: "/about", element: <Aboutus /> },
-      { path: "/contact", element: <Contactus /> }
+      { path: "/contact", element: <Contactus /> },
+      { path: "/login", element: <Login /> },
+      { path: "/signup", element: <Signup /> }
     ]
   }
 ]);
