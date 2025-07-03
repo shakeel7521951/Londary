@@ -5,13 +5,13 @@ const collections = [
   {
     title: "The Platinum Care",
     desc: "Our highest tier service for your most precious garments. Hand-washed, steamed, and wrapped in protective tissue.",
-    image: "./home/luxuryDelivery.jpg",
+    image: "./home/platinumCare.jpg",
     icon: "✨",
   },
   {
     title: "Executive Collection",
     desc: "Precision care for business attire. Perfect creases, stain removal, and fabric revitalization for your professional image.",
-    image: "./home/expertProcessing.jpg",
+    image: "./home/exectiveCollection.jpg",
     icon: "👔",
   },
   {

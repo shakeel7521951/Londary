@@ -19,7 +19,7 @@ const Hero = () => {
 
       {/* Luxury Hero Banner */}
       <section className="relative h-[80vh] min-h-[600px] overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/6069530/pexels-photo-6069530.jpeg')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-[url('./home/eco.jpg')] bg-cover bg-center">
           <div className="absolute inset-0 bg-gradient-to-r from-[#1C1C1C]/80 via-[#1C1C1C]/40 to-[#1C1C1C]/10"></div>
         </div>
         

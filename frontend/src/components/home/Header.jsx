@@ -7,13 +7,13 @@ const Header = () => {
 
   const slides = [
     {
-      image: "./home/cur3.jpg",
+      image: "./home/platinumCare.jpg",
       title: "Premium Garment Care",
       description: "Expert cleaning for your most delicate fabrics",
     },
     {
       image:
-        "https://images.pexels.com/photos/5591581/pexels-photo-5591581.jpeg?auto=compress&cs=tinysrgb&w=1920",
+        "./home/eco.jpg",
       title: "Eco-Conscious Cleaning",
       description: "Sustainable methods without compromising quality",
     },
@@ -23,7 +23,7 @@ const Header = () => {
       description: "Same-day luxury care for urgent needs",
     },
     {
-      image: "./home/cur33.jpg",
+      image: "./home/pressing.jpg",
       title: "Precision Pressing",
       description: "Impeccable finishes for business and formalwear",
     },
