@@ -10,13 +10,14 @@ import Login from "./components/common/Login";
 import Signup from "./components/common/Signup";
 import OrderPage from "./pages/Order";
 import RouteMiddleware from "./components/common/RouteMiddleware";
+import Dashboard from "./pages/Dashboard";
 
 const MainFunction = () => {
   return (
     <div>
       <RouteMiddleware />
       <Navbar />
-      <Outlet />``
+      <Outlet />
       <Footer />
     </div>
   );
@@ -36,7 +37,8 @@ const router = createBrowserRouter([
   },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
-]); 
+  { path: "/dashboard", element: <Dashboard /> },
+]);
 
 function App() {
   return <RouterProvider router={router} />;
