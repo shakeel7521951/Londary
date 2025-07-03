@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 4000;
 import cookieParser from "cookie-parser";
 
 import userRoute from "./routes/userRoutes.js";
+import orderRoute from "./routes/orderRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ mongoose
   });
 
 app.use("/api/v1", userRoute);
+app.use("/api/v1", orderRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running at PORT no. ${PORT}`);
