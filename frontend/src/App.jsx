@@ -18,6 +18,7 @@ const MainFunction = () => {
       <RouteMiddleware />
       <Navbar />
       <Outlet />
+      <Outlet />
       <Footer />
     </div>
   );
