@@ -16,7 +16,7 @@ const MainFunction = () => {
     <div>
       <RouteMiddleware />
       <Navbar />
-      <Outlet />``
+      <Outlet />
       <Footer />
     </div>
   );
@@ -36,7 +36,7 @@ const router = createBrowserRouter([
   },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
-]); 
+]);
 
 function App() {
   return <RouterProvider router={router} />;
