@@ -4,15 +4,16 @@ import {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
-  deleteOrder
+  deleteOrder,
 } from "../controller/orderController.js";
+import auth from "../middleware/AuthMiddleWare.js";
 
 const router = express.Router();
 
-router.post("/", createOrder);
-router.get("/", getAllOrders);
-router.get("/:id", getOrderById);
-router.put("/status/:id", updateOrderStatus);
-router.delete("/:id", deleteOrder);
+router.post("/", auth, createOrder);
+router.get("/", auth, getAllOrders);
+router.get("/:id", auth, getOrderById);
+router.put("/status/:id", auth, updateOrderStatus);
+router.delete("/:id", auth, deleteOrder);
 
 export default router;

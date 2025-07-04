@@ -15,7 +15,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL, 
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -33,7 +33,7 @@ mongoose
     console.log("Error in connecting DB", error);
   });
 
-app.use("/api/v1", userRoute);
+app.use("/api/v1/users", userRoute);
 app.use("/api/v1", orderRoute);
 
 app.listen(PORT, () => {

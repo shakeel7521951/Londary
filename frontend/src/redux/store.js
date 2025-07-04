@@ -13,15 +13,19 @@ import storage from "redux-persist/lib/storage";
 
 // RTK Query APIs
 import { userApi } from "./features/usersApi";
+import { orderApi } from "./features/ordersApi";
+import authReducer from "./features/authSlice";
 
 const rootReducer = combineReducers({
+  auth: authReducer,
   [userApi.reducerPath]: userApi.reducer,
+  [orderApi.reducerPath]: orderApi.reducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user"],
+  whitelist: ["auth"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -35,7 +39,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(userApi.middleware),
+    }).concat(userApi.middleware, orderApi.middleware),
 });
 
 // Create persistor

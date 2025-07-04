@@ -1,25 +1,33 @@
 import "./App.css";
 import Footer from "./components/common/Footer";
 import Navbar from "./components/common/Navbar";
+import AuthInitializer from "./components/common/AuthInitializer";
 import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
 import Services from "./pages/Services";
 import Contactus from "./pages/Contactus";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Login from "./components/common/Login";
 import Signup from "./components/common/Signup";
+import VerifyOTP from "./components/auth/VerifyOTP";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import ResetPasswordVerify from "./components/auth/ResetPasswordVerify";
+import ResetPasswordNew from "./components/auth/ResetPasswordNew";
 import OrderPage from "./pages/Order";
 import RouteMiddleware from "./components/common/RouteMiddleware";
 import Dashboard from "./pages/Dashboard";
 
 const MainFunction = () => {
   return (
-    <div>
-      <RouteMiddleware />
-      <Navbar />
-      <Outlet />
-      <Footer />
-    </div>
+    <AuthInitializer>
+      <div>
+        <RouteMiddleware />
+        <Navbar />
+        <Outlet />
+        <Footer />
+      </div>
+    </AuthInitializer>
   );
 };
 
@@ -37,11 +45,47 @@ const router = createBrowserRouter([
   },
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <Signup /> },
+  { path: "/verify-otp", element: <VerifyOTP /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/reset-password-verify", element: <ResetPasswordVerify /> },
+  { path: "/reset-password-new", element: <ResetPasswordNew /> },
   { path: "/dashboard", element: <Dashboard /> },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#1C1C1C",
+            color: "#D4AF37",
+            borderRadius: "8px",
+            fontWeight: "500",
+          },
+          success: {
+            iconTheme: {
+              primary: "#D4AF37",
+              secondary: "#1C1C1C",
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#ffffff",
+            },
+            style: {
+              background: "#ef4444",
+              color: "#ffffff",
+            },
+          },
+        }}
+      />
+    </>
+  );
 }
 
 export default App;

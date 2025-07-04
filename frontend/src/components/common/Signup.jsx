@@ -1,39 +1,45 @@
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { useRegisterUserMutation } from "../../redux/features/usersApi";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const [registerUser] = useRegisterUserMutation();
 
   const validate = () => {
     const newErrors = {};
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
     }
 
     if (!formData.email.trim() || !emailPattern.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = "Please enter a valid email";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
@@ -50,30 +56,66 @@ export default function Signup() {
     if (errors[e.target.id]) {
       setErrors({
         ...errors,
-        [e.target.id]: '',
+        [e.target.id]: "",
       });
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
-      console.log('Form Data:', formData);
-      // Here you would typically call your signup API
+
+    if (!validate()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await registerUser({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      }).unwrap();
+
+      toast.success(
+        "Registration successful! Please check your email for verification code."
+      );
+      // Navigate to verification page with email
+      navigate("/verify-otp", {
+        state: { email: formData.email },
+      });
+    } catch (err) {
+      setErrors({
+        submit: err?.data?.message || "Registration failed. Please try again.",
+      });
+      toast.error(
+        err?.data?.message || "Registration failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const inputFields = [
     {
-      id: "username",
+      id: "name",
       label: "Full Name",
       type: "text",
       placeholder: "Enter your full name",
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: "email",
@@ -81,10 +123,20 @@ export default function Signup() {
       type: "email",
       placeholder: "your@email.com",
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: "password",
@@ -92,10 +144,20 @@ export default function Signup() {
       type: "password",
       placeholder: "••••••••",
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          />
         </svg>
-      )
+      ),
     },
     {
       id: "confirmPassword",
@@ -103,11 +165,21 @@ export default function Signup() {
       type: "password",
       placeholder: "••••••••",
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5 13l4 4L19 7"
+          />
         </svg>
-      )
-    }
+      ),
+    },
   ];
 
   return (
@@ -117,7 +189,7 @@ export default function Signup() {
         <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -125,16 +197,29 @@ export default function Signup() {
       >
         {/* Luxury header */}
         <div className="bg-[#1C1C1C] p-6 text-center">
-          <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">AKOYA PREMIUM LAUNDRY</h2>
+          <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">
+            AKOYA PREMIUM LAUNDRY
+          </h2>
           <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-          <p className="mt-2 text-gray-300 text-sm">Create your premium account</p>
+          <p className="mt-2 text-gray-300 text-sm">
+            Create your premium account
+          </p>
         </div>
 
         <div className="p-8">
+          {errors.submit && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-600 text-sm">{errors.submit}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {inputFields.map(({ id, label, type, placeholder, icon }) => (
               <div key={id}>
-                <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={id}>
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                  htmlFor={id}
+                >
                   {label}
                 </label>
                 <div className="relative">
@@ -148,7 +233,7 @@ export default function Signup() {
                     value={formData[id]}
                     onChange={handleChange}
                     className={`block w-full pl-10 pr-4 py-3 border ${
-                      errors[id] ? 'border-red-500' : 'border-gray-300'
+                      errors[id] ? "border-red-500" : "border-gray-300"
                     } rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition duration-200`}
                   />
                 </div>
@@ -164,8 +249,14 @@ export default function Signup() {
                 type="checkbox"
                 className="h-4 w-4 text-[#D4AF37] focus:ring-[#D4AF37] border-gray-300 rounded"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                I agree to the <a href="#" className="text-[#D4AF37] hover:underline">terms and conditions</a>
+              <label
+                htmlFor="terms"
+                className="ml-2 block text-sm text-gray-700"
+              >
+                I agree to the{" "}
+                <a href="#" className="text-[#D4AF37] hover:underline">
+                  terms and conditions
+                </a>
               </label>
             </div>
 
@@ -173,15 +264,16 @@ export default function Signup() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full flex justify-center py-3 px-4 mt-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200"
+              disabled={isLoading}
+              className="w-full flex justify-center py-3 px-4 mt-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create Account
+              {isLoading ? "Creating Account..." : "Create Account"}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center text-sm">
             <p className="text-gray-600">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <Link
                 to="/login"
                 className="font-medium text-[#D4AF37] hover:text-yellow-600 border-b border-transparent hover:border-[#D4AF37] transition duration-200"

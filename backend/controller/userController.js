@@ -231,7 +231,18 @@ export const login = async (req, res) => {
       sameSite: "None",
     });
 
-    res.status(200).json({ message: "Login successful", success: true, user });
+    res.status(200).json({
+      message: "Login successful",
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+        role: user.role,
+        status: user.status,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -285,7 +296,16 @@ export const myProfile = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      user,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        profilePic: user.profilePic,
+        role: user.role,
+        status: user.status,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });

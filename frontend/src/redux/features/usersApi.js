@@ -12,7 +12,7 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (data) => ({
-        url: "/users/register",
+        url: "/users/sign-up",
         method: "POST",
         body: data,
       }),
@@ -31,43 +31,45 @@ export const userApi = createApi({
       }),
     }),
 
-    verifyOTP: builder.mutation({
-      query: ({ id, otp }) => ({
-        url: `/users/verify-otp/${id}`,
-        method: "POST",
-        body: { otp },
-      }),
-    }),
-    resendOTP: builder.mutation({
-      query: (email) => ({
-        url: `/users/resend-otp`,
-        method: "POST",
-        body: { email },
-      }),
-    }),
-
-    requestPasswordReset: builder.mutation({
-      query: (email) => ({
-        url: `/users/request-password-reset`,
-        method: "POST",
-        body: { email },
-      }),
-    }),
-    resetPassword: builder.mutation({
+    verifyUser: builder.mutation({
       query: (data) => ({
-        url: `/users/reset-password`,
+        url: "/users/verify-user",
         method: "POST",
         body: data,
       }),
     }),
 
+    forgotPasswordOTP: builder.mutation({
+      query: (email) => ({
+        url: "/users/forgot-password-otp",
+        method: "POST",
+        body: { email },
+      }),
+    }),
+
+    verifyOTP: builder.mutation({
+      query: (data) => ({
+        url: "/users/verify-otp",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: "/users/reset-password",
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
     getUserProfile: builder.query({
-      query: (id) => `/users/profile/${id}`,
+      query: () => "/users/my-profile",
       providesTags: ["User"],
     }),
     updateUserProfile: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/users/profile/${id}`,
+      query: (data) => ({
+        url: "/users/update-profile",
         method: "PUT",
         body: data,
       }),
@@ -75,7 +77,7 @@ export const userApi = createApi({
     }),
 
     getAllUsers: builder.query({
-      query: () => `/users`,
+      query: () => "/users/all-users",
       providesTags: ["Users"],
     }),
     deleteUser: builder.mutation({
@@ -92,9 +94,9 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useLogoutUserMutation,
+  useVerifyUserMutation,
+  useForgotPasswordOTPMutation,
   useVerifyOTPMutation,
-  useResendOTPMutation,
-  useRequestPasswordResetMutation,
   useResetPasswordMutation,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,

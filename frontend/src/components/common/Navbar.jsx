@@ -1,10 +1,20 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import {
+  selectCurrentUser,
+  selectIsAuthenticated,
+} from "../../redux/features/authSlice";
+import UserProfileDropdown from "./UserProfileDropdown";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Get authentication state
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const currentUser = useSelector(selectCurrentUser);
 
   const navLinks = ["Home", "Services", "About", "Contact"];
 
@@ -57,14 +67,18 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-4">
-            <motion.a
-              href="/login"
-              className="px-6 py-2.5 text-sm font-medium text-white border border-[#D4AF37] rounded-full hover:bg-[#D4AF37]/10 transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Client Login
-            </motion.a>
+            {isAuthenticated ? (
+              <UserProfileDropdown user={currentUser} />
+            ) : (
+              <motion.a
+                href="/login"
+                className="px-6 py-2.5 text-sm font-medium text-white border border-[#D4AF37] rounded-full hover:bg-[#D4AF37]/10 transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Client Login
+              </motion.a>
+            )}
             <motion.a
               href="/book-now"
               className="px-6 py-2.5 text-sm font-medium text-[#1a1a1a] bg-[#D4AF37] rounded-full hover:bg-[#c9a227] transition-colors"
@@ -130,15 +144,53 @@ const Navbar = () => {
                   </motion.a>
                 ))}
                 <div className="pt-4 mt-4 border-t border-[#D4AF37]/20 space-y-4">
-                  <motion.a
-                    href="/login"
-                    className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
-                    initial={{ x: 20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                  >
-                    Client Login
-                  </motion.a>
+                  {isAuthenticated ? (
+                    <div className="space-y-4">
+                      <div className="px-3 py-3 text-white">
+                        <div className="flex items-center space-x-3">
+                          {currentUser?.profilePic ? (
+                            <img
+                              src={currentUser.profilePic}
+                              alt={currentUser.name}
+                              className="w-8 h-8 rounded-full object-cover border-2 border-[#D4AF37]"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center text-[#1a1a1a] font-medium text-sm">
+                              {currentUser?.name?.charAt(0)?.toUpperCase() ||
+                                "U"}
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-sm font-medium">
+                              {currentUser?.name || "User"}
+                            </p>
+                            <p className="text-xs text-gray-300">
+                              {currentUser?.email}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <motion.a
+                        href="/dashboard"
+                        className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                        initial={{ x: 20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.3, delay: 0.1 }}
+                      >
+                        Dashboard
+                      </motion.a>
+                    </div>
+                  ) : (
+                    <motion.a
+                      href="/login"
+                      className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                      initial={{ x: 20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    >
+                      Client Login
+                    </motion.a>
+                  )}
                   <motion.a
                     href="/book-now"
                     className="block px-3 py-3 text-center text-[#1a1a1a] bg-[#D4AF37] rounded-lg hover:bg-[#c9a227] transition-colors"
