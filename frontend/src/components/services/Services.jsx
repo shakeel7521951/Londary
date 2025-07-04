@@ -15,7 +15,7 @@ const Services = () => {
         "Expert care for suits and delicate fabrics using eco-friendly solvents",
       price: "From 50 QAR",
       icon: "🧥",
-      image: "./home/professionalCollection.jpg",
+      image: "./home/dryCleaning.jpg",
     },
     {
       id: 2,
@@ -25,7 +25,7 @@ const Services = () => {
         "Crisp finishes for business attire with precision steam technology",
       price: "From 35 QAR",
       icon: "👔",
-      image: "./home/luxuryDelivery.jpg",
+      image: "./home/exectivePressing.jpg",
     },
     {
       id: 3,
@@ -61,7 +61,7 @@ const Services = () => {
       description: "Luxury scent options for your garments",
       price: "20 QAR",
       icon: "🌸",
-      image: "./home/card.jpg",
+      image: "./home/fragrance.jpg",
     },
   ];
 

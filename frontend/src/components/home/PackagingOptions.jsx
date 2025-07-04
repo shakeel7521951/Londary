@@ -33,7 +33,7 @@ const PackagingOptions = () => {
         "Magnetic seal",
         "Reusable design",
       ],
-      image: "./home/expertProcessing.jpg",
+      image: "./home/febricRap.jpg",
     },
     {
       id: "box",

@@ -4,7 +4,7 @@ const VIPClubTeaser = () => {
   return (
     <section className="relative bg-[#1C1C1C] py-24 px-6 md:px-16 lg:px-24 overflow-hidden">
       {/* Gold texture overlay */}
-      <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80')]"></div>
+      <div className="absolute inset-0 opacity-10 bg-[url('./home/exclusive.jpg')]"></div>
       
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
@@ -22,7 +22,7 @@ const VIPClubTeaser = () => {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="https://images.pexels.com/photos/6739692/pexels-photo-6739692.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+                src="./home/aquaClub.jpg"
                 alt="VIP Laundry Service"
                 className="w-full h-auto object-cover"
               />

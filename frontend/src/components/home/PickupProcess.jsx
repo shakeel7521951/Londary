@@ -48,7 +48,7 @@ const PickupProcess = () => {
         </svg>
       ),
       image:
-        "./home/professionalCollection.jpg",
+        "./home/pCollection.jpg",
     },
     {
       id: 3,
@@ -72,7 +72,7 @@ const PickupProcess = () => {
         </svg>
       ),
       image:
-        "./home/expertProcessing.jpg",
+        "./home/expert.jpg",
     },
     {
       id: 4,
@@ -95,7 +95,7 @@ const PickupProcess = () => {
           />
         </svg>
       ),
-      image: "./home/luxuryDelivery.jpg"
+      image: "./home/luxury.jpg"
     },
   ];
 
