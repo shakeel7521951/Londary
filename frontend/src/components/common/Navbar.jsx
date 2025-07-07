@@ -134,7 +134,7 @@ const Navbar = () => {
                 {navLinks.map((link) => (
                   <motion.a
                     key={link}
-                    href="#"
+                    href={link}
                     className="block px-3 py-3 text-white hover:bg-[#D4AF37]/10 rounded-lg transition-colors"
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
