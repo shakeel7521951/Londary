@@ -72,7 +72,7 @@ const Services = () => {
       description: "Professional care for men's traditional Qatari garment",
       price: "From 45 QAR",
       icon: "👳‍♂️",
-      image: "./home/traditional.jpg",
+      image: "./services/dishdasha.webp",
     },
     {
       id: 8,
@@ -81,7 +81,7 @@ const Services = () => {
       description: "Specialized care for children's traditional garments",
       price: "From 35 QAR",
       icon: "👦",
-      image: "./home/traditional.jpg",
+      image: "./services/child_dishdasha.jpg",
     },
     {
       id: 9,
@@ -90,7 +90,7 @@ const Services = () => {
       description: "Premium care for ceremonial cloak with gold detailing",
       price: "From 90 QAR",
       icon: "🪔",
-      image: "./home/traditional.jpg",
+      image: "./services/bisht.jpg",
     },
     {
       id: 10,
@@ -99,7 +99,7 @@ const Services = () => {
       description: "Gentle cleaning for traditional headwear",
       price: "From 25 QAR",
       icon: "🧕",
-      image: "./home/traditional.jpg",
+      image: "./services/ghutra.jpg",
     },
 
     // Traditional Wear - South Asian
@@ -110,7 +110,7 @@ const Services = () => {
       description: "Care for traditional South Asian tunic",
       price: "From 40 QAR",
       icon: "👘",
-      image: "./home/traditional2.jpg",
+      image: "./services/kurta.jpg",
     },
     {
       id: 12,
@@ -119,7 +119,7 @@ const Services = () => {
       description: "Complete set cleaning for traditional attire",
       price: "From 60 QAR",
       icon: "👖",
-      image: "./home/traditional2.jpg",
+      image: "./services/kurtaPajama.jpg",
     },
     {
       id: 13,
@@ -128,7 +128,7 @@ const Services = () => {
       description: "Professional care for traditional long shirts",
       price: "From 45 QAR",
       icon: "👕",
-      image: "./home/traditional2.jpg",
+      image: "./services/kameez.jpg",
     },
     {
       id: 14,
@@ -137,7 +137,7 @@ const Services = () => {
       description: "Specialized care for flowing traditional gowns",
       price: "From 55 QAR",
       icon: "👚",
-      image: "./home/traditional2.jpg",
+      image: "./services/jalabiya.jpg",
     },
 
     // Women's Wear
@@ -148,7 +148,7 @@ const Services = () => {
       description: "Professional cleaning for everyday abayas",
       price: "From 50 QAR",
       icon: "🧕",
-      image: "./home/womenswear.jpg",
+      image: "./services/abaya.jpg",
     },
     {
       id: 16,
@@ -157,7 +157,7 @@ const Services = () => {
       description: "Premium care for embellished abayas",
       price: "From 80 QAR",
       icon: "✨",
-      image: "./home/womenswear.jpg",
+      image: "./services/abaya_special.jpg",
     },
     {
       id: 17,
@@ -166,7 +166,7 @@ const Services = () => {
       description: "Delicate cleaning for headscarves",
       price: "From 20 QAR",
       icon: "🧣",
-      image: "./home/womenswear.jpg",
+      image: "./services/hijab.png",
     },
 
     // Western Wear
@@ -177,7 +177,7 @@ const Services = () => {
       description: "Complete care for 3-piece suits",
       price: "From 75 QAR",
       icon: "👔",
-      image: "./home/dryCleaning.jpg",
+      image: "./services/gent_suit.jpg",
     },
     {
       id: 19,
@@ -186,7 +186,7 @@ const Services = () => {
       description: "Care for cocktail and summer dresses",
       price: "From 45 QAR",
       icon: "👗",
-      image: "./home/care.jpg",
+      image: "./services/dress.jpg",
     },
     {
       id: 20,
@@ -195,7 +195,7 @@ const Services = () => {
       description: "Specialized care for evening gowns",
       price: "From 65 QAR",
       icon: "👰",
-      image: "./home/care.jpg",
+      image: "./services/dressLong.jpg",
     },
     {
       id: 21,
@@ -204,7 +204,7 @@ const Services = () => {
       description: "Winter coat cleaning and preservation",
       price: "From 70 QAR",
       icon: "🧥",
-      image: "./home/dryCleaning.jpg",
+      image: "./services/overcoat.jpg",
     },
     {
       id: 22,
@@ -213,7 +213,7 @@ const Services = () => {
       description: "Regimental standard cleaning and pressing",
       price: "From 85 QAR",
       icon: "🎖️",
-      image: "./home/resturation.jpg",
+      image: "./services/military_suite.jpg",
     },
     {
       id: 23,
@@ -222,7 +222,7 @@ const Services = () => {
       description: "Delicate care for embellished tops",
       price: "From 55 QAR",
       icon: "👚",
-      image: "./home/care.jpg",
+      image: "./services/blouse.jpg",
     },
     {
       id: 24,
@@ -231,7 +231,7 @@ const Services = () => {
       description: "Deep cleaning for plush bathrobes",
       price: "From 40 QAR",
       icon: "🛁",
-      image: "./home/fragrance.jpg",
+      image: "./services/bathrob.jpg",
     },
   ];
 
