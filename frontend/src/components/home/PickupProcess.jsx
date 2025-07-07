@@ -23,8 +23,7 @@ const PickupProcess = () => {
           />
         </svg>
       ),
-      image:
-        "./home/sehedulePickup.jpg",
+      image: "./home/Pickup.mp4",
     },
     {
       id: 2,
@@ -47,8 +46,7 @@ const PickupProcess = () => {
           />
         </svg>
       ),
-      image:
-        "./home/pCollection.jpg",
+      image: "./home/professional_collection.mp4",
     },
     {
       id: 3,
@@ -71,8 +69,7 @@ const PickupProcess = () => {
           />
         </svg>
       ),
-      image:
-        "./home/expert.jpg",
+      image: "./home/ExpertProcessing.mp4",
     },
     {
       id: 4,
@@ -95,20 +92,20 @@ const PickupProcess = () => {
           />
         </svg>
       ),
-      image: "./home/luxury.jpg"
+      image: "./home/luxury.jpg",
     },
   ];
 
   return (
     <section className="bg-[#f8f5f2] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden">
-      {/* Decorative elements */}
+      {/* Decorative background blobs */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-60 h-60 rounded-full bg-[#1C1C1C] mix-blend-multiply filter blur-3xl"></div>
       </div>
 
       <div className="max-w-7xl mx-auto relative">
-        {/* Section Header */}
+        {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -128,12 +125,10 @@ const PickupProcess = () => {
           </div>
         </motion.div>
 
-        {/* Process Timeline */}
+        {/* Timeline steps */}
         <div className="relative">
-          {/* Timeline line */}
           <div className="hidden md:block absolute left-1/2 h-full w-0.5 bg-[#D4AF37] transform -translate-x-1/2"></div>
 
-          {/* Process Steps */}
           <div className="space-y-24 md:space-y-32">
             {steps.map((step, index) => (
               <motion.div
@@ -146,22 +141,33 @@ const PickupProcess = () => {
                   index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                 } items-center gap-8 md:gap-16`}
               >
-                {/* Image */}
+                {/* Media (Image/Video) */}
                 <motion.div
                   className="w-full md:w-1/2 rounded-xl overflow-hidden shadow-xl"
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.4 }}
                 >
-                  <img
-                    src={step.image}
-                    alt={step.title}
-                    className="w-full h-64 md:h-80 object-cover"
-                  />
+                  {step.image.endsWith(".mp4") ? (
+                    <video
+                      className="w-full h-64 md:h-80 object-cover"
+                      muted
+                      autoPlay
+                      loop
+                    >
+                      <source src={step.image} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="w-full h-64 md:h-80 object-cover"
+                    />
+                  )}
                 </motion.div>
 
-                {/* Content */}
+                {/* Text Content */}
                 <div className="w-full md:w-1/2 relative">
-                  {/* Step indicator */}
                   <motion.div
                     className="hidden md:flex absolute -left-24 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-[#D4AF37] text-white items-center justify-center font-bold text-xl shadow-lg"
                     whileHover={{ scale: 1.1 }}
@@ -170,7 +176,6 @@ const PickupProcess = () => {
                   </motion.div>
 
                   <div className="bg-white p-8 rounded-xl shadow-lg relative z-10">
-                    {/* Mobile step indicator */}
                     <div className="md:hidden absolute -top-5 -left-5 w-10 h-10 rounded-full bg-[#D4AF37] text-white flex items-center justify-center font-bold shadow-md">
                       {step.id}
                     </div>
@@ -183,7 +188,7 @@ const PickupProcess = () => {
                     </div>
                     <p className="text-[#2C2C2C] mb-6">{step.description}</p>
 
-                    {/* Additional details */}
+                    {/* Additional Info */}
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       whileHover={{ height: "auto", opacity: 1 }}
@@ -194,73 +199,23 @@ const PickupProcess = () => {
                           {step.id === 1 && (
                             <>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
+                                <CheckIcon />
                                 <span>24/7 booking availability</span>
                               </li>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
-                                <span>
-                                  Recurring pickup scheduling available
-                                </span>
+                                <CheckIcon />
+                                <span>Recurring pickup scheduling available</span>
                               </li>
                             </>
                           )}
                           {step.id === 2 && (
                             <>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
+                                <CheckIcon />
                                 <span>Contactless pickup available</span>
                               </li>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
+                                <CheckIcon />
                                 <span>Digital receipt provided</span>
                               </li>
                             </>
@@ -268,35 +223,11 @@ const PickupProcess = () => {
                           {step.id === 3 && (
                             <>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
+                                <CheckIcon />
                                 <span>Individual garment tracking</span>
                               </li>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
+                                <CheckIcon />
                                 <span>Quality control at every stage</span>
                               </li>
                             </>
@@ -304,35 +235,11 @@ const PickupProcess = () => {
                           {step.id === 4 && (
                             <>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
+                                <CheckIcon />
                                 <span>Same-day delivery available</span>
                               </li>
                               <li className="flex items-start">
-                                <svg
-                                  className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M5 13l4 4L19 7"
-                                  ></path>
-                                </svg>
+                                <CheckIcon />
                                 <span>Hanger-ready with protective covers</span>
                               </li>
                             </>
@@ -347,7 +254,7 @@ const PickupProcess = () => {
           </div>
         </div>
 
-        {/* CTA */}
+        {/* Call to Action Button */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -384,5 +291,22 @@ const PickupProcess = () => {
     </section>
   );
 };
+
+// Helper icon component
+const CheckIcon = () => (
+  <svg
+    className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2"
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M5 13l4 4L19 7"
+    ></path>
+  </svg>
+);
 
 export default PickupProcess;
