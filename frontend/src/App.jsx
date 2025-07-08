@@ -54,7 +54,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <>
+    <div className="max-w-[1440px] mx-auto">
       <RouterProvider router={router} />
       <Toaster
         position="top-right"
@@ -84,7 +84,7 @@ function App() {
           },
         }}
       />
-    </>
+    </div>
   );
 }
 
