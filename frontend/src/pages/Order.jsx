@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -41,15 +41,30 @@ const OrderPage = () => {
       "Thobe",
       "Socks",
       "Underwear",
+      "Child Dishdasha",
+      "Military Uniform",
+      "Overcoat",
+      "Kameez",
+      "Kurta",
+      "Kurta Pyjama (Set)",
+      "Gent Suit (3pcs)",
+      "Ghutra",
+      "Dishdasha",
     ],
     "Women's": [
       "Abaya",
+      "Abaya Special",
       "Dress",
+      "Dress (Short)",
+      "Dress (Long)",
       "Blouse",
+      "Blouse (Special)",
       "Skirt",
       "Scarf",
       "Hijab",
       "Lingerie",
+      "Jalabiya",
+      "Bath Robe",
     ],
   };
 

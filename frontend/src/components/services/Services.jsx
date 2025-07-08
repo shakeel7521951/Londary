@@ -1,3 +1,4 @@
+// components/Services.js
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -7,12 +8,12 @@ const Services = () => {
 
   // Services Data
   const services = [
+    // Existing services
     {
       id: 1,
       title: "Dry Cleaning",
       category: "dry-cleaning",
-      description:
-        "Expert care for suits and delicate fabrics using eco-friendly solvents",
+      description: "Expert care for suits and delicate fabrics using eco-friendly solvents",
       price: "From 50 QAR",
       icon: "🧥",
       image: "./home/dryCleaning.jpg",
@@ -21,8 +22,7 @@ const Services = () => {
       id: 2,
       title: "Executive Pressing",
       category: "pressing",
-      description:
-        "Crisp finishes for business attire with precision steam technology",
+      description: "Crisp finishes for business attire with precision steam technology",
       price: "From 35 QAR",
       icon: "👔",
       image: "./home/exectivePressing.jpg",
@@ -63,6 +63,176 @@ const Services = () => {
       icon: "🌸",
       image: "./home/fragrance.jpg",
     },
+
+    // Traditional Wear - Qatari
+    {
+      id: 7,
+      title: "Dishdasha",
+      category: "traditional",
+      description: "Professional care for men's traditional Qatari garment",
+      price: "From 45 QAR",
+      icon: "👳‍♂️",
+      image: "./services/dishdasha.webp",
+    },
+    {
+      id: 8,
+      title: "Child Dishdasha",
+      category: "traditional",
+      description: "Specialized care for children's traditional garments",
+      price: "From 35 QAR",
+      icon: "👦",
+      image: "./services/child_dishdasha.jpg",
+    },
+    {
+      id: 9,
+      title: "Bisht",
+      category: "traditional",
+      description: "Premium care for ceremonial cloak with gold detailing",
+      price: "From 90 QAR",
+      icon: "🪔",
+      image: "./services/bisht.jpg",
+    },
+    {
+      id: 10,
+      title: "Ghutra",
+      category: "traditional",
+      description: "Gentle cleaning for traditional headwear",
+      price: "From 25 QAR",
+      icon: "🧕",
+      image: "./services/ghutra.jpg",
+    },
+
+    // Traditional Wear - South Asian
+    {
+      id: 11,
+      title: "Kurta",
+      category: "traditional",
+      description: "Care for traditional South Asian tunic",
+      price: "From 40 QAR",
+      icon: "👘",
+      image: "./services/kurta.jpg",
+    },
+    {
+      id: 12,
+      title: "Kurta Pyjama (Set)",
+      category: "traditional",
+      description: "Complete set cleaning for traditional attire",
+      price: "From 60 QAR",
+      icon: "👖",
+      image: "./services/kurtaPajama.jpg",
+    },
+    {
+      id: 13,
+      title: "Kameez",
+      category: "traditional",
+      description: "Professional care for traditional long shirts",
+      price: "From 45 QAR",
+      icon: "👕",
+      image: "./services/kameez.jpg",
+    },
+    {
+      id: 14,
+      title: "Jalabiya",
+      category: "traditional",
+      description: "Specialized care for flowing traditional gowns",
+      price: "From 55 QAR",
+      icon: "👚",
+      image: "./services/jalabiya.jpg",
+    },
+
+    // Women's Wear
+    {
+      id: 15,
+      title: "Abaya",
+      category: "traditional",
+      description: "Professional cleaning for everyday abayas",
+      price: "From 50 QAR",
+      icon: "🧕",
+      image: "./services/abaya.jpg",
+    },
+    {
+      id: 16,
+      title: "Abaya Special",
+      category: "traditional",
+      description: "Premium care for embellished abayas",
+      price: "From 80 QAR",
+      icon: "✨",
+      image: "./services/abaya_special.jpg",
+    },
+    {
+      id: 17,
+      title: "Hijab",
+      category: "traditional",
+      description: "Delicate cleaning for headscarves",
+      price: "From 20 QAR",
+      icon: "🧣",
+      image: "./services/hijab.png",
+    },
+
+    // Western Wear
+    {
+      id: 18,
+      title: "Gent Suit (3pcs)",
+      category: "dry-cleaning",
+      description: "Complete care for 3-piece suits",
+      price: "From 75 QAR",
+      icon: "👔",
+      image: "./services/gent_suit.jpg",
+    },
+    {
+      id: 19,
+      title: "Dress (Short)",
+      category: "dry-cleaning",
+      description: "Care for cocktail and summer dresses",
+      price: "From 45 QAR",
+      icon: "👗",
+      image: "./services/dress.jpg",
+    },
+    {
+      id: 20,
+      title: "Dress (Long)",
+      category: "dry-cleaning",
+      description: "Specialized care for evening gowns",
+      price: "From 65 QAR",
+      icon: "👰",
+      image: "./services/dressLong.jpg",
+    },
+    {
+      id: 21,
+      title: "Overcoat",
+      category: "dry-cleaning",
+      description: "Winter coat cleaning and preservation",
+      price: "From 70 QAR",
+      icon: "🧥",
+      image: "./services/overcoat.jpg",
+    },
+    {
+      id: 22,
+      title: "Military Uniform",
+      category: "specialty",
+      description: "Regimental standard cleaning and pressing",
+      price: "From 85 QAR",
+      icon: "🎖️",
+      image: "./services/military_suite.jpg",
+    },
+    {
+      id: 23,
+      title: "Blouse (Special)",
+      category: "specialty",
+      description: "Delicate care for embellished tops",
+      price: "From 55 QAR",
+      icon: "👚",
+      image: "./services/blouse.jpg",
+    },
+    {
+      id: 24,
+      title: "Bath Robe",
+      category: "specialty",
+      description: "Deep cleaning for plush bathrobes",
+      price: "From 40 QAR",
+      icon: "🛁",
+      image: "./services/bathrob.jpg",
+    },
   ];
 
   const filteredServices =
@@ -72,7 +242,6 @@ const Services = () => {
 
   return (
     <div>
-      {" "}
       {/* Services Grid Section */}
       <section className="py-24 px-6 md:px-16 lg:px-24 relative overflow-hidden">
         {/* Decorative elements */}
@@ -114,6 +283,7 @@ const Services = () => {
               "dry-cleaning",
               "pressing",
               "specialty",
+              "traditional",
               "express",
               "addon",
             ].map((tab) => (
@@ -183,7 +353,7 @@ const Services = () => {
                       whileTap={{ scale: 0.95 }}
                       className="w-full px-4 py-2.5 bg-[#D4AF37] text-[#1C1C1C] rounded-lg font-medium flex items-center justify-center gap-2"
                     >
-                      Add to Order
+                       Order
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-4 w-4"

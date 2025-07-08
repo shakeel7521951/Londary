@@ -28,14 +28,14 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className={`fixed w-full z-50 transition-colors duration-300 ${
+      className={`fixed w-full z-50 transition-colors duration-300 max-w-[1440px] ${
         scrolled ? "bg-[#1a1a1a] shadow-lg" : "bg-transparent"
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
+      <div className=" mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/">
@@ -134,7 +134,7 @@ const Navbar = () => {
                 {navLinks.map((link) => (
                   <motion.a
                     key={link}
-                    href="#"
+                    href={link}
                     className="block px-3 py-3 text-white hover:bg-[#D4AF37]/10 rounded-lg transition-colors"
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}

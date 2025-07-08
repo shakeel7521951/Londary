@@ -17,11 +17,11 @@ const Header = () => {
       title: "Eco-Conscious Cleaning",
       description: "Sustainable methods without compromising quality",
     },
-    {
-      image: "./home/cur1.avif",
-      title: "Express Service",
-      description: "Same-day luxury care for urgent needs",
-    },
+      // {
+      //   image: "./home/cur1.avif",
+      //   title: "Express Service",
+      //   description: "Same-day luxury care for urgent needs",
+      // },
     {
       image: "./home/pressing.jpg",
       title: "Precision Pressing",
