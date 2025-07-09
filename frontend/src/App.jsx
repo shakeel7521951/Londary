@@ -17,6 +17,7 @@ import ResetPasswordNew from "./components/auth/ResetPasswordNew";
 import OrderPage from "./pages/Order";
 import RouteMiddleware from "./components/common/RouteMiddleware";
 import Dashboard from "./pages/Dashboard";
+import BotpressChat from "./components/common/BotpressChat";
 
 const MainFunction = () => {
   return (
@@ -26,6 +27,7 @@ const MainFunction = () => {
         <Navbar />
         <Outlet />
         <Footer />
+        <BotpressChat />
       </div>
     </AuthInitializer>
   );
