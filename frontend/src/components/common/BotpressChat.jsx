@@ -27,7 +27,7 @@ const BotpressChat = () => {
               lazyLoad: true,
               showPoweredBy: false,
               closeOnEscape: true,
-              layout: "embedded", // ✅ important to hide default icon
+              layout: "embedded",
             });
             setIsBotReady(true);
           } else {
