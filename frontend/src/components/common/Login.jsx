@@ -92,8 +92,8 @@ const Login = () => {
       );
 
       toast.success("Login successful!");
-      // Redirect to dashboard or home
-      navigate("/dashboard");
+      // Redirect to home page after successful login
+      navigate("/");
     } catch (err) {
       setError(err?.data?.message || "Login failed. Please try again.");
       toast.error(err?.data?.message || "Login failed. Please try again.");

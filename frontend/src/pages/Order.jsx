@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -156,9 +156,9 @@ const OrderPage = () => {
       // Open WhatsApp
       window.open(whatsappURL, "_blank");
 
-      // Redirect to dashboard after a short delay
+      // Redirect to home page after a short delay
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 2000);
     } catch (error) {
       toast.error(
@@ -419,38 +419,45 @@ Please confirm this order and provide pickup details.
     </div>
   );
 
-  const Step6 = () => (
-    <div className="space-y-6">
-      <h3 className="text-xl font-light text-gray-700">
-        Want to include a personalized card?
-      </h3>
-      <div className="space-y-4">
-        <div>
-          <label className="block mb-1">From</label>
-          <input
-            type="text"
-            placeholder="Your name"
-            value={cardDetails.from}
-            onChange={(e) =>
-              setCardDetails({ ...cardDetails, from: e.target.value })
-            }
-            className="w-full p-3 border border-gray-300 rounded-lg"
-          />
-        </div>
-        <div>
-          <label className="block mb-1">To (optional)</label>
-          <input
-            type="text"
-            placeholder="Recipient's name"
-            value={cardDetails.to}
-            onChange={(e) =>
-              setCardDetails({ ...cardDetails, to: e.target.value })
-            }
-            className="w-full p-3 border border-gray-300 rounded-lg"
-          />
+  const handleCardFromChange = useCallback((e) => {
+    setCardDetails((prev) => ({ ...prev, from: e.target.value }));
+  }, []);
+
+  const handleCardToChange = useCallback((e) => {
+    setCardDetails((prev) => ({ ...prev, to: e.target.value }));
+  }, []);
+
+  const Step6 = useMemo(
+    () => (
+      <div className="space-y-6">
+        <h3 className="text-xl font-light text-gray-700">
+          Want to include a personalized card?
+        </h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block mb-1">From</label>
+            <input
+              type="text"
+              placeholder="Your name"
+              value={cardDetails.from}
+              onChange={handleCardFromChange}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="block mb-1">To (optional)</label>
+            <input
+              type="text"
+              placeholder="Recipient's name"
+              value={cardDetails.to}
+              onChange={handleCardToChange}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    ),
+    [cardDetails.from, cardDetails.to, handleCardFromChange, handleCardToChange]
   );
 
   const Step7 = () => (
@@ -552,7 +559,7 @@ Please confirm this order and provide pickup details.
       case 5:
         return <Step5 />;
       case 6:
-        return <Step6 />;
+        return Step6;
       case 7:
         return <Step7 />;
       default:
@@ -561,13 +568,25 @@ Please confirm this order and provide pickup details.
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f9f7f4] to-[#f1ece5] py-12 pt-20 px-4 sm:px-6 lg:px-8">
+    <div
+      className="min-h-screen py-12 pt-20 px-4 sm:px-6 lg:px-8 relative"
+      style={{
+        background:
+          "linear-gradient(to bottom, #2C2416 0%, #4A3B2A 30%, #6B5B47 60%, #f9f7f4 100%)",
+      }}
+    >
+      {/* Smooth gradient overlay with golden tints */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/10 via-[#D4AF37]/5 to-transparent pointer-events-none"></div>
+
       {/* Decorative elements */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none">
+      <div className="absolute inset-0 opacity-15 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/3 w-24 h-24 rounded-full bg-[#B8941F] mix-blend-multiply filter blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-40 h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute top-1/2 right-1/4 w-28 h-28 rounded-full bg-[#F4E4B8] mix-blend-multiply filter blur-2xl animate-pulse delay-3000"></div>
       </div>
 
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden relative z-10">
         {/* Progress bar */}
         <div className="bg-gray-100 h-2">
           <div
@@ -577,7 +596,13 @@ Please confirm this order and provide pickup details.
         </div>
 
         {/* Header */}
-        <div className="p-6 bg-[#1C1C1C] text-center">
+        <div
+          className="p-6 text-center"
+          style={{
+            background:
+              "linear-gradient(135deg, #2C2416 0%, #4A3B2A 50%, #6B5B47 100%)",
+          }}
+        >
           <h2 className="text-2xl font-light text-[#D4AF37]">
             AKOYA PREMIUM LAUNDRY
           </h2>

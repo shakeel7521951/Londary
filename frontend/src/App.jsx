@@ -2,6 +2,7 @@ import "./App.css";
 import Footer from "./components/common/Footer";
 import Navbar from "./components/common/Navbar";
 import AuthInitializer from "./components/common/AuthInitializer";
+import AdminRoute from "./components/common/AdminRoute";
 import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
 import Services from "./pages/Services";
@@ -51,7 +52,14 @@ const router = createBrowserRouter([
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password-verify", element: <ResetPasswordVerify /> },
   { path: "/reset-password-new", element: <ResetPasswordNew /> },
-  { path: "/dashboard", element: <Dashboard /> },
+  {
+    path: "/dashboard",
+    element: (
+      <AdminRoute>
+        <Dashboard />
+      </AdminRoute>
+    ),
+  },
 ]);
 
 function App() {
