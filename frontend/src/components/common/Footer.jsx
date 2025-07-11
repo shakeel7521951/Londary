@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1C1C1C] text-white border-t border-[#D4AF37]/20">
+    <footer className="bg-[#1C1C1C] text-white border-t border-[#D4AF37]/ mb-[-30px]">
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Column 1: Brand Info */}
         <motion.div

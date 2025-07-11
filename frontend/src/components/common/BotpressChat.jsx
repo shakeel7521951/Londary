@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-// import { FaComments } from "react-icons/fa";
+import { useEffect } from "react";
 
 const BotpressChat = () => {
-  const [isBotReady, setIsBotReady] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const injectScript = document.createElement("script");
@@ -46,27 +43,7 @@ const BotpressChat = () => {
     document.body.appendChild(injectScript);
   }, []);
 
-  // const handleToggleChat = () => {
-  //   if (!isBotReady || !window.botpressWebChat) {
-  //     console.error("❌ Botpress is not ready.");
-  //     return;
-  //   }
-
-  //   const nextVisible = !isVisible;
-  //   setIsVisible(nextVisible);
-
-  //   window.botpressWebChat.sendEvent({ type: nextVisible ? "show" : "hide" });
-  // };
-
-  return (
-    <button
-    // onClick={handleToggleChat}
-    // className="fixed bottom-6 right-6 bg-gradient-to-br from-yellow-400 to-yellow-600 text-white p-5 rounded-full shadow-2xl z-50 animate-bounce hover:scale-110 transition-all duration-300"
-    // title="Chat with Akoya"
-    >
-      {/* <FaComments size={26} /> */}
-    </button>
-  );
+  return
 };
 
 export default BotpressChat;
