@@ -46,17 +46,17 @@ const BotpressChat = () => {
     document.body.appendChild(injectScript);
   }, []);
 
-  const handleToggleChat = () => {
-    if (!isBotReady || !window.botpressWebChat) {
-      console.error("❌ Botpress is not ready.");
-      return;
-    }
+  // const handleToggleChat = () => {
+  //   if (!isBotReady || !window.botpressWebChat) {
+  //     console.error("❌ Botpress is not ready.");
+  //     return;
+  //   }
 
-    const nextVisible = !isVisible;
-    setIsVisible(nextVisible);
+  //   const nextVisible = !isVisible;
+  //   setIsVisible(nextVisible);
 
-    window.botpressWebChat.sendEvent({ type: nextVisible ? "show" : "hide" });
-  };
+  //   window.botpressWebChat.sendEvent({ type: nextVisible ? "show" : "hide" });
+  // };
 
   return (
     <button

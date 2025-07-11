@@ -1,25 +1,23 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const HeaderSlides = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   // Header Slides
   const headerSlides = [
     {
-      image:
-        "./home/eco.jpg",
+      image: "./home/eco.jpg",
       title: "Premium Garment Care",
       subtitle: "Experience the Akoya difference",
     },
     {
-      image:
-        "./home/pCollection.jpg",
+      image: "./home/pCollection.jpg",
       title: "Luxury Laundry Services",
       subtitle: "For the most discerning clients",
     },
     {
-      image:
-        "./home/expert.jpg",
+      image: "./home/expert.jpg",
       title: "Precision Fabric Care",
       subtitle: "Tailored to your garment's needs",
     },
@@ -83,16 +81,18 @@ const HeaderSlides = () => {
             </p>
             <div className="w-16 h-px bg-[#D4AF37] mx-4"></div>
           </motion.div>
-          <motion.button
-            className="bg-[#D4AF37] hover:bg-[#c9a227] text-[#1C1C1C] px-8 py-3 rounded-full text-lg font-medium"
-            initial={{ y: 40 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.4 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Book a Collection
-          </motion.button>
+          <Link to="/book-now">
+            <motion.button
+              className="bg-[#D4AF37] hover:bg-[#c9a227] text-[#1C1C1C] px-8 py-3 rounded-full text-lg font-medium"
+              initial={{ y: 40 }}
+              animate={{ y: 0 }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Book a Collection
+            </motion.button>
+          </Link>
         </motion.div>
 
         {/* Slide Indicators */}
@@ -101,8 +101,9 @@ const HeaderSlides = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all ${currentSlide === index ? "bg-[#D4AF37] w-6" : "bg-white/50"
-                }`}
+              className={`w-3 h-3 rounded-full transition-all ${
+                currentSlide === index ? "bg-[#D4AF37] w-6" : "bg-white/50"
+              }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
