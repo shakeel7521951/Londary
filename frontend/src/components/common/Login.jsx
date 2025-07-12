@@ -2,56 +2,85 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLoginUserMutation } from "../../redux/features/usersApi";
 import { setCredentials } from "../../redux/features/authSlice";
 
-const inputFields = [
-  {
-    id: "email",
-    label: "Email Address",
-    type: "email",
-    placeholder: "your@email.com",
-    icon: (
-      <svg
-        className="w-6 h-6 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-        />
-      </svg>
-    ),
+// Translations for English and Arabic
+const translations = {
+  en: {
+    signInToAccount: "Sign in to your account",
+    email: "Email Address",
+    password: "Password",
+    rememberMe: "Remember me",
+    forgotPassword: "Forgot password?",
+    signIn: "Sign in",
+    signingIn: "Signing in...",
+    newToAkoya: "New to AKOYA?",
+    createAccount: "Create your account",
   },
-  {
-    id: "password",
-    label: "Password",
-    type: "password",
-    placeholder: "••••••••",
-    icon: (
-      <svg
-        className="w-6 h-6 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-        />
-      </svg>
-    ),
+  ar: {
+    signInToAccount: "تسجيل الدخول إلى حسابك",
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    rememberMe: "تذكرني",
+    forgotPassword: "هل نسيت كلمة المرور؟",
+    signIn: "تسجيل الدخول",
+    signingIn: "جاري تسجيل الدخول...",
+    newToAkoya: "جديد على AKOYA؟",
+    createAccount: "أنشئ حسابك",
   },
-];
+};
 
 const Login = () => {
+  const language = useSelector((state) => state.language.language || "en");
+  const t = translations[language];
+
+  const inputFields = [
+    {
+      id: "email",
+      label: t.email,
+      type: "email",
+      placeholder: "your@email.com",
+      icon: (
+        <svg
+          className="w-6 h-6 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
+        </svg>
+      ),
+    },
+    {
+      id: "password",
+      label: t.password,
+      type: "password",
+      placeholder: "••••••••",
+      icon: (
+        <svg
+          className="w-6 h-6 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          />
+        </svg>
+      ),
+    },
+  ];
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -83,7 +112,6 @@ const Login = () => {
         password: formData.password,
       }).unwrap();
 
-      // Set user credentials in Redux store
       dispatch(
         setCredentials({
           user: result.user,
@@ -92,7 +120,6 @@ const Login = () => {
       );
 
       toast.success("Login successful!");
-      // Redirect to home page after successful login
       navigate("/");
     } catch (err) {
       setError(err?.data?.message || "Login failed. Please try again.");
@@ -115,13 +142,13 @@ const Login = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100"
       >
-        {/* Luxury header */}
+        {/* Header */}
         <div className="bg-[#1C1C1C] p-6 text-center">
           <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">
             AKOYA PREMIUM LAUNDRY
           </h2>
           <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-          <p className="mt-2 text-gray-300 text-sm">Sign in to your account</p>
+          <p className="mt-2 text-gray-300 text-sm">{t.signInToAccount}</p>
         </div>
 
         <div className="p-8">
@@ -171,7 +198,7 @@ const Login = () => {
                   htmlFor="remember"
                   className="ml-2 block text-sm text-gray-700"
                 >
-                  Remember me
+                  {t.rememberMe}
                 </label>
               </div>
 
@@ -180,7 +207,7 @@ const Login = () => {
                   to="/forgot-password"
                   className="font-medium text-[#D4AF37] hover:text-yellow-600"
                 >
-                  Forgot password?
+                  {t.forgotPassword}
                 </Link>
               </div>
             </div>
@@ -192,7 +219,7 @@ const Login = () => {
               disabled={isLoading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? t.signingIn : t.signIn}
             </motion.button>
           </form>
 
@@ -203,7 +230,7 @@ const Login = () => {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  New to AKOYA?
+                  {t.newToAkoya}
                 </span>
               </div>
             </div>
@@ -213,7 +240,7 @@ const Login = () => {
                 to="/signup"
                 className="font-medium text-[#D4AF37] hover:text-yellow-600 border-b border-transparent hover:border-[#D4AF37] transition duration-200"
               >
-                Create your account
+                {t.createAccount}
               </Link>
             </div>
           </div>

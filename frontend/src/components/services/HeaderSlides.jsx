@@ -60,7 +60,7 @@ const HeaderSlides = () => {
   return (
     <div>
       {/* Luxury Header Section */}
-      <div className="relative w-full h-[70vh] min-h-[500px] overflow-hidden">
+      <div className="relative w-full h-[70vh] min-h-[560px] max-h-[600px] overflow-hidden">
         {/* Background Slides */}
         <div
           className="absolute inset-0 flex transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"

@@ -68,7 +68,7 @@ const Header = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[80vh] min-h-[560px] overflow-hidden">
+    <div className="relative w-full h-[80vh] min-h-[560px] max-h-[600px] overflow-hidden">
       {/* Slides */}
       <div
         className="h-full w-full flex transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"

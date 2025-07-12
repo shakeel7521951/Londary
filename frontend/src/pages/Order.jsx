@@ -16,6 +16,84 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreateOrderMutation();
+  const language = useSelector((state) => state.language.language);
+
+  // Translations
+  const translations = {
+    en: {
+      title: "AKOYA PREMIUM LAUNDRY",
+      step: "Step",
+      of: "of",
+      washQuestion: "How would you like us to clean your garments?",
+      garmentsQuestion: "What clothes are you sending us?",
+      steamQuestion: "Do you want us to steam the garments?",
+      fragranceQuestion:
+        "Would you like us to perfume your clothes with a luxury scent?",
+      packagingQuestion: "How would you like us to package your garments?",
+      cardQuestion: "Want to include a personalized card?",
+      summaryTitle: "Order Summary",
+      serviceType: "Service Type:",
+      garments: "Garments:",
+      steamFinishing: "Steam Finishing:",
+      fragrance: "Fragrance:",
+      packaging: "Packaging:",
+      personalizedCard: "Personalized Card:",
+      from: "From",
+      to: "To (optional)",
+      total: "Total:",
+      pcs: "pcs",
+      yes: "Yes (+20 QAR)",
+      no: "No",
+      back: "Back",
+      next: "Next",
+      confirmOrder: "Confirm & Order on WhatsApp",
+      placingOrder: "Placing Order...",
+      standardWash: "Standard Wash (48h)",
+      expressWash: "Express Wash (24h)",
+      loginError: "Please login to place an order",
+      orderSuccess: "Order placed successfully!",
+      orderError: "Failed to place order. Please try again.",
+      mens: "Men's",
+      womens: "Women's",
+    },
+    ar: {
+      title: "أكویا لخدمات الغسيل الفاخرة",
+      step: "خطوة",
+      of: "من",
+      washQuestion: "كيف تفضل أن نقوم بتنظيف ملابسك؟",
+      garmentsQuestion: "ما هي الملابس التي ترسلها إلينا؟",
+      steamQuestion: "هل تريد منا كي الملابس بالبخار؟",
+      fragranceQuestion: "هل ترغب في تعطير ملابسك برائحة فاخرة؟",
+      packagingQuestion: "كيف تفضل أن نقوم بتغليف ملابسك؟",
+      cardQuestion: "هل ترغب في إضافة بطاقة شخصية؟",
+      summaryTitle: "ملخص الطلب",
+      serviceType: "نوع الخدمة:",
+      garments: "الملابس:",
+      steamFinishing: "كي بالبخار:",
+      fragrance: "العطر:",
+      packaging: "التغليف:",
+      personalizedCard: "بطاقة شخصية:",
+      from: "من",
+      to: "إلى (اختياري)",
+      total: "المجموع:",
+      pcs: "قطعة",
+      yes: "نعم (+20 ريال)",
+      no: "لا",
+      back: "رجوع",
+      next: "التالي",
+      confirmOrder: "تأكيد الطلب عبر واتساب",
+      placingOrder: "جاري تقديم الطلب...",
+      standardWash: "غسيل عادي (48 ساعة)",
+      expressWash: "غسيل سريع (24 ساعة)",
+      loginError: "يرجى تسجيل الدخول لتقديم الطلب",
+      orderSuccess: "تم تقديم الطلب بنجاح!",
+      orderError: "فشل في تقديم الطلب. يرجى المحاولة مرة أخرى.",
+      mens: "رجالي",
+      womens: "نسائي",
+    },
+  };
+
+  const t = translations[language] || translations.en;
 
   // State for each step
   const [step, setStep] = useState(1);
@@ -28,72 +106,145 @@ const OrderPage = () => {
 
   // Available options
   const washOptions = [
-    { id: "standard", name: "Standard Wash (48h)", price: 50 },
-    { id: "express", name: "Express Wash (24h)", price: 80 },
+    {
+      id: "standard",
+      name: language === "ar" ? "غسيل عادي (48 ساعة)" : "Standard Wash (48h)",
+      price: 50,
+    },
+    {
+      id: "express",
+      name: language === "ar" ? "غسيل سريع (24 ساعة)" : "Express Wash (24h)",
+      price: 80,
+    },
   ];
 
   const garmentTypes = {
-    "Men's": [
-      "Kandura",
-      "Shirt",
-      "Trousers",
-      "Bisht",
-      "Thobe",
-      "Socks",
-      "Underwear",
-      "Child Dishdasha",
-      "Military Uniform",
-      "Overcoat",
-      "Kameez",
-      "Kurta",
-      "Kurta Pyjama (Set)",
-      "Gent Suit (3pcs)",
-      "Ghutra",
-      "Dishdasha",
-    ],
-    "Women's": [
-      "Abaya",
-      "Abaya Special",
-      "Dress",
-      "Dress (Short)",
-      "Dress (Long)",
-      "Blouse",
-      "Blouse (Special)",
-      "Skirt",
-      "Scarf",
-      "Hijab",
-      "Lingerie",
-      "Jalabiya",
-      "Bath Robe",
-    ],
+    [t.mens]:
+      language === "ar"
+        ? [
+            "كندورة",
+            "قميص",
+            "بنطال",
+            "بشت",
+            "ثوب",
+            "جوارب",
+            "ملابس داخلية",
+            "دشداشة أطفال",
+            "زي عسكري",
+            "معطف",
+            "قميص",
+            "كورتا",
+            "كورتا بيجامة (مجموعة)",
+            "بدلة رجالية (3 قطع)",
+            "غترة",
+            "دشداشة",
+          ]
+        : [
+            "Kandura",
+            "Shirt",
+            "Trousers",
+            "Bisht",
+            "Thobe",
+            "Socks",
+            "Underwear",
+            "Child Dishdasha",
+            "Military Uniform",
+            "Overcoat",
+            "Kameez",
+            "Kurta",
+            "Kurta Pyjama (Set)",
+            "Gent Suit (3pcs)",
+            "Ghutra",
+            "Dishdasha",
+          ],
+    [t.womens]:
+      language === "ar"
+        ? [
+            "عباية",
+            "عباية خاصة",
+            "فستان",
+            "فستان قصير",
+            "فستان طويل",
+            "بلوزة",
+            "بلوزة خاصة",
+            "تنورة",
+            "وشاح",
+            "حجاب",
+            "ملابس داخلية",
+            "جلابية",
+            "روب حمام",
+          ]
+        : [
+            "Abaya",
+            "Abaya Special",
+            "Dress",
+            "Dress (Short)",
+            "Dress (Long)",
+            "Blouse",
+            "Blouse (Special)",
+            "Skirt",
+            "Scarf",
+            "Hijab",
+            "Lingerie",
+            "Jalabiya",
+            "Bath Robe",
+          ],
   };
 
   const fragranceOptions = {
-    "Women's": [
-      { id: "orchid", name: "Orchid - Soft Floral" },
-      { id: "moony", name: "Moony - Airy Musk" },
+    [t.womens]: [
+      {
+        id: "orchid",
+        name:
+          language === "ar" ? "أوركيد - عطر زهري ناعم" : "Orchid - Soft Floral",
+      },
+      {
+        id: "moony",
+        name: language === "ar" ? "موني - عطر مسك جوي" : "Moony - Airy Musk",
+      },
     ],
-    "Men's": [
-      { id: "elixir", name: "Elixir - Oud & Amber" },
-      { id: "imperial", name: "Imperial - Oriental Bold" },
+    [t.mens]: [
+      {
+        id: "elixir",
+        name:
+          language === "ar"
+            ? "إكسير - عطر العود والكهرمان"
+            : "Elixir - Oud & Amber",
+      },
+      {
+        id: "imperial",
+        name:
+          language === "ar"
+            ? "إمبريال - عطر شرقي قوي"
+            : "Imperial - Oriental Bold",
+      },
     ],
   };
 
   const packagingOptions = [
     {
       id: "plastic",
-      name: "Plastic Wrap",
-      desc: "Clean transparent protection",
+      name: language === "ar" ? "تغليف بلاستيكي" : "Plastic Wrap",
+      desc:
+        language === "ar"
+          ? "حماية نظيفة شفافة"
+          : "Clean transparent protection",
     },
     {
       id: "fabric",
-      name: "Luxury Fabric Wrap",
-      desc: "Soft-touch premium wrapping",
+      name: language === "ar" ? "تغليف قماش فاخر" : "Luxury Fabric Wrap",
+      desc:
+        language === "ar"
+          ? "تغليف مميز بملمس ناعم"
+          : "Soft-touch premium wrapping",
     },
     {
       id: "box",
-      name: "Premium Gift Box",
-      desc: "Elegant box with magnetic closure",
+      name: language === "ar" ? "صندوق هدايا فاخر" : "Premium Gift Box",
+      desc:
+        language === "ar"
+          ? "صندوق أنيق بإغلاق مغناطيسي"
+          : "Elegant box with magnetic closure",
     },
   ];
 
@@ -123,7 +274,7 @@ const OrderPage = () => {
   const handleSubmit = async () => {
     // Check if user is authenticated
     if (!isAuthenticated) {
-      toast.error("Please login to place an order");
+      toast.error(t.loginError);
       navigate("/login");
       return;
     }
@@ -142,7 +293,7 @@ const OrderPage = () => {
     try {
       const result = await createOrder(orderDetails).unwrap();
 
-      toast.success("Order placed successfully!");
+      toast.success(t.orderSuccess);
 
       // Create WhatsApp message
       const whatsappMessage = generateWhatsAppMessage(
@@ -161,60 +312,107 @@ const OrderPage = () => {
         navigate("/");
       }, 2000);
     } catch (error) {
-      toast.error(
-        error?.data?.message || "Failed to place order. Please try again."
-      );
+      toast.error(error?.data?.message || t.orderError);
       console.error("Order creation failed:", error);
     }
   };
 
   const generateWhatsAppMessage = (orderDetails, order) => {
     const userInfo = currentUser
-      ? `👤 Customer: ${currentUser.name} (${currentUser.email})`
+      ? `${language === "ar" ? "👤 العميل" : "👤 Customer"}: ${
+          currentUser.name
+        } (${currentUser.email})`
       : "";
+
     const orderInfo = `
-🏷️ *AKOYA PREMIUM LAUNDRY - NEW ORDER*
+${
+  language === "ar"
+    ? "🏷️ أكویا لخدمات الغسيل الفاخرة - طلب جديد"
+    : "🏷️ AKOYA PREMIUM LAUNDRY - NEW ORDER"
+}
 
 ${userInfo}
-📝 Order ID: ${order._id}
+${language === "ar" ? "📝 رقم الطلب" : "📝 Order ID"}: ${order._id}
 
-🧺 *Service Details:*
-• Wash Type: ${
+${language === "ar" ? "🧺 تفاصيل الخدمة:" : "🧺 Service Details:"}
+• ${language === "ar" ? "نوع الغسيل" : "Wash Type"}: ${
       orderDetails.washType === "standard"
-        ? "Standard Wash (48h)"
+        ? language === "ar"
+          ? "غسيل عادي (48 ساعة)"
+          : "Standard Wash (48h)"
+        : language === "ar"
+        ? "غسيل سريع (24 ساعة)"
         : "Express Wash (24h)"
     }
-• Steam Finishing: ${orderDetails.steamFinish ? "Yes (+20 QAR)" : "No"}
-• Fragrance: ${orderDetails.fragrance || "None"}
-• Packaging: ${orderDetails.packaging || "Standard"}
+• ${language === "ar" ? "كي بالبخار" : "Steam Finishing"}: ${
+      orderDetails.steamFinish
+        ? language === "ar"
+          ? "نعم (+20 ريال)"
+          : "Yes (+20 QAR)"
+        : language === "ar"
+        ? "لا"
+        : "No"
+    }
+• ${language === "ar" ? "العطر" : "Fragrance"}: ${
+      orderDetails.fragrance
+        ? fragranceOptions[
+            orderDetails.fragrance.includes("orchid") ? t.womens : t.mens
+          ].find((f) => f.id === orderDetails.fragrance).name
+        : language === "ar"
+        ? "بدون"
+        : "None"
+    }
+• ${language === "ar" ? "التغليف" : "Packaging"}: ${
+      orderDetails.packaging
+        ? packagingOptions.find((p) => p.id === orderDetails.packaging).name
+        : language === "ar"
+        ? "قياسي"
+        : "Standard"
+    }
 
-👕 *Garments:*
-${orderDetails.garments.map((g) => `• ${g.type}: ${g.quantity} pcs`).join("\n")}
+${language === "ar" ? "👕 الملابس:" : "👕 Garments:"}
+${orderDetails.garments
+  .map(
+    (g) => `• ${g.type}: ${g.quantity} ${language === "ar" ? "قطعة" : "pcs"}`
+  )
+  .join("\n")}
 
 ${
   orderDetails.cardFrom
-    ? `💌 *Personalized Card:*\n• From: ${orderDetails.cardFrom}${
-        orderDetails.cardTo ? `\n• To: ${orderDetails.cardTo}` : ""
+    ? `${language === "ar" ? "💌 بطاقة شخصية:" : "💌 Personalized Card:"}\n• ${
+        language === "ar" ? "من" : "From"
+      }: ${orderDetails.cardFrom}${
+        orderDetails.cardTo
+          ? `\n• ${language === "ar" ? "إلى" : "To"}: ${orderDetails.cardTo}`
+          : ""
       }`
     : ""
 }
 
-💰 *Total: ${orderDetails.total} QAR*
+${language === "ar" ? "💰 المجموع" : "💰 Total"}: ${orderDetails.total} ${
+      language === "ar" ? "ريال" : "QAR"
+    }
 
-📅 Order Date: ${new Date().toLocaleDateString()}
-🕐 Order Time: ${new Date().toLocaleTimeString()}
+${
+  language === "ar" ? "📅 تاريخ الطلب" : "📅 Order Date"
+}: ${new Date().toLocaleDateString()}
+${
+  language === "ar" ? "🕐 وقت الطلب" : "🕐 Order Time"
+}: ${new Date().toLocaleTimeString()}
 
-Please confirm this order and provide pickup details.
+${
+  language === "ar"
+    ? "يرجى تأكيد هذا الطلب وتوفير تفاصيل الاستلام."
+    : "Please confirm this order and provide pickup details."
+}
 `;
     return orderInfo.trim();
   };
 
   // Step components
   const Step1 = () => (
-    <div className="space-y-6">
-      <h3 className="text-xl font-light text-gray-700">
-        How would you like us to clean your garments?
-      </h3>
+    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
+      <h3 className="text-xl font-light text-gray-700">{t.washQuestion}</h3>
       <div className="grid gap-4 md:grid-cols-2">
         {washOptions.map((option) => (
           <motion.div
@@ -231,7 +429,7 @@ Please confirm this order and provide pickup details.
             <div className="flex justify-between items-center">
               <h4 className="font-medium">{option.name}</h4>
               <span className="text-[#D4AF37] font-bold">
-                {option.price} QAR
+                {option.price} {language === "ar" ? "ريال" : "QAR"}
               </span>
             </div>
           </motion.div>
@@ -241,10 +439,8 @@ Please confirm this order and provide pickup details.
   );
 
   const Step2 = () => (
-    <div className="space-y-6">
-      <h3 className="text-xl font-light text-gray-700">
-        What clothes are you sending us?
-      </h3>
+    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
+      <h3 className="text-xl font-light text-gray-700">{t.garmentsQuestion}</h3>
 
       <div className="grid gap-4 md:grid-cols-2">
         {Object.entries(garmentTypes).map(([category, items]) => (
@@ -254,14 +450,18 @@ Please confirm this order and provide pickup details.
               {items.map((item) => (
                 <motion.button
                   key={item}
-                  whileHover={{ x: 5 }}
+                  whileHover={{ x: language === "ar" ? -5 : 5 }}
                   type="button"
-                  className="flex items-center w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+                  className={`flex items-center w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 ${
+                    language === "ar" ? "text-right" : "text-left"
+                  }`}
                   onClick={() => addGarment(item)}
                 >
                   <span>{item}</span>
                   <svg
-                    className="w-5 h-5 ml-auto text-[#D4AF37]"
+                    className={`w-5 h-5 ${
+                      language === "ar" ? "mr-auto" : "ml-auto"
+                    } text-[#D4AF37]`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -282,7 +482,9 @@ Please confirm this order and provide pickup details.
 
       {garments.length > 0 && (
         <div className="mt-8">
-          <h4 className="font-medium mb-3">Your Garments</h4>
+          <h4 className="font-medium mb-3">
+            {language === "ar" ? "ملابسك" : "Your Garments"}
+          </h4>
           <div className="space-y-3">
             {garments.map((garment, index) => (
               <div
@@ -302,7 +504,9 @@ Please confirm this order and provide pickup details.
                 <button
                   type="button"
                   onClick={() => removeGarment(index)}
-                  className="ml-3 text-red-500 hover:text-red-700"
+                  className={`${
+                    language === "ar" ? "mr-3" : "ml-3"
+                  } text-red-500 hover:text-red-700`}
                 >
                   <svg
                     className="w-5 h-5"
@@ -327,10 +531,8 @@ Please confirm this order and provide pickup details.
   );
 
   const Step3 = () => (
-    <div className="space-y-6">
-      <h3 className="text-xl font-light text-gray-700">
-        Do you want us to steam the garments?
-      </h3>
+    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
+      <h3 className="text-xl font-light text-gray-700">{t.steamQuestion}</h3>
       <div className="flex space-x-4">
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -340,7 +542,7 @@ Please confirm this order and provide pickup details.
           }`}
           onClick={() => setSteamFinish(true)}
         >
-          Yes (+20 QAR)
+          {t.yes}
         </motion.button>
         <motion.button
           whileHover={{ scale: 1.05 }}
@@ -350,16 +552,16 @@ Please confirm this order and provide pickup details.
           }`}
           onClick={() => setSteamFinish(false)}
         >
-          No
+          {t.no}
         </motion.button>
       </div>
     </div>
   );
 
   const Step4 = () => (
-    <div className="space-y-6">
+    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
       <h3 className="text-xl font-light text-gray-700">
-        Would you like us to perfume your clothes with a luxury scent?
+        {t.fragranceQuestion}
       </h3>
       <div className="grid gap-4 md:grid-cols-2">
         {Object.entries(fragranceOptions).map(([gender, options]) => (
@@ -375,7 +577,7 @@ Please confirm this order and provide pickup details.
                     fragrance === option.id
                       ? "border-[#D4AF37] bg-[#FFF9E6]"
                       : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  } ${language === "ar" ? "text-right" : "text-left"}`}
                   onClick={() => setFragrance(option.id)}
                 >
                   {option.name}
@@ -389,9 +591,9 @@ Please confirm this order and provide pickup details.
   );
 
   const Step5 = () => (
-    <div className="space-y-6">
+    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
       <h3 className="text-xl font-light text-gray-700">
-        How would you like us to package your garments?
+        {t.packagingQuestion}
       </h3>
       <div className="grid gap-4 md:grid-cols-3">
         {packagingOptions.map((option) => (
@@ -408,10 +610,14 @@ Please confirm this order and provide pickup details.
             <h4 className="font-medium">{option.name}</h4>
             <p className="text-sm text-gray-600 mt-1">{option.desc}</p>
             {option.id === "fabric" && (
-              <p className="text-[#D4AF37] text-sm mt-2">+15 QAR</p>
+              <p className="text-[#D4AF37] text-sm mt-2">
+                +15 {language === "ar" ? "ريال" : "QAR"}
+              </p>
             )}
             {option.id === "box" && (
-              <p className="text-[#D4AF37] text-sm mt-2">+30 QAR</p>
+              <p className="text-[#D4AF37] text-sm mt-2">
+                +30 {language === "ar" ? "ريال" : "QAR"}
+              </p>
             )}
           </motion.div>
         ))}
@@ -429,26 +635,26 @@ Please confirm this order and provide pickup details.
 
   const Step6 = useMemo(
     () => (
-      <div className="space-y-6">
-        <h3 className="text-xl font-light text-gray-700">
-          Want to include a personalized card?
-        </h3>
+      <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
+        <h3 className="text-xl font-light text-gray-700">{t.cardQuestion}</h3>
         <div className="space-y-4">
           <div>
-            <label className="block mb-1">From</label>
+            <label className="block mb-1">{t.from}</label>
             <input
               type="text"
-              placeholder="Your name"
+              placeholder={language === "ar" ? "اسمك" : "Your name"}
               value={cardDetails.from}
               onChange={handleCardFromChange}
               className="w-full p-3 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
-            <label className="block mb-1">To (optional)</label>
+            <label className="block mb-1">{t.to}</label>
             <input
               type="text"
-              placeholder="Recipient's name"
+              placeholder={
+                language === "ar" ? "اسم المستلم" : "Recipient's name"
+              }
               value={cardDetails.to}
               onChange={handleCardToChange}
               className="w-full p-3 border border-gray-300 rounded-lg"
@@ -457,28 +663,37 @@ Please confirm this order and provide pickup details.
         </div>
       </div>
     ),
-    [cardDetails.from, cardDetails.to, handleCardFromChange, handleCardToChange]
+    [
+      cardDetails.from,
+      cardDetails.to,
+      handleCardFromChange,
+      handleCardToChange,
+      language,
+      t,
+    ]
   );
 
   const Step7 = () => (
-    <div className="space-y-6">
-      <h3 className="text-xl font-light text-gray-700">Order Summary</h3>
+    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
+      <h3 className="text-xl font-light text-gray-700">{t.summaryTitle}</h3>
       <div className="bg-gray-50 p-6 rounded-lg">
         <div className="space-y-4">
           <div className="flex justify-between border-b pb-2">
-            <span className="font-medium">Service Type:</span>
+            <span className="font-medium">{t.serviceType}</span>
             <span>
-              {washType === "standard" ? "Standard Wash" : "Express Wash"}
+              {washType === "standard" ? t.standardWash : t.expressWash}
             </span>
           </div>
 
           <div className="border-b pb-2">
-            <p className="font-medium mb-2">Garments:</p>
+            <p className="font-medium mb-2">{t.garments}</p>
             <ul className="space-y-1">
               {garments.map((g, i) => (
                 <li key={i} className="flex justify-between">
                   <span>{g.type}</span>
-                  <span>{g.quantity} pcs</span>
+                  <span>
+                    {g.quantity} {t.pcs}
+                  </span>
                 </li>
               ))}
             </ul>
@@ -486,18 +701,18 @@ Please confirm this order and provide pickup details.
 
           {steamFinish && (
             <div className="flex justify-between border-b pb-2">
-              <span>Steam Finishing:</span>
-              <span>+20 QAR</span>
+              <span>{t.steamFinishing}</span>
+              <span>+20 {language === "ar" ? "ريال" : "QAR"}</span>
             </div>
           )}
 
           {fragrance && (
             <div className="flex justify-between border-b pb-2">
-              <span>Fragrance:</span>
+              <span>{t.fragrance}</span>
               <span>
                 {
                   fragranceOptions[
-                    fragrance.includes("orchid") ? "Women's" : "Men's"
+                    fragrance.includes("orchid") ? t.womens : t.mens
                   ].find((f) => f.id === fragrance).name
                 }
               </span>
@@ -506,13 +721,13 @@ Please confirm this order and provide pickup details.
 
           {packaging && (
             <div className="flex justify-between border-b pb-2">
-              <span>Packaging:</span>
+              <span>{t.packaging}</span>
               <span>
                 {packagingOptions.find((p) => p.id === packaging).name}
                 {packaging === "fabric"
-                  ? " (+15 QAR)"
+                  ? ` (+15 ${language === "ar" ? "ريال" : "QAR"})`
                   : packaging === "box"
-                  ? " (+30 QAR)"
+                  ? ` (+30 ${language === "ar" ? "ريال" : "QAR"})`
                   : ""}
               </span>
             </div>
@@ -520,15 +735,23 @@ Please confirm this order and provide pickup details.
 
           {cardDetails.from && (
             <div className="border-b pb-2">
-              <p className="font-medium">Personalized Card:</p>
-              <p>From: {cardDetails.from}</p>
-              {cardDetails.to && <p>To: {cardDetails.to}</p>}
+              <p className="font-medium">{t.personalizedCard}</p>
+              <p>
+                {t.from}: {cardDetails.from}
+              </p>
+              {cardDetails.to && (
+                <p>
+                  {t.to}: {cardDetails.to}
+                </p>
+              )}
             </div>
           )}
 
           <div className="flex justify-between font-bold text-lg">
-            <span>Total:</span>
-            <span>{calculateTotal()} QAR</span>
+            <span>{t.total}</span>
+            <span>
+              {calculateTotal()} {language === "ar" ? "ريال" : "QAR"}
+            </span>
           </div>
         </div>
       </div>
@@ -540,7 +763,7 @@ Please confirm this order and provide pickup details.
         onClick={handleSubmit}
         disabled={isCreatingOrder}
       >
-        {isCreatingOrder ? "Placing Order..." : "Confirm & Order on WhatsApp"}
+        {isCreatingOrder ? t.placingOrder : t.confirmOrder}
       </motion.button>
     </div>
   );
@@ -603,10 +826,10 @@ Please confirm this order and provide pickup details.
               "linear-gradient(135deg, #2C2416 0%, #4A3B2A 50%, #6B5B47 100%)",
           }}
         >
-          <h2 className="text-2xl font-light text-[#D4AF37]">
-            AKOYA PREMIUM LAUNDRY
-          </h2>
-          <p className="text-gray-300 mt-1">Step {step} of 7</p>
+          <h2 className="text-2xl font-light text-[#D4AF37]">{t.title}</h2>
+          <p className="text-gray-300 mt-1">
+            {t.step} {step} {t.of} 7
+          </p>
         </div>
 
         {/* Form content */}
@@ -623,7 +846,7 @@ Please confirm this order and provide pickup details.
                 className="px-6 py-2 border border-gray-300 rounded-lg"
                 onClick={() => setStep(step - 1)}
               >
-                Back
+                {t.back}
               </motion.button>
             )}
 
@@ -644,7 +867,7 @@ Please confirm this order and provide pickup details.
                   (step === 2 && garments.length === 0)
                 }
               >
-                Next
+                {t.next}
               </motion.button>
             )}
           </div>

@@ -3,8 +3,46 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { useVerifyUserMutation } from "../../redux/features/usersApi";
+import { useSelector } from "react-redux";
+
+// Language translations
+const translations = {
+  en: {
+    verifyYourAccount: "Verify Your Account",
+    checkEmail: "Check Your Email",
+    sentCode: "We've sent a 4-digit verification code to",
+    enterCode: "Enter verification code",
+    verifying: "Verifying...",
+    verifyAccount: "Verify Account",
+    didntReceive: "Didn't receive the code?",
+    resend: "Resend Code",
+    backToSignup: "← Back to Sign Up",
+    pleaseEnter4Digits: "Please enter all 4 digits",
+    verificationSuccess: "Account verified successfully!",
+    verificationFailed: "Verification failed. Please try again.",
+    goToSignupToResend: "Please go back to signup to resend OTP",
+  },
+  ar: {
+    verifyYourAccount: "تحقق من حسابك",
+    checkEmail: "تحقق من بريدك الإلكتروني",
+    sentCode: "لقد أرسلنا رمز تحقق مكون من 4 أرقام إلى",
+    enterCode: "أدخل رمز التحقق",
+    verifying: "جارٍ التحقق...",
+    verifyAccount: "تحقق من الحساب",
+    didntReceive: "لم يصلك الرمز؟",
+    resend: "إعادة إرسال الرمز",
+    backToSignup: "← العودة للتسجيل",
+    pleaseEnter4Digits: "يرجى إدخال 4 أرقام",
+    verificationSuccess: "تم التحقق من الحساب بنجاح!",
+    verificationFailed: "فشل التحقق. حاول مرة أخرى.",
+    goToSignupToResend: "يرجى العودة إلى صفحة التسجيل لإعادة إرسال الرمز",
+  },
+};
 
 const VerifyOTP = () => {
+  const language = useSelector((state) => state.language.language || "en");
+  const t = translations[language];
+
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -12,11 +50,9 @@ const VerifyOTP = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-
   const [verifyUser] = useVerifyUserMutation();
 
   useEffect(() => {
-    // Get email from navigation state or localStorage
     const emailFromState = location.state?.email;
     const emailFromStorage = localStorage.getItem("verificationEmail");
 
@@ -26,19 +62,17 @@ const VerifyOTP = () => {
     } else if (emailFromStorage) {
       setEmail(emailFromStorage);
     } else {
-      // No email found, redirect to signup
       navigate("/signup");
     }
   }, [location, navigate]);
 
   const handleOtpChange = (value, index) => {
-    if (value.length > 1) return; // Prevent multiple characters
+    if (value.length > 1) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 3) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -58,42 +92,32 @@ const VerifyOTP = () => {
 
     const otpString = otp.join("");
     if (otpString.length !== 4) {
-      setError("Please enter all 4 digits");
+      setError(t.pleaseEnter4Digits);
       return;
     }
 
     setIsLoading(true);
     try {
-      await verifyUser({
-        email,
-        otp: otpString,
-      }).unwrap();
-
-      // Clear stored email
+      await verifyUser({ email, otp: otpString }).unwrap();
       localStorage.removeItem("verificationEmail");
 
-      // Show success message and redirect
-      toast.success("Account verified successfully!");
+      toast.success(t.verificationSuccess);
       navigate("/login");
     } catch (err) {
-      setError(err?.data?.message || "Verification failed. Please try again.");
-      toast.error(
-        err?.data?.message || "Verification failed. Please try again."
-      );
+      setError(err?.data?.message || t.verificationFailed);
+      toast.error(err?.data?.message || t.verificationFailed);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleResendOTP = async () => {
-    // This would trigger registration again to resend OTP
+  const handleResendOTP = () => {
     setError("");
-    toast.info("Please go back to signup to resend OTP");
+    toast.info(t.goToSignupToResend);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9f7f4] to-[#f1ece5] flex items-center justify-center p-4">
-      {/* Decorative elements */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
       </div>
@@ -104,24 +128,18 @@ const VerifyOTP = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100"
       >
-        {/* Luxury header */}
         <div className="bg-[#1C1C1C] p-6 text-center">
           <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">
             AKOYA PREMIUM LAUNDRY
           </h2>
           <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-          <p className="mt-2 text-gray-300 text-sm">Verify Your Account</p>
+          <p className="mt-2 text-gray-300 text-sm">{t.verifyYourAccount}</p>
         </div>
 
         <div className="p-8">
           <div className="text-center mb-6">
             <div className="mx-auto w-16 h-16 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mb-4">
-              <svg
-                className="w-8 h-8 text-[#D4AF37]"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-8 h-8 text-[#D4AF37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -130,12 +148,8 @@ const VerifyOTP = () => {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">
-              Check Your Email
-            </h3>
-            <p className="text-gray-600 text-sm">
-              We've sent a 4-digit verification code to
-            </p>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">{t.checkEmail}</h3>
+            <p className="text-gray-600 text-sm">{t.sentCode}</p>
             <p className="text-[#D4AF37] font-medium text-sm">{email}</p>
           </div>
 
@@ -148,7 +162,7 @@ const VerifyOTP = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
-                Enter verification code
+                {t.enterCode}
               </label>
               <div className="flex justify-center space-x-2">
                 {otp.map((digit, index) => (
@@ -174,17 +188,17 @@ const VerifyOTP = () => {
               disabled={isLoading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Verifying..." : "Verify Account"}
+              {isLoading ? t.verifying : t.verifyAccount}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600 text-sm">Didn't receive the code?</p>
+            <p className="text-gray-600 text-sm">{t.didntReceive}</p>
             <button
               onClick={handleResendOTP}
               className="mt-2 font-medium text-[#D4AF37] hover:text-yellow-600 border-b border-transparent hover:border-[#D4AF37] transition duration-200"
             >
-              Resend Code
+              {t.resend}
             </button>
           </div>
 
@@ -193,7 +207,7 @@ const VerifyOTP = () => {
               to="/signup"
               className="font-medium text-gray-600 hover:text-gray-800 text-sm"
             >
-              ← Back to Sign Up
+              {t.backToSignup}
             </Link>
           </div>
         </div>

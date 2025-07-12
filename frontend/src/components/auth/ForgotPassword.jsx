@@ -2,8 +2,54 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useForgotPasswordOTPMutation } from "../../redux/features/usersApi";
+import { useSelector } from "react-redux";
+
+// Language translations
+const translations = {
+  en: {
+    resetPassword: "Reset Your Password",
+    forgotPassword: "Forgot Password?",
+    enterEmailPrompt:
+      "Enter your email address and we'll send you a verification code to reset your password.",
+    emailSent: "Email Sent Successfully",
+    checkYourEmail: "Check Your Email",
+    codeSentTo: "We've sent a verification code to",
+    redirecting: "Redirecting to verification page...",
+    emailLabel: "Email Address",
+    emailPlaceholder: "your@email.com",
+    sendResetCode: "Send Reset Code",
+    sending: "Sending...",
+    backToSignIn: "Back to Sign In",
+    rememberPassword: "Remember your password?",
+    pleaseEnterEmail: "Please enter your email address",
+    invalidEmail: "Please enter a valid email address",
+    sendFailed: "Failed to send reset email. Please try again.",
+  },
+  ar: {
+    resetPassword: "إعادة تعيين كلمة المرور",
+    forgotPassword: "هل نسيت كلمة المرور؟",
+    enterEmailPrompt:
+      "أدخل بريدك الإلكتروني وسنرسل لك رمز تحقق لإعادة تعيين كلمة المرور.",
+    emailSent: "تم إرسال البريد الإلكتروني بنجاح",
+    checkYourEmail: "تحقق من بريدك الإلكتروني",
+    codeSentTo: "لقد أرسلنا رمز تحقق إلى",
+    redirecting: "جاري التوجيه إلى صفحة التحقق...",
+    emailLabel: "البريد الإلكتروني",
+    emailPlaceholder: "example@email.com",
+    sendResetCode: "إرسال رمز التحقق",
+    sending: "جاري الإرسال...",
+    backToSignIn: "العودة لتسجيل الدخول",
+    rememberPassword: "هل تذكرت كلمة المرور؟",
+    pleaseEnterEmail: "يرجى إدخال بريدك الإلكتروني",
+    invalidEmail: "يرجى إدخال بريد إلكتروني صالح",
+    sendFailed: "فشل في إرسال البريد الإلكتروني. حاول مرة أخرى.",
+  },
+};
 
 const ForgotPassword = () => {
+  const language = useSelector((state) => state.language.language || "en");
+  const t = translations[language];
+
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -17,13 +63,13 @@ const ForgotPassword = () => {
     setError("");
 
     if (!email.trim()) {
-      setError("Please enter your email address");
+      setError(t.pleaseEnterEmail);
       return;
     }
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailPattern.test(email)) {
-      setError("Please enter a valid email address");
+      setError(t.invalidEmail);
       return;
     }
 
@@ -32,19 +78,15 @@ const ForgotPassword = () => {
       await forgotPasswordOTP(email).unwrap();
 
       setIsEmailSent(true);
-      // Store email for next step
       localStorage.setItem("resetPasswordEmail", email);
 
-      // Navigate to OTP verification after a short delay
       setTimeout(() => {
         navigate("/reset-password-verify", {
           state: { email, fromForgotPassword: true },
         });
       }, 2000);
     } catch (err) {
-      setError(
-        err?.data?.message || "Failed to send reset email. Please try again."
-      );
+      setError(err?.data?.message || t.sendFailed);
     } finally {
       setIsLoading(false);
     }
@@ -64,9 +106,7 @@ const ForgotPassword = () => {
               AKOYA PREMIUM LAUNDRY
             </h2>
             <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-            <p className="mt-2 text-gray-300 text-sm">
-              Email Sent Successfully
-            </p>
+            <p className="mt-2 text-gray-300 text-sm">{t.emailSent}</p>
           </div>
 
           <div className="p-8 text-center">
@@ -86,14 +126,12 @@ const ForgotPassword = () => {
               </svg>
             </div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">
-              Check Your Email
+              {t.checkYourEmail}
             </h3>
             <p className="text-gray-600 text-sm mb-4">
-              We've sent a verification code to <strong>{email}</strong>
+              {t.codeSentTo} <strong>{email}</strong>
             </p>
-            <p className="text-gray-500 text-xs">
-              Redirecting to verification page...
-            </p>
+            <p className="text-gray-500 text-xs">{t.redirecting}</p>
           </div>
         </motion.div>
       </div>
@@ -102,7 +140,6 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9f7f4] to-[#f1ece5] flex items-center justify-center p-4">
-      {/* Decorative elements */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
       </div>
@@ -113,13 +150,12 @@ const ForgotPassword = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100"
       >
-        {/* Luxury header */}
         <div className="bg-[#1C1C1C] p-6 text-center">
           <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">
             AKOYA PREMIUM LAUNDRY
           </h2>
           <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-          <p className="mt-2 text-gray-300 text-sm">Reset Your Password</p>
+          <p className="mt-2 text-gray-300 text-sm">{t.resetPassword}</p>
         </div>
 
         <div className="p-8">
@@ -140,12 +176,9 @@ const ForgotPassword = () => {
               </svg>
             </div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">
-              Forgot Password?
+              {t.forgotPassword}
             </h3>
-            <p className="text-gray-600 text-sm">
-              Enter your email address and we'll send you a verification code to
-              reset your password.
-            </p>
+            <p className="text-gray-600 text-sm">{t.enterEmailPrompt}</p>
           </div>
 
           {error && (
@@ -160,7 +193,7 @@ const ForgotPassword = () => {
                 className="block text-sm font-medium text-gray-700 mb-1"
                 htmlFor="email"
               >
-                Email Address
+                {t.emailLabel}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -181,7 +214,7 @@ const ForgotPassword = () => {
                 <input
                   id="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder={t.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition duration-200"
@@ -197,7 +230,7 @@ const ForgotPassword = () => {
               disabled={isLoading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Sending..." : "Send Reset Code"}
+              {isLoading ? t.sending : t.sendResetCode}
             </motion.button>
           </form>
 
@@ -208,7 +241,7 @@ const ForgotPassword = () => {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  Remember your password?
+                  {t.rememberPassword}
                 </span>
               </div>
             </div>
@@ -218,7 +251,7 @@ const ForgotPassword = () => {
                 to="/login"
                 className="font-medium text-[#D4AF37] hover:text-yellow-600 border-b border-transparent hover:border-[#D4AF37] transition duration-200"
               >
-                Back to Sign In
+                {t.backToSignIn}
               </Link>
             </div>
           </div>

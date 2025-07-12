@@ -3,8 +3,48 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { useRegisterUserMutation } from "../../redux/features/usersApi";
+import { useSelector } from "react-redux";
+
+// Language translations
+const translations = {
+  en: {
+    createPremiumAccount: "Create your premium account",
+    fullName: "Full Name",
+    email: "Email Address",
+    password: "Password",
+    confirmPassword: "Confirm Password",
+    placeholderName: "Enter your full name",
+    placeholderEmail: "your@email.com",
+    placeholderPassword: "••••••••",
+    terms: "I agree to the",
+    termsLink: "terms and conditions",
+    createAccount: "Create Account",
+    creatingAccount: "Creating Account...",
+    alreadyHaveAccount: "Already have an account?",
+    signIn: "Sign in",
+  },
+  ar: {
+    createPremiumAccount: "أنشئ حسابك المميز",
+    fullName: "الاسم الكامل",
+    email: "البريد الإلكتروني",
+    password: "كلمة المرور",
+    confirmPassword: "تأكيد كلمة المرور",
+    placeholderName: "أدخل اسمك الكامل",
+    placeholderEmail: "your@email.com",
+    placeholderPassword: "••••••••",
+    terms: "أوافق على",
+    termsLink: "الشروط والأحكام",
+    createAccount: "إنشاء حساب",
+    creatingAccount: "جارٍ إنشاء الحساب...",
+    alreadyHaveAccount: "هل لديك حساب بالفعل؟",
+    signIn: "تسجيل الدخول",
+  },
+};
 
 export default function Signup() {
+  const language = useSelector((state) => state.language.language || "en");
+  const t = translations[language];
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,7 +92,6 @@ export default function Signup() {
       [e.target.id]: e.target.value,
     });
 
-    // Clear error when user types
     if (errors[e.target.id]) {
       setErrors({
         ...errors,
@@ -64,9 +103,7 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate()) {
-      return;
-    }
+    if (!validate()) return;
 
     setIsLoading(true);
     try {
@@ -79,7 +116,6 @@ export default function Signup() {
       toast.success(
         "Registration successful! Please check your email for verification code."
       );
-      // Navigate to verification page with email
       navigate("/verify-otp", {
         state: { email: formData.email },
       });
@@ -87,9 +123,7 @@ export default function Signup() {
       setErrors({
         submit: err?.data?.message || "Registration failed. Please try again.",
       });
-      toast.error(
-        err?.data?.message || "Registration failed. Please try again."
-      );
+      toast.error(err?.data?.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -98,85 +132,45 @@ export default function Signup() {
   const inputFields = [
     {
       id: "name",
-      label: "Full Name",
+      label: t.fullName,
       type: "text",
-      placeholder: "Enter your full name",
+      placeholder: t.placeholderName,
       icon: (
-        <svg
-          className="w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-          />
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
         </svg>
       ),
     },
     {
       id: "email",
-      label: "Email Address",
+      label: t.email,
       type: "email",
-      placeholder: "your@email.com",
+      placeholder: t.placeholderEmail,
       icon: (
-        <svg
-          className="w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-          />
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
     },
     {
       id: "password",
-      label: "Password",
+      label: t.password,
       type: "password",
-      placeholder: "••••••••",
+      placeholder: t.placeholderPassword,
       icon: (
-        <svg
-          className="w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-          />
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
         </svg>
       ),
     },
     {
       id: "confirmPassword",
-      label: "Confirm Password",
+      label: t.confirmPassword,
       type: "password",
-      placeholder: "••••••••",
+      placeholder: t.placeholderPassword,
       icon: (
-        <svg
-          className="w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M5 13l4 4L19 7"
-          />
+        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
         </svg>
       ),
     },
@@ -184,7 +178,6 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f9f7f4] to-[#f1ece5] flex items-center justify-center p-4">
-      {/* Decorative elements */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
         <div className="absolute top-1/4 right-1/4 w-32 h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
       </div>
@@ -195,15 +188,12 @@ export default function Signup() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100"
       >
-        {/* Luxury header */}
         <div className="bg-[#1C1C1C] p-6 text-center">
           <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">
             AKOYA PREMIUM LAUNDRY
           </h2>
           <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-          <p className="mt-2 text-gray-300 text-sm">
-            Create your premium account
-          </p>
+          <p className="mt-2 text-gray-300 text-sm">{t.createPremiumAccount}</p>
         </div>
 
         <div className="p-8">
@@ -216,10 +206,7 @@ export default function Signup() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {inputFields.map(({ id, label, type, placeholder, icon }) => (
               <div key={id}>
-                <label
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                  htmlFor={id}
-                >
+                <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={id}>
                   {label}
                 </label>
                 <div className="relative">
@@ -249,13 +236,10 @@ export default function Signup() {
                 type="checkbox"
                 className="h-4 w-4 text-[#D4AF37] focus:ring-[#D4AF37] border-gray-300 rounded"
               />
-              <label
-                htmlFor="terms"
-                className="ml-2 block text-sm text-gray-700"
-              >
-                I agree to the{" "}
+              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                {t.terms}{" "}
                 <a href="#" className="text-[#D4AF37] hover:underline">
-                  terms and conditions
+                  {t.termsLink}
                 </a>
               </label>
             </div>
@@ -267,18 +251,18 @@ export default function Signup() {
               disabled={isLoading}
               className="w-full flex justify-center py-3 px-4 mt-6 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Creating Account..." : "Create Account"}
+              {isLoading ? t.creatingAccount : t.createAccount}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center text-sm">
             <p className="text-gray-600">
-              Already have an account?{" "}
+              {t.alreadyHaveAccount}{" "}
               <Link
                 to="/login"
                 className="font-medium text-[#D4AF37] hover:text-yellow-600 border-b border-transparent hover:border-[#D4AF37] transition duration-200"
               >
-                Sign in
+                {t.signIn}
               </Link>
             </p>
           </div>
