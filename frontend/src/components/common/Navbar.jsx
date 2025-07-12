@@ -74,7 +74,7 @@ const Navbar = () => {
             {t.navLinks.map((link, idx) => (
               <motion.a
                 key={idx}
-                href={`#${link}`}
+                href={`/${link}`}
                 className={`relative text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
                   scrolled
                     ? "text-white/90 hover:text-white"
@@ -185,7 +185,7 @@ const Navbar = () => {
                 {t.navLinks.map((link, idx) => (
                   <motion.a
                     key={idx}
-                    href={`#${link}`}
+                    href={`/${link}`}
                     className={`block px-3 py-3 text-white rounded-lg transition-all duration-300 ${
                       scrolled
                         ? "hover:bg-white/10 hover:backdrop-blur-sm"

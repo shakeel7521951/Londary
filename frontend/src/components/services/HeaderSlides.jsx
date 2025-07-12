@@ -1,27 +1,54 @@
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 const HeaderSlides = () => {
+  const language = useSelector((state) => state.language.language);
   const [currentSlide, setCurrentSlide] = useState(0);
+
   // Header Slides
   const headerSlides = [
     {
       image: "./home/eco.jpg",
-      title: "Premium Garment Care",
-      subtitle: "Experience the Akoya difference",
+      title: {
+        en: "Premium Garment Care",
+        ar: "رعاية فاخرة للملابس",
+      },
+      subtitle: {
+        en: "Experience the Akoya difference",
+        ar: "اختبر الفرق مع أكويا",
+      },
     },
     {
       image: "./home/pCollection.jpg",
-      title: "Luxury Laundry Services",
-      subtitle: "For the most discerning clients",
+      title: {
+        en: "Luxury Laundry Services",
+        ar: "خدمات غسيل فاخرة",
+      },
+      subtitle: {
+        en: "For the most discerning clients",
+        ar: "للعملاء الأكثر تميزًا",
+      },
     },
     {
       image: "./home/expert.jpg",
-      title: "Precision Fabric Care",
-      subtitle: "Tailored to your garment's needs",
+      title: {
+        en: "Precision Fabric Care",
+        ar: "عناية دقيقة بالأقمشة",
+      },
+      subtitle: {
+        en: "Tailored to your garment's needs",
+        ar: "مصممة خصيصًا لاحتياجات ملابسك",
+      },
     },
   ];
+
+  const buttonLabel = {
+    en: "Book a Collection",
+    ar: "احجز موعد الاستلام",
+  };
+
   // Auto-rotate header slides
   useEffect(() => {
     const interval = setInterval(() => {
@@ -56,7 +83,9 @@ const HeaderSlides = () => {
 
         {/* Header Content */}
         <motion.div
-          className="absolute inset-0 flex flex-col justify-center items-center text-center px-8"
+          className={`absolute inset-0 flex flex-col justify-center items-center text-center px-8 ${
+            language === "ar" ? "rtl" : ""
+          }`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
@@ -67,7 +96,7 @@ const HeaderSlides = () => {
             animate={{ y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            {headerSlides[currentSlide].title}
+            {headerSlides[currentSlide].title[language]}
           </motion.h1>
           <motion.div
             className="flex items-center mb-8"
@@ -77,7 +106,7 @@ const HeaderSlides = () => {
           >
             <div className="w-16 h-px bg-[#D4AF37] mx-4"></div>
             <p className="text-xl text-[#D4AF37] tracking-widest">
-              {headerSlides[currentSlide].subtitle}
+              {headerSlides[currentSlide].subtitle[language]}
             </p>
             <div className="w-16 h-px bg-[#D4AF37] mx-4"></div>
           </motion.div>
@@ -90,7 +119,7 @@ const HeaderSlides = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Book a Collection
+              {buttonLabel[language]}
             </motion.button>
           </Link>
         </motion.div>
