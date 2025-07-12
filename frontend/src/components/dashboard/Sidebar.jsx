@@ -54,9 +54,9 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
           >
             {!isCollapsed && (
               <>
-                <img src="" alt="" />
+                <img src="/logo.png" alt="LONDARY Logo" className="w-14" />
                 <h1 className="text-xl font-light tracking-wider text-white">
-                  LONDARY
+                  AKOYA
                 </h1>
               </>
             )}
