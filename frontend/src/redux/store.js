@@ -15,11 +15,13 @@ import storage from "redux-persist/lib/storage";
 import { userApi } from "./features/usersApi";
 import { orderApi } from "./features/ordersApi";
 import authReducer from "./features/authSlice";
+import languageReducer from "../redux/features/languageSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   [userApi.reducerPath]: userApi.reducer,
   [orderApi.reducerPath]: orderApi.reducer,
+  language:languageReducer
 });
 
 const persistConfig = {

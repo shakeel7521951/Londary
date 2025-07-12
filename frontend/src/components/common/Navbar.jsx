@@ -1,22 +1,42 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   selectCurrentUser,
   selectIsAuthenticated,
 } from "../../redux/features/authSlice";
+import { toggleLanguage } from "../../redux/features/languageSlice";
 import UserProfileDropdown from "./UserProfileDropdown";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Get authentication state
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUser = useSelector(selectCurrentUser);
 
-  const navLinks = ["Home", "Services", "About", "Contact"];
+  const dispatch = useDispatch();
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    en: {
+      navLinks: ["Home", "Services", "About", "Contact"],
+      login: "Client Login",
+      bookNow: "Book Now",
+      dashboard: "Dashboard",
+      languageToggle: "العربية",
+    },
+    ar: {
+      navLinks: ["الرئيسية", "الخدمات", "من نحن", "اتصل بنا"],
+      login: "تسجيل الدخول",
+      bookNow: "احجز الآن",
+      dashboard: "لوحة التحكم",
+      languageToggle: "English",
+    },
+  };
+
+  const t = translations[language];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,10 +71,10 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navLinks.map((link) => (
+            {t.navLinks.map((link, idx) => (
               <motion.a
-                key={link}
-                href={link}
+                key={idx}
+                href={`#${link}`}
                 className={`relative text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
                   scrolled
                     ? "text-white/90 hover:text-white"
@@ -73,6 +93,17 @@ const Navbar = () => {
 
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-4">
+            <button
+              onClick={() => dispatch(toggleLanguage())}
+              className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
+                scrolled
+                  ? "text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
+                  : "text-white border border-[#D4AF37] hover:bg-[#D4AF37]/10"
+              }`}
+            >
+              {t.languageToggle}
+            </button>
+
             {isAuthenticated ? (
               <UserProfileDropdown user={currentUser} />
             ) : (
@@ -86,7 +117,7 @@ const Navbar = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Client Login
+                {t.login}
               </motion.a>
             )}
             <motion.a
@@ -99,7 +130,7 @@ const Navbar = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Book Now
+              {t.bookNow}
             </motion.a>
           </div>
 
@@ -151,10 +182,10 @@ const Navbar = () => {
                     : ""
                 }`}
               >
-                {navLinks.map((link) => (
+                {t.navLinks.map((link, idx) => (
                   <motion.a
-                    key={link}
-                    href={link}
+                    key={idx}
+                    href={`#${link}`}
                     className={`block px-3 py-3 text-white rounded-lg transition-all duration-300 ${
                       scrolled
                         ? "hover:bg-white/10 hover:backdrop-blur-sm"
@@ -180,8 +211,7 @@ const Navbar = () => {
                             />
                           ) : (
                             <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center text-[#1a1a1a] font-medium text-sm">
-                              {currentUser?.name?.charAt(0)?.toUpperCase() ||
-                                "U"}
+                              {currentUser?.name?.charAt(0)?.toUpperCase() || "U"}
                             </div>
                           )}
                           <div>
@@ -194,7 +224,6 @@ const Navbar = () => {
                           </div>
                         </div>
                       </div>
-                      {/* Only show dashboard link for admin users */}
                       {currentUser?.role === "admin" && (
                         <motion.a
                           href="/dashboard"
@@ -203,7 +232,7 @@ const Navbar = () => {
                           animate={{ x: 0, opacity: 1 }}
                           transition={{ duration: 0.3, delay: 0.1 }}
                         >
-                          Dashboard
+                          {t.dashboard}
                         </motion.a>
                       )}
                     </div>
@@ -215,7 +244,7 @@ const Navbar = () => {
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ duration: 0.3, delay: 0.1 }}
                     >
-                      Client Login
+                      {t.login}
                     </motion.a>
                   )}
                   <motion.a
@@ -225,8 +254,18 @@ const Navbar = () => {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.15 }}
                   >
-                    Book Now
+                    {t.bookNow}
                   </motion.a>
+
+                  <motion.button
+                    onClick={() => dispatch(toggleLanguage())}
+                    className="block w-full px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
+                  >
+                    {t.languageToggle}
+                  </motion.button>
                 </div>
               </div>
             </motion.div>

@@ -1,28 +1,67 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-
-const collections = [
-  {
-    title: "The Platinum Care",
-    desc: "Our highest tier service for your most precious garments. Hand-washed, steamed, and wrapped in protective tissue.",
-    image: "./home/platinumCare.jpg",
-    icon: "✨",
-  },
-  {
-    title: "Executive Collection",
-    desc: "Precision care for business attire. Perfect creases, stain removal, and fabric revitalization for your professional image.",
-    image: "./home/exectiveCollection.jpg",
-    icon: "👔",
-  },
-  {
-    title: "Couture Preservation",
-    desc: "Specialized care for designer pieces and delicate fabrics. Museum-quality cleaning to maintain texture and color integrity.",
-    image: "./home/professionalCollection.jpg",
-    icon: "🧵",
-  },
-];
+import { useSelector } from "react-redux";
 
 const SignatureLines = () => {
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    en: {
+      heading: "Signature Lines",
+      subheading: "THE AKOYA COLLECTION",
+      viewAll: "View All Collections",
+      discover: "Discover",
+      collections: [
+        {
+          title: "The Platinum Care",
+          desc: "Our highest tier service for your most precious garments. Hand-washed, steamed, and wrapped in protective tissue.",
+          image: "./home/platinumCare.jpg",
+          icon: "✨",
+        },
+        {
+          title: "Executive Collection",
+          desc: "Precision care for business attire. Perfect creases, stain removal, and fabric revitalization for your professional image.",
+          image: "./home/exectiveCollection.jpg",
+          icon: "👔",
+        },
+        {
+          title: "Couture Preservation",
+          desc: "Specialized care for designer pieces and delicate fabrics. Museum-quality cleaning to maintain texture and color integrity.",
+          image: "./home/professionalCollection.jpg",
+          icon: "🧵",
+        },
+      ],
+    },
+    ar: {
+      heading: "خطوط التميز",
+      subheading: "مجموعة أكويا",
+      viewAll: "عرض جميع المجموعات",
+      discover: "استكشاف",
+      collections: [
+        {
+          title: "العناية البلاتينية",
+          desc: "خدمتنا الأعلى للملابس الثمينة. تغسل باليد، تكوى بالبخار وتُلف بعناية.",
+          image: "./home/platinumCare.jpg",
+          icon: "✨",
+        },
+        {
+          title: "مجموعة التنفيذيين",
+          desc: "عناية دقيقة للملابس الرسمية. إزالة البقع، الكي المثالي، وإنعاش الأقمشة.",
+          image: "./home/exectiveCollection.jpg",
+          icon: "👔",
+        },
+        {
+          title: "حفظ الأزياء الراقية",
+          desc: "عناية متخصصة لقطع المصممين والأقمشة الحساسة. تنظيف بجودة المتاحف للحفاظ على النسيج واللون.",
+          image: "./home/professionalCollection.jpg",
+          icon: "🧵",
+        },
+      ],
+    },
+  };
+
+  const { heading, subheading, viewAll, discover, collections } = translations[language];
+
   return (
     <section className="bg-[#faf9f7] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden">
       {/* Decorative elements */}
@@ -38,16 +77,14 @@ const SignatureLines = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          className={`text-center mb-20 ${language === 'ar' ? 'rtl' : 'ltr'}`}
         >
           <h2 className="text-4xl md:text-5xl font-light text-[#1C1C1C] mb-3 tracking-tight">
-            Signature Lines
+            {heading}
           </h2>
           <div className="flex justify-center items-center">
             <div className="w-16 h-px bg-[#D4AF37] mx-4"></div>
-            <p className="text-xl text-[#D4AF37] tracking-widest font-medium">
-              THE AKOYA COLLECTION
-            </p>
+            <p className="text-xl text-[#D4AF37] tracking-widest font-medium">{subheading}</p>
             <div className="w-16 h-px bg-[#D4AF37] mx-4"></div>
           </div>
         </motion.div>
@@ -70,31 +107,27 @@ const SignatureLines = () => {
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-full h-80 object-cover rounded-2xl brightness-95 group-hover:brightness-105 transition-all duration-500"
+                className="w-full h-80 object-cover rounded-2xl brightness-95 group-hover:brightness-105 transition-all duration-500 "
               />
 
-              <div className="absolute bottom-0 left-0 p-6 z-20 w-full">
+              <div className={`absolute bottom-0 ${language === 'ar' ? 'right-0 text-right pr-6' : 'left-0 text-left pl-6'} z-20 w-full pb-6`}>
                 <motion.div
                   whileHover={{ scale: 1.1 }}
-                  className="text-4xl mb-3 w-14 h-14 flex items-center justify-center bg-[#D4AF37] rounded-full text-white shadow-lg"
+                  className={`text-4xl mb-3 w-14 h-14 flex items-center justify-center bg-[#D4AF37] rounded-full text-white shadow-lg ${language === 'ar'?'mr-0 ml-auto':""}`}
                 >
                   {item.icon}
                 </motion.div>
-                <h3 className="text-2xl font-medium text-white mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-white/90 text-sm leading-relaxed">
-                  {item.desc}
-                </p>
+                <h3 className="text-2xl font-medium text-white mb-2">{item.title}</h3>
+                <p className="text-white/90 text-sm leading-relaxed">{item.desc}</p>
                 <Link to="/Services">
                   <motion.button
                     whileHover={{
                       backgroundColor: "#1C1C1C",
                       color: "#D4AF37",
                     }}
-                    className="mt-4 px-6 py-2 bg-[#D4AF37] text-[#1C1C1C] rounded-full text-sm font-medium flex items-center gap-2"
+                    className={`mt-4 px-6 py-2 bg-[#D4AF37] text-[#1C1C1C] rounded-full text-sm font-medium flex items-center gap-2 ${language==='ar'? ' ml-auto mr-0':''}`}
                   >
-                    Discover
+                    {discover}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-4 w-4"
@@ -126,7 +159,7 @@ const SignatureLines = () => {
         >
           <Link to="/services">
             <button className="px-8 py-3 border border-[#1C1C1C] text-[#1C1C1C] rounded-full hover:bg-[#1C1C1C] hover:text-white transition-all duration-300 flex items-center mx-auto gap-2">
-              View All Collections
+              {viewAll}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"

@@ -1,7 +1,45 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const WashTypeSelector = () => {
+  const language = useSelector((state) => state.language.language);
+
+  const translations = {
+    en: {
+      heading: "How Would You Like It Washed?",
+      subheading: "Choose your experience",
+      standard: {
+        title: "Standard Wash",
+        desc: "Our signature 48-hour service with gentle cleaning, eco-friendly detergents, and basic folding.",
+        price: "From 50 QAR",
+      },
+      express: {
+        title: "Express Wash",
+        desc: "Need it fast? Get 24-hour turnaround, priority processing, and premium care.",
+        price: "From 80 QAR",
+      },
+      button: "Continue to Garment Selection",
+    },
+    ar: {
+      heading: "كيف تود غسيل ملابسك؟",
+      subheading: "اختر تجربتك",
+      standard: {
+        title: "غسيل عادي",
+        desc: "خدمتنا المميزة خلال ٤٨ ساعة بالتنظيف اللطيف والمنظفات البيئية والطي الأساسي.",
+        price: "ابتداءً من ٥٠ ريال",
+      },
+      express: {
+        title: "غسيل سريع",
+        desc: "تحتاجها بسرعة؟ خدمة خلال ٢٤ ساعة مع معالجة ذات أولوية ورعاية مميزة.",
+        price: "ابتداءً من ٨٠ ريال",
+      },
+      button: "الاستمرار لاختيار الملابس",
+    },
+  };
+
+  const t = translations[language];
+
   return (
     <section className="bg-white py-12 px-6 md:px-20 overflow-hidden">
       {/* Decorative Blurs */}
@@ -16,18 +54,18 @@ const WashTypeSelector = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-16"
+        className={`text-center mb-16 ${language === "ar" ? "rtl" : ""}`}
       >
         <h2 className="text-4xl md:text-5xl font-bold text-[#1C1C1C] mb-4">
-          How Would You Like It Washed?
+          {t.heading}
         </h2>
         <p className="text-[#D4AF37] font-semibold text-lg tracking-wide uppercase">
-          Choose your experience
+          {t.subheading}
         </p>
       </motion.div>
 
       {/* Options */}
-      <div className="grid md:grid-cols-2 gap-12">
+      <div className={`grid md:grid-cols-2 gap-12 ${language === "ar" ? "rtl text-right" : ""}`}>
         {/* Standard Wash */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -37,14 +75,9 @@ const WashTypeSelector = () => {
           className="bg-[#F5E1DA] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300"
         >
           <div className="text-5xl mb-4">🧼</div>
-          <h3 className="text-2xl font-bold text-[#1C1C1C] mb-2">
-            Standard Wash
-          </h3>
-          <p className="text-[#2C2C2C] mb-4">
-            Our signature 48-hour service with gentle cleaning, eco-friendly
-            detergents, and basic folding.
-          </p>
-          <div className="text-[#D4AF37] font-medium text-lg">From 50 QAR</div>
+          <h3 className="text-2xl font-bold text-[#1C1C1C] mb-2">{t.standard.title}</h3>
+          <p className="text-[#2C2C2C] mb-4">{t.standard.desc}</p>
+          <div className="text-[#D4AF37] font-medium text-lg">{t.standard.price}</div>
         </motion.div>
 
         {/* Express Wash */}
@@ -56,22 +89,19 @@ const WashTypeSelector = () => {
           className="bg-[#F5E1DA] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300"
         >
           <div className="text-5xl mb-4">⚡</div>
-          <h3 className="text-2xl font-bold text-[#1C1C1C] mb-2">
-            Express Wash
-          </h3>
-          <p className="text-[#2C2C2C] mb-4">
-            Need it fast? Get 24-hour turnaround, priority processing, and
-            premium care.
-          </p>
-          <div className="text-[#D4AF37] font-medium text-lg">From 80 QAR</div>
+          <h3 className="text-2xl font-bold text-[#1C1C1C] mb-2">{t.express.title}</h3>
+          <p className="text-[#2C2C2C] mb-4">{t.express.desc}</p>
+          <div className="text-[#D4AF37] font-medium text-lg">{t.express.price}</div>
         </motion.div>
       </div>
+
+      {/* Button */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.4 }}
-        className="mt-12 text-center"
+        className={`mt-12 text-center ${language === "ar" ? "rtl" : ""}`}
       >
         <Link to="/services">
           <motion.button
@@ -79,7 +109,7 @@ const WashTypeSelector = () => {
             whileTap={{ scale: 0.95 }}
             className="bg-[#D4AF37] text-[#1C1C1C] font-semibold px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
           >
-            Continue to Garment Selection
+            {t.button}
           </motion.button>
         </Link>
       </motion.div>

@@ -1,63 +1,128 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const PackagingOptions = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [hoveredOption, setHoveredOption] = useState(null);
+  const language = useSelector((state) => state.language.language);
 
-  const packagingOptions = [
-    {
-      id: "plastic",
-      title: "Plastic Wrap",
-      description:
-        "Crystal-clear protective wrapping with our embossed gold seal for discreet luxury.",
-      price: "Included",
-      features: [
-        "Medical-grade transparency",
-        "Anti-static interior",
-        "Recyclable material",
-        "Tamper-evident closure",
+  const translations = {
+    en: {
+      sectionTitle: "The Final Touch",
+      sectionSubtitle: "PACKAGING OPTIONS",
+      selected: "SELECTED",
+      bookBtn: "Book Your Order",
+      options: [
+        {
+          title: "Plastic Wrap",
+          description:
+            "Crystal-clear protective wrapping with our embossed gold seal for discreet luxury.",
+          price: "Included",
+          features: [
+            "Medical-grade transparency",
+            "Anti-static interior",
+            "Recyclable material",
+            "Tamper-evident closure",
+          ],
+        },
+        {
+          title: "Luxury Fabric Wrap",
+          description:
+            "Cashmere-lined protective casing with magnetic closure and monogram option.",
+          price: "+25 QAR",
+          features: [
+            "Italian wool exterior",
+            "Silk-lined interior",
+            "Magnetic seal",
+            "Reusable design",
+          ],
+        },
+        {
+          title: "Premium Gift Box",
+          description:
+            "Handcrafted wooden presentation case with velvet interior and scent capsule.",
+          price: "+50 QAR",
+          features: [
+            "Sandalwood construction",
+            "French velvet lining",
+            "Integrated scent capsule",
+            "Heirloom quality",
+          ],
+        },
       ],
-      image: "./home/professionalCollection.jpg",
     },
-    {
-      id: "fabric",
-      title: "Luxury Fabric Wrap",
-      description:
-        "Cashmere-lined protective casing with magnetic closure and monogram option.",
-      price: "+25 QAR",
-      features: [
-        "Italian wool exterior",
-        "Silk-lined interior",
-        "Magnetic seal",
-        "Reusable design",
+    ar: {
+      sectionTitle: "اللمسة النهائية",
+      sectionSubtitle: "خيارات التغليف",
+      selected: "تم الاختيار",
+      bookBtn: "احجز طلبك",
+      options: [
+        {
+          title: "تغليف بلاستيكي",
+          description:
+            "تغليف شفاف بحماية مميزة وختم ذهبي لنقل الفخامة بكل أناقة.",
+          price: "مجاني",
+          features: [
+            "شفافية طبية",
+            "داخل مقاوم للكهرباء الساكنة",
+            "مادة قابلة لإعادة التدوير",
+            "إغلاق آمن يظهر العبث",
+          ],
+        },
+        {
+          title: "تغليف قماشي فاخر",
+          description:
+            "غلاف مبطن بالكشمير بإغلاق مغناطيسي وخيار إضافة الأحرف الأولى.",
+          price: "+٢٥ ريال",
+          features: [
+            "صوف إيطالي فاخر",
+            "بطانة من الحرير",
+            "إغلاق مغناطيسي",
+            "تصميم قابل لإعادة الاستخدام",
+          ],
+        },
+        {
+          title: "علبة هدية فاخرة",
+          description:
+            "صندوق خشبي مصنوع يدويًا ببطانة مخملية وكبسولة عطرية.",
+          price: "+٥٠ ريال",
+          features: [
+            "مصنوع من خشب الصندل",
+            "بطانة من المخمل الفرنسي",
+            "كبسولة عطر مدمجة",
+            "جودة تدوم للأجيال",
+          ],
+        },
       ],
-      image: "./home/febricRap.jpg",
     },
-    {
-      id: "box",
-      title: "Premium Gift Box",
-      description:
-        "Handcrafted wooden presentation case with velvet interior and scent capsule.",
-      price: "+50 QAR",
-      features: [
-        "Sandalwood construction",
-        "French velvet lining",
-        "Integrated scent capsule",
-        "Heirloom quality",
-      ],
-      image: "./home/sehedulePickup.jpg",
-    },
-  ];
+  };
+
+  const t = translations[language];
+
+  const packagingOptions = t.options.map((option, i) => ({
+    ...option,
+    id: ["plastic", "fabric", "box"][i],
+    image: [
+      "./home/professionalCollection.jpg",
+      "./home/febricRap.jpg",
+      "./home/sehedulePickup.jpg",
+    ][i],
+  }));
 
   return (
-    <section className="bg-[#faf9f7] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden">
-      {/* Luxury texture overlay */}
+    <section
+      dir={language === "ar" ? "rtl" : "ltr"}
+      className={`bg-[#faf9f7] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden ${
+        language === "ar" ? "text-right" : ""
+      }`}
+    >
+      {/* Texture */}
       <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/7130555/pexels-photo-7130555.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')] opacity-5 mix-blend-overlay pointer-events-none"></div>
 
       <div className="max-w-7xl mx-auto relative">
-        {/* Section Header */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -66,18 +131,18 @@ const PackagingOptions = () => {
           className="text-center mb-20"
         >
           <h2 className="text-3xl md:text-4xl font-light text-[#1C1C1C] mb-3 tracking-tight">
-            The Final Touch
+            {t.sectionTitle}
           </h2>
           <div className="flex justify-center items-center">
             <div className="w-12 h-px bg-[#D4AF37] mx-4"></div>
             <p className="text-lg text-[#D4AF37] tracking-widest font-medium">
-              PACKAGING OPTIONS
+              {t.sectionSubtitle}
             </p>
             <div className="w-12 h-px bg-[#D4AF37] mx-4"></div>
           </div>
         </motion.div>
 
-        {/* Packaging Options */}
+        {/* Packaging Items */}
         <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
           {packagingOptions.map((option) => (
             <motion.div
@@ -99,7 +164,7 @@ const PackagingOptions = () => {
                     : "ring-1 ring-[#00000010]"
                 }`}
               >
-                {/* Professional image with parallax effect */}
+                {/* Image */}
                 <div className="relative h-64 overflow-hidden">
                   <motion.img
                     src={option.image}
@@ -109,10 +174,14 @@ const PackagingOptions = () => {
                     animate={{
                       scale: hoveredOption === option.id ? 1.1 : 1,
                     }}
-                    transition={{ duration: 0.8, ease: [0.2, 0.8, 0.4, 1] }}
+                    transition={{ duration: 0.8 }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4">
+                  <div
+                    className={`absolute bottom-4 ${
+                      language === "ar" ? "right-4" : "left-4"
+                    }`}
+                  >
                     <motion.span
                       animate={{
                         backgroundColor:
@@ -127,12 +196,10 @@ const PackagingOptions = () => {
                   </div>
                 </div>
 
-                {/* Content with floating animation */}
+                {/* Text */}
                 <motion.div
                   className="p-6 flex-grow flex flex-col"
-                  animate={{
-                    y: hoveredOption === option.id ? -5 : 0,
-                  }}
+                  animate={{ y: hoveredOption === option.id ? -5 : 0 }}
                   transition={{ duration: 0.4 }}
                 >
                   <h3 className="text-xl font-medium text-[#1C1C1C] mb-2">
@@ -146,11 +213,13 @@ const PackagingOptions = () => {
                     {option.features.map((feature, index) => (
                       <motion.div
                         key={index}
-                        whileHover={{ x: 5 }}
+                        whileHover={{ x: language === "ar" ? -5 : 5 }}
                         className="flex items-start"
                       >
                         <svg
-                          className="w-4 h-4 text-[#D4AF37] mt-0.5 mr-2.5 flex-shrink-0"
+                          className={`w-4 h-4 text-[#D4AF37] mt-0.5 ${
+                            language === "ar" ? "ml-2.5" : "mr-2.5"
+                          } flex-shrink-0`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -170,7 +239,7 @@ const PackagingOptions = () => {
                   </div>
                 </motion.div>
 
-                {/* Animated selection bar */}
+                {/* Selection Bar */}
                 <motion.div
                   animate={{
                     height: selectedOption === option.id ? 4 : 0,
@@ -180,7 +249,7 @@ const PackagingOptions = () => {
                 />
               </motion.div>
 
-              {/* Floating ribbon with physics animation */}
+              {/* Ribbon */}
               {selectedOption === option.id && (
                 <motion.div
                   initial={{ rotate: -45, scale: 0, y: -20 }}
@@ -190,17 +259,19 @@ const PackagingOptions = () => {
                     y: 0,
                     transition: { type: "spring", stiffness: 500, damping: 15 },
                   }}
-                  className="absolute -top-3 -right-8 bg-[#D4AF37] text-white px-8 py-1 font-medium text-xs shadow-lg"
+                  className={`absolute -top-3 ${
+                    language === "ar" ? "-left-8" : "-right-8"
+                  } bg-[#D4AF37] text-white px-8 py-1 font-medium text-xs shadow-lg`}
                   style={{ fontFamily: "'Playfair Display', serif" }}
                 >
-                  SELECTED
+                  {t.selected}
                 </motion.div>
               )}
             </motion.div>
           ))}
         </div>
 
-        {/* Navigation CTA */}
+        {/* Button */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -217,7 +288,7 @@ const PackagingOptions = () => {
               whileTap={{ scale: 0.98 }}
               className="px-8 py-4 bg-[#1C1C1C] text-white rounded-full font-medium flex items-center mx-auto gap-3 text-sm tracking-wider"
             >
-              Book Your Order
+              {t.bookBtn}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"

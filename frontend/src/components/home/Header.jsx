@@ -1,33 +1,50 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Header = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const language = useSelector((state) => state.language.language);
 
-  const slides = [
-    {
-      image: "./home/platinumCare.jpg",
-      title: "Premium Garment Care",
-      description: "Expert cleaning for your most delicate fabrics",
-    },
-    {
-      image:
-        "./home/eco.jpg",
-      title: "Eco-Conscious Cleaning",
-      description: "Sustainable methods without compromising quality",
-    },
-      // {
-      //   image: "./home/cur1.avif",
-      //   title: "Express Service",
-      //   description: "Same-day luxury care for urgent needs",
-      // },
-    {
-      image: "./home/pressing.jpg",
-      title: "Precision Pressing",
-      description: "Impeccable finishes for business and formalwear",
-    },
-  ];
+  const translations = {
+    en: [
+      {
+        image: "./home/platinumCare.jpg",
+        title: "Premium Garment Care",
+        description: "Expert cleaning for your most delicate fabrics",
+      },
+      {
+        image: "./home/eco.jpg",
+        title: "Eco-Conscious Cleaning",
+        description: "Sustainable methods without compromising quality",
+      },
+      {
+        image: "./home/pressing.jpg",
+        title: "Precision Pressing",
+        description: "Impeccable finishes for business and formalwear",
+      },
+    ],
+    ar: [
+      {
+        image: "./home/platinumCare.jpg",
+        title: "رعاية متميزة للملابس",
+        description: "تنظيف احترافي لأقمشتك الحساسة",
+      },
+      {
+        image: "./home/eco.jpg",
+        title: "تنظيف صديق للبيئة",
+        description: "طرق مستدامة دون المساس بالجودة",
+      },
+      {
+        image: "./home/pressing.jpg",
+        title: "كي دقيق",
+        description: "تشطيبات مثالية للملابس الرسمية",
+      },
+    ],
+  };
+
+  const slides = translations[language];
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) =>
@@ -69,7 +86,9 @@ const Header = () => {
 
             {/* Content */}
             <motion.div
-              className="absolute inset-0 flex flex-col justify-center items-start px-8 md:px-16 lg:px-24"
+              className={`absolute inset-0 flex flex-col justify-center ${
+                language === "ar" ? "items-end text-right" : "items-start text-left"
+              } px-8 md:px-16 lg:px-24`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
@@ -99,7 +118,7 @@ const Header = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Schedule Pickup
+                  {language === "ar" ? "جدولة الاستلام" : "Schedule Pickup"}
                 </motion.button>
               </Link>
             </motion.div>

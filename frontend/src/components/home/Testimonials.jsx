@@ -1,38 +1,90 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 const Testimonials = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const language = useSelector((state) => state.language.language);
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Sheikha Al-Thani",
-      role: "Fashion Designer",
-      quote: "Akoya's attention to detail is unmatched. My delicate couture pieces return looking better than when they were new. The only service I trust with my collection.",
-      rating: 5,
-      image: "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+  const translations = {
+    en: {
+      sectionTitle: "Loved by Doha's Finest",
+      subtitle: "CLIENT TESTIMONIALS",
+      cta: "Join Our Discerning Clients",
+      testimonials: [
+        {
+          name: "Sheikha Al-Thani",
+          role: "Fashion Designer",
+          quote:
+            "Akoya's attention to detail is unmatched. My delicate couture pieces return looking better than when they were new. The only service I trust with my collection.",
+          rating: 5,
+          image:
+            "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        },
+        {
+          name: "Mr. Khalid Al-Mansoori",
+          role: "Executive Director",
+          quote:
+            "As someone who wears bespoke suits daily, Akoya's executive service saves me hours each week. Their precision pressing is worth every dirham.",
+          rating: 5,
+          image:
+            "https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        },
+        {
+          name: "Mrs. Eleanor Rutherford",
+          role: "Diplomat's Wife",
+          quote:
+            "The fragrance infusion option is divine. My clothes return smelling like a Parisian boutique. It's become my signature scent in Doha's social circles.",
+          rating: 4,
+          image:
+            "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        },
+      ],
     },
-    {
-      id: 2,
-      name: "Mr. Khalid Al-Mansoori",
-      role: "Executive Director",
-      quote: "As someone who wears bespoke suits daily, Akoya's executive service saves me hours each week. Their precision pressing is worth every dirham.",
-      rating: 5,
-      image: "https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+    ar: {
+      sectionTitle: "محبوب من نخبة الدوحة",
+      subtitle: "آراء العملاء",
+      cta: "انضم إلى عملائنا المميزين",
+      testimonials: [
+        {
+          name: "الشيخة آل ثاني",
+          role: "مصممة أزياء",
+          quote:
+            "الاهتمام بالتفاصيل لدى أكويا لا يُضاهى. تعود قطع الأزياء الراقية أفضل من حالتها الجديدة. الخدمة الوحيدة التي أثق بها.",
+          rating: 5,
+          image:
+            "https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        },
+        {
+          name: "خالد المنصوري",
+          role: "المدير التنفيذي",
+          quote:
+            "أرتدي بدلات مصممة حسب الطلب يوميًا، وخدمة أكويا التنفيذية توفر لي ساعات كل أسبوع. ضغطهم الدقيق يستحق كل درهم.",
+          rating: 5,
+          image:
+            "https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        },
+        {
+          name: "إلينور رذرفورد",
+          role: "زوجة دبلوماسي",
+          quote:
+            "خيار إضافة العطر رائع. تعود ملابسي برائحة كأنها من متجر باريس. أصبحت هذه الرائحة توقيعي الاجتماعي في الدوحة.",
+          rating: 4,
+          image:
+            "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+        },
+      ],
     },
-    {
-      id: 3,
-      name: "Mrs. Eleanor Rutherford",
-      role: "Diplomat's Wife",
-      quote: "The fragrance infusion option is divine. My clothes return smelling like a Parisian boutique. It's become my signature scent in Doha's social circles.",
-      rating: 4,
-      image: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-    }
-  ];
+  };
+
+  const t = translations[language];
+  const currentTestimonial = t.testimonials[activeIndex];
 
   return (
-    <section className="bg-[#faf9f7] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden">
+    <section
+      dir={language === "ar" ? "rtl" : "ltr"}
+      className="bg-[#faf9f7] py-12 px-6 md:px-16 lg:px-24 relative overflow-hidden"
+    >
       {/* Decorative elements */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-20 right-10 w-40 h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl"></div>
@@ -44,17 +96,16 @@ const Testimonials = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
           <h2 className="text-3xl md:text-4xl font-light text-[#1C1C1C] mb-3 tracking-tight">
-            Loved by Doha's Finest
+            {t.sectionTitle}
           </h2>
           <div className="flex justify-center items-center">
             <div className="w-12 h-px bg-[#D4AF37] mx-4"></div>
             <p className="text-lg text-[#D4AF37] tracking-widest font-medium">
-              CLIENT TESTIMONIALS
+              {t.subtitle}
             </p>
             <div className="w-12 h-px bg-[#D4AF37] mx-4"></div>
           </div>
@@ -62,9 +113,8 @@ const Testimonials = () => {
 
         {/* Testimonial Carousel */}
         <div className="relative">
-          {/* Main Testimonial */}
           <motion.div
-            key={testimonials[activeIndex].id}
+            key={currentTestimonial.name}
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
@@ -73,24 +123,26 @@ const Testimonials = () => {
           >
             <div className="flex flex-col md:flex-row gap-8 items-center">
               {/* Client Image */}
-              <motion.div 
+              <motion.div
                 whileHover={{ scale: 1.05 }}
                 className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-[#D4AF37] shadow-lg flex-shrink-0"
               >
                 <img
-                  src={testimonials[activeIndex].image}
-                  alt={testimonials[activeIndex].name}
+                  src={currentTestimonial.image}
+                  alt={currentTestimonial.name}
                   className="w-full h-full object-cover"
                 />
               </motion.div>
 
               {/* Testimonial Content */}
-              <div className="text-center md:text-left">
-                <div className="flex justify-center md:justify-start mb-4">
+              <div className={`text-center ${language === "ar" ? "md:text-right" : "md:text-left"}`}>
+                <div className={`flex ${language === "ar" ? "justify-start" : "justify-start"} mb-4`}>
                   {[...Array(5)].map((_, i) => (
                     <svg
                       key={i}
-                      className={`w-5 h-5 ${i < testimonials[activeIndex].rating ? 'text-[#D4AF37]' : 'text-gray-300'}`}
+                      className={`w-5 h-5 ${
+                        i < currentTestimonial.rating ? "text-[#D4AF37]" : "text-gray-300"
+                      }`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -100,49 +152,61 @@ const Testimonials = () => {
                 </div>
 
                 <blockquote className="text-lg italic text-[#2C2C2C] mb-6 leading-relaxed">
-                  "{testimonials[activeIndex].quote}"
+                  "{currentTestimonial.quote}"
                 </blockquote>
 
                 <div>
-                  <p className="font-medium text-[#1C1C1C]">{testimonials[activeIndex].name}</p>
-                  <p className="text-sm text-[#D4AF37]">{testimonials[activeIndex].role}</p>
+                  <p className="font-medium text-[#1C1C1C]">{currentTestimonial.name}</p>
+                  <p className="text-sm text-[#D4AF37]">{currentTestimonial.role}</p>
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Navigation Dots */}
+          {/* Dots Navigation */}
           <div className="flex justify-center gap-2 mb-12">
-            {testimonials.map((_, index) => (
+            {t.testimonials.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all ${index === activeIndex ? 'bg-[#D4AF37] w-6' : 'bg-[#D4AF37]/30'}`}
+                className={`w-3 h-3 rounded-full transition-all ${
+                  index === activeIndex ? "bg-[#D4AF37] w-6" : "bg-[#D4AF37]/30"
+                }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
             ))}
           </div>
         </div>
 
-        {/* CTA */}
+        {/* CTA Button */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
           transition={{ delay: 0.6 }}
           className="text-center"
         >
           <motion.button
-            whileHover={{ 
+            whileHover={{
               scale: 1.05,
-              boxShadow: "0 10px 25px -5px rgba(212, 175, 55, 0.3)"
+              boxShadow: "0 10px 25px -5px rgba(212, 175, 55, 0.3)",
             }}
             whileTap={{ scale: 0.98 }}
             className="px-8 py-4 bg-[#1C1C1C] text-white rounded-full font-medium flex items-center mx-auto gap-3 text-sm tracking-wider"
           >
-            Join Our Discerning Clients
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            {t.cta}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
             </svg>
           </motion.button>
         </motion.div>
