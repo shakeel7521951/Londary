@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const language = useSelector((state) => state.language.language);
@@ -24,8 +25,6 @@ const Footer = () => {
       newsletterDesc: "Subscribe for exclusive offers and garment care tips.",
       newsletterPlaceholder: "Your email address",
       subscribe: "Subscribe",
-      copyright:
-        "© " + new Date().getFullYear() + " Akoya Laundry. All rights reserved.",
       privacy: "Privacy Policy",
       terms: "Terms of Service",
       sitemap: "Sitemap",
@@ -49,8 +48,6 @@ const Footer = () => {
       newsletterDesc: "اشترك للحصول على عروض حصرية ونصائح للعناية بالملابس.",
       newsletterPlaceholder: "أدخل بريدك الإلكتروني",
       subscribe: "اشترك",
-      copyright:
-        "© " + new Date().getFullYear() + " أكويا لغسيل الملابس. جميع الحقوق محفوظة.",
       privacy: "سياسة الخصوصية",
       terms: "شروط الخدمة",
       sitemap: "خريطة الموقع",
@@ -105,8 +102,8 @@ const Footer = () => {
           <ul className="space-y-3">
             {t.services.map((service, idx) => (
               <motion.li key={idx} whileHover={{ x: 5 }}>
-                <a
-                  href="/Services"
+                <Link
+                  to="/services"
                   className="text-white/70 hover:text-[#D4AF37] transition-colors flex items-center gap-2"
                 >
                   <svg
@@ -123,7 +120,7 @@ const Footer = () => {
                     />
                   </svg>
                   {service}
-                </a>
+                </Link>
               </motion.li>
             ))}
           </ul>
@@ -232,15 +229,15 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-white/50 text-sm">
           <div>{t.copyright}</div>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-[#D4AF37] transition-colors">
+            <Link to="/privacy" className="hover:text-[#D4AF37] transition-colors">
               {t.privacy}
-            </a>
-            <a href="#" className="hover:text-[#D4AF37] transition-colors">
+            </Link>
+            <Link to="/terms" className="hover:text-[#D4AF37] transition-colors">
               {t.terms}
-            </a>
-            <a href="#" className="hover:text-[#D4AF37] transition-colors">
+            </Link>
+            <Link to="/sitemap" className="hover:text-[#D4AF37] transition-colors">
               {t.sitemap}
-            </a>
+            </Link>
           </div>
         </div>
       </motion.div>

@@ -2,8 +2,42 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useVerifyOTPMutation } from "../../redux/features/usersApi";
+import { useSelector } from "react-redux";
+
+// Language dictionary
+const translations = {
+  en: {
+    verifyResetCode: "Verify Reset Code",
+    enterVerificationCode: "Enter Verification Code",
+    codeSentTo: "We've sent a 4-digit code to",
+    enterCodeLabel: "Enter verification code",
+    verifying: "Verifying...",
+    verifyCode: "Verify Code",
+    noCode: "Didn't receive the code?",
+    resend: "Resend Code",
+    backToSignIn: "← Back to Sign In",
+    incompleteOTP: "Please enter all 4 digits",
+    invalidOTP: "Invalid or expired OTP. Please try again.",
+  },
+  ar: {
+    verifyResetCode: "التحقق من رمز إعادة التعيين",
+    enterVerificationCode: "أدخل رمز التحقق",
+    codeSentTo: "لقد أرسلنا رمزًا مكونًا من 4 أرقام إلى",
+    enterCodeLabel: "أدخل رمز التحقق",
+    verifying: "جارٍ التحقق...",
+    verifyCode: "تحقق من الرمز",
+    noCode: "لم تستلم الرمز؟",
+    resend: "إعادة الإرسال",
+    backToSignIn: "← الرجوع لتسجيل الدخول",
+    incompleteOTP: "يرجى إدخال جميع الأرقام الأربعة",
+    invalidOTP: "رمز التحقق غير صالح أو منتهي الصلاحية. حاول مرة أخرى.",
+  },
+};
 
 const ResetPasswordVerify = () => {
+  const language = useSelector((state) => state.language.language || "en");
+  const t = translations[language];
+
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -15,7 +49,6 @@ const ResetPasswordVerify = () => {
   const [verifyOTP] = useVerifyOTPMutation();
 
   useEffect(() => {
-    // Get email from navigation state or localStorage
     const emailFromState = location.state?.email;
     const emailFromStorage = localStorage.getItem("resetPasswordEmail");
 
@@ -25,19 +58,17 @@ const ResetPasswordVerify = () => {
     } else if (emailFromStorage) {
       setEmail(emailFromStorage);
     } else {
-      // No email found, redirect to forgot password
       navigate("/forgot-password");
     }
   }, [location, navigate]);
 
   const handleOtpChange = (value, index) => {
-    if (value.length > 1) return; // Prevent multiple characters
+    if (value.length > 1) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (value && index < 3) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -57,7 +88,7 @@ const ResetPasswordVerify = () => {
 
     const otpString = otp.join("");
     if (otpString.length !== 4) {
-      setError("Please enter all 4 digits");
+      setError(t.incompleteOTP);
       return;
     }
 
@@ -68,14 +99,11 @@ const ResetPasswordVerify = () => {
         otp: otpString,
       }).unwrap();
 
-      // Navigate to reset password form
       navigate("/reset-password-new", {
         state: { email, verified: true },
       });
     } catch (err) {
-      setError(
-        err?.data?.message || "Invalid or expired OTP. Please try again."
-      );
+      setError(err?.data?.message || t.invalidOTP);
     } finally {
       setIsLoading(false);
     }
@@ -94,13 +122,12 @@ const ResetPasswordVerify = () => {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100"
       >
-        {/* Luxury header */}
         <div className="bg-[#1C1C1C] p-6 text-center">
           <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">
             AKOYA PREMIUM LAUNDRY
           </h2>
           <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-          <p className="mt-2 text-gray-300 text-sm">Verify Reset Code</p>
+          <p className="mt-2 text-gray-300 text-sm">{t.verifyResetCode}</p>
         </div>
 
         <div className="p-8">
@@ -121,11 +148,9 @@ const ResetPasswordVerify = () => {
               </svg>
             </div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">
-              Enter Verification Code
+              {t.enterVerificationCode}
             </h3>
-            <p className="text-gray-600 text-sm">
-              We've sent a 4-digit code to
-            </p>
+            <p className="text-gray-600 text-sm">{t.codeSentTo}</p>
             <p className="text-[#D4AF37] font-medium text-sm">{email}</p>
           </div>
 
@@ -138,7 +163,7 @@ const ResetPasswordVerify = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
-                Enter verification code
+                {t.enterCodeLabel}
               </label>
               <div className="flex justify-center space-x-2">
                 {otp.map((digit, index) => (
@@ -164,17 +189,17 @@ const ResetPasswordVerify = () => {
               disabled={isLoading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-[#D4AF37] to-[#F1C232] hover:from-[#C9A227] hover:to-[#E0B82D] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D4AF37] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Verifying..." : "Verify Code"}
+              {isLoading ? t.verifying : t.verifyCode}
             </motion.button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-gray-600 text-sm">Didn't receive the code?</p>
+            <p className="text-gray-600 text-sm">{t.noCode}</p>
             <button
               onClick={() => navigate("/forgot-password")}
               className="mt-2 font-medium text-[#D4AF37] hover:text-yellow-600 border-b border-transparent hover:border-[#D4AF37] transition duration-200"
             >
-              Resend Code
+              {t.resend}
             </button>
           </div>
 
@@ -183,7 +208,7 @@ const ResetPasswordVerify = () => {
               to="/login"
               className="font-medium text-gray-600 hover:text-gray-800 text-sm"
             >
-              ← Back to Sign In
+              {t.backToSignIn}
             </Link>
           </div>
         </div>
