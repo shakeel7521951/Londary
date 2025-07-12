@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   FiSearch,
   FiFilter,
@@ -21,6 +22,7 @@ import {
 import { CiRoute } from "react-icons/ci";
 
 const Delivery = () => {
+  const { t } = useTranslation();
   const [deliveries, setDeliveries] = useState([]);
   const [filteredDeliveries, setFilteredDeliveries] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -216,6 +218,45 @@ const Delivery = () => {
     }
   };
 
+  const getDeliveryStatusTranslation = (status) => {
+    switch (status) {
+      case "scheduled":
+        return t("scheduled");
+      case "in-transit":
+        return t("inTransit");
+      case "delivered":
+        return t("delivered");
+      case "failed":
+        return "Failed";
+      default:
+        return status;
+    }
+  };
+
+  const getDeliveryTypeTranslation = (type) => {
+    switch (type) {
+      case "pickup":
+        return t("pickupType");
+      case "delivery":
+        return t("deliveryType");
+      default:
+        return type;
+    }
+  };
+
+  const getPriorityTranslation = (priority) => {
+    switch (priority) {
+      case "high":
+        return t("high");
+      case "normal":
+        return t("normal");
+      case "low":
+        return t("low");
+      default:
+        return priority;
+    }
+  };
+
   const getDeliveryTypeColor = (type) => {
     return type === "pickup"
       ? "text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20"
@@ -267,11 +308,9 @@ const Delivery = () => {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-3xl font-light text-white mb-2 tracking-wide">
-          Delivery Management
+          {t("deliveryManagement")}
         </h1>
-        <p className="text-white/70">
-          Track and manage all delivery operations
-        </p>
+        <p className="text-white/70">{t("manageCustomers")}</p>
       </motion.div>
 
       {/* Stats Cards */}
@@ -282,13 +321,13 @@ const Delivery = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiCalendar className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white/70 tracking-wide">
-                Scheduled
+              <p className="text-sm  font-medium text-white/70 tracking-wide">
+                {t("scheduled")}
               </p>
               <p className="text-2xl font-light text-white">
                 {
@@ -307,13 +346,13 @@ const Delivery = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiTruck className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white/70 tracking-wide">
-                In Transit
+              <p className="text-sm  font-medium text-white/70 tracking-wide">
+                {t("inTransit")}
               </p>
               <p className="text-2xl font-light text-white">
                 {
@@ -332,13 +371,13 @@ const Delivery = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiCheckCircle className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white/70 tracking-wide">
-                Delivered
+              <p className="text-sm  font-medium text-white/70 tracking-wide">
+                {t("delivered")}
               </p>
               <p className="text-2xl font-light text-white">
                 {
@@ -357,13 +396,13 @@ const Delivery = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiAlertCircle className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white/70 tracking-wide">
-                Failed
+              <p className="text-sm  font-medium text-white/70 tracking-wide">
+                {t("failed")}
               </p>
               <p className="text-2xl font-light text-white">
                 {
@@ -388,7 +427,7 @@ const Delivery = () => {
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4AF37]" />
             <input
               type="text"
-              placeholder="Search deliveries..."
+              placeholder={t("searchDeliveries")}
               className="w-full pl-10 pr-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -402,11 +441,11 @@ const Delivery = () => {
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all">All Status</option>
-                <option value="scheduled">Scheduled</option>
-                <option value="in-transit">In Transit</option>
-                <option value="delivered">Delivered</option>
-                <option value="failed">Failed</option>
+                <option value="all">{t("allStatus")}</option>
+                <option value="scheduled">{t("scheduled")}</option>
+                <option value="in-transit">{t("inTransit")}</option>
+                <option value="delivered">{t("delivered")}</option>
+                <option value="failed">{t("failed")}</option>
               </select>
             </div>
           </div>
@@ -430,28 +469,28 @@ const Delivery = () => {
             <thead>
               <tr className="border-b border-[#D4AF37]/30">
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Delivery ID
+                  {t("deliveryId")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Customer
+                  {t("customer")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Driver
+                  {t("driver")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Type
+                  {t("type")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Status
+                  {t("deliveryStatus")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Priority
+                  {t("priority")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Time
+                  {t("time")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Actions
+                  {t("actions")}
                 </th>
               </tr>
             </thead>
@@ -505,7 +544,7 @@ const Delivery = () => {
                         delivery.deliveryType
                       )}`}
                     >
-                      {delivery.deliveryType}
+                      {getDeliveryTypeTranslation(delivery.deliveryType)}
                     </span>
                   </td>
                   <td className="py-4 px-6">
@@ -515,7 +554,9 @@ const Delivery = () => {
                       )}`}
                     >
                       {getStatusIcon(delivery.status)}
-                      <span>{delivery.status.replace("-", " ")}</span>
+                      <span>
+                        {getDeliveryStatusTranslation(delivery.status)}
+                      </span>
                     </span>
                   </td>
                   <td className="py-4 px-6">
@@ -524,7 +565,7 @@ const Delivery = () => {
                         delivery.priority
                       )}`}
                     >
-                      {delivery.priority}
+                      {getPriorityTranslation(delivery.priority)}
                     </span>
                   </td>
                   <td className="py-4 px-6">
@@ -542,7 +583,7 @@ const Delivery = () => {
                       <button
                         onClick={() => viewDeliveryDetails(delivery)}
                         className="p-2 text-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-lg transition-colors"
-                        title="View Details"
+                        title={t("view")}
                       >
                         <FiEye className="w-4 h-4" />
                       </button>
@@ -553,10 +594,10 @@ const Delivery = () => {
                           updateDeliveryStatus(delivery.id, e.target.value)
                         }
                       >
-                        <option value="scheduled">Scheduled</option>
-                        <option value="in-transit">In Transit</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="failed">Failed</option>
+                        <option value="scheduled">{t("scheduled")}</option>
+                        <option value="in-transit">{t("inTransit")}</option>
+                        <option value="delivered">{t("delivered")}</option>
+                        <option value="failed">{t("failed")}</option>
                       </select>
                     </div>
                   </td>
@@ -577,7 +618,7 @@ const Delivery = () => {
           onClick={closeModal}
         >
           <motion.div
-            className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+            className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -586,18 +627,18 @@ const Delivery = () => {
           >
             <div className="overflow-y-auto max-h-[90vh]">
               {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <div className="sticky top-0 bg-[#1C1C1C]/95 backdrop-blur-sm border-b border-[#D4AF37]/20 px-6 py-4 flex justify-between items-center">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    Delivery Details
+                  <h2 className="text-2xl font-bold text-white">
+                    {t("deliveryDetails")}
                   </h2>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-white/70">
                     #{selectedDelivery.id} - Order #{selectedDelivery.orderId}
                   </p>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 text-white/60 hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 rounded-full transition-colors"
                 >
                   <FiX className="w-6 h-6" />
                 </button>
@@ -605,25 +646,19 @@ const Delivery = () => {
 
               <div className="p-6">
                 {/* Status Banner */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                <div className="bg-gradient-to-r from-[#D4AF37]/10 to-[#D4AF37]/5 border border-[#D4AF37]/20 rounded-xl p-6 mb-8">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div
-                        className={`p-3 rounded-full ${getStatusColor(
-                          selectedDelivery.status
-                        )
-                          .replace("text-", "bg-")
-                          .replace("bg-", "bg-gradient-to-r from-")
-                          .replace("-100", "-500 to-")
-                          .replace("-600", "-600")}`}
+                        className={`p-3 rounded-full bg-[#D4AF37]/20 border border-[#D4AF37]/30`}
                       >
                         {getStatusIcon(selectedDelivery.status)}
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800">
-                          Current Status
+                        <h3 className="text-lg font-semibold text-white">
+                          {t("currentStatus")}
                         </h3>
-                        <p className="text-gray-600">
+                        <p className="text-white/70">
                           {selectedDelivery.status
                             .replace("-", " ")
                             .toUpperCase()}
@@ -631,8 +666,10 @@ const Delivery = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-600">Estimated Time</p>
-                      <p className="text-lg font-semibold text-gray-800">
+                      <p className="text-sm text-white/70">
+                        {t("estimatedTime")}
+                      </p>
+                      <p className="text-lg font-semibold text-[#D4AF37]">
                         {selectedDelivery.estimatedTime}
                       </p>
                     </div>
@@ -642,27 +679,27 @@ const Delivery = () => {
                 {/* Main Info Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                   {/* Customer Information */}
-                  <div className="bg-blue-50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiUser className="w-5 h-5 mr-2 text-blue-600" />
-                      Customer Information
+                  <div className="bg-[#1C1C1C]/50 border border-[#D4AF37]/10 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                      <FiUser className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("customerInformation")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
-                        <FiUser className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium text-gray-800">
+                        <FiUser className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="font-medium text-white">
                           {selectedDelivery.customerName}
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <FiPhone className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">
+                        <FiPhone className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-white/70">
                           {selectedDelivery.customerPhone}
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <FiMail className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">
+                        <FiMail className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-white/70">
                           {selectedDelivery.customerEmail}
                         </span>
                       </div>
@@ -670,27 +707,27 @@ const Delivery = () => {
                   </div>
 
                   {/* Driver Information */}
-                  <div className="bg-green-50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiTruck className="w-5 h-5 mr-2 text-green-600" />
-                      Driver Information
+                  <div className="bg-[#1C1C1C]/50 border border-[#D4AF37]/10 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                      <FiTruck className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("driverInformation")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
-                        <FiUser className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium text-gray-800">
+                        <FiUser className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="font-medium text-white">
                           {selectedDelivery.driverName}
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <FiPhone className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">
+                        <FiPhone className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-white/70">
                           {selectedDelivery.driverPhone}
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <FiTruck className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">
+                        <FiTruck className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-white/70">
                           {selectedDelivery.vehicleNumber}
                         </span>
                       </div>
@@ -698,35 +735,37 @@ const Delivery = () => {
                   </div>
 
                   {/* Delivery Information */}
-                  <div className="bg-purple-50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiPackage className="w-5 h-5 mr-2 text-purple-600" />
-                      Delivery Information
+                  <div className="bg-[#1C1C1C]/50 border border-[#D4AF37]/10 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                      <FiPackage className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("deliveryInformation")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Type:</span>
+                        <span className="text-white/70">{t("type")}:</span>
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${getDeliveryTypeColor(
                             selectedDelivery.deliveryType
                           )}`}
                         >
-                          {selectedDelivery.deliveryType}
+                          {getDeliveryTypeTranslation(
+                            selectedDelivery.deliveryType
+                          )}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Priority:</span>
+                        <span className="text-white/70">{t("priority")}:</span>
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(
                             selectedDelivery.priority
                           )}`}
                         >
-                          {selectedDelivery.priority}
+                          {getPriorityTranslation(selectedDelivery.priority)}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Distance:</span>
-                        <span className="font-medium text-gray-800">
+                        <span className="text-white/70">{t("distance")}:</span>
+                        <span className="font-medium text-white">
                           {selectedDelivery.distance}
                         </span>
                       </div>
@@ -736,42 +775,42 @@ const Delivery = () => {
 
                 {/* Addresses */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                  <div className="bg-orange-50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiMapPin className="w-5 h-5 mr-2 text-orange-600" />
-                      Pickup Address
+                  <div className="bg-[#1C1C1C]/50 border border-[#D4AF37]/10 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                      <FiMapPin className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("pickupAddress")}
                     </h3>
-                    <p className="text-gray-700">
+                    <p className="text-white/80">
                       {selectedDelivery.pickupAddress}
                     </p>
                   </div>
-                  <div className="bg-indigo-50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiFlag className="w-5 h-5 mr-2 text-indigo-600" />
-                      Delivery Address
+                  <div className="bg-[#1C1C1C]/50 border border-[#D4AF37]/10 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                      <FiFlag className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("deliveryAddress")}
                     </h3>
-                    <p className="text-gray-700">
+                    <p className="text-white/80">
                       {selectedDelivery.deliveryAddress}
                     </p>
                   </div>
                 </div>
 
                 {/* Route Information */}
-                <div className="bg-gray-50 rounded-xl p-6 mb-8">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <CiRoute className="w-5 h-5 mr-2 text-gray-600" />
-                    Route Information
+                <div className="bg-[#1C1C1C]/50 border border-[#D4AF37]/10 rounded-xl p-6 mb-8">
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                    <CiRoute className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("routeInformation")}
                   </h3>
                   <div className="flex items-center space-x-4">
                     <div className="flex-1">
-                      <p className="text-gray-600 text-sm">Route</p>
-                      <p className="font-medium text-gray-800">
+                      <p className="text-white/70 text-sm">{t("route")}</p>
+                      <p className="font-medium text-white">
                         {selectedDelivery.route}
                       </p>
                     </div>
                     <div>
-                      <p className="text-gray-600 text-sm">Distance</p>
-                      <p className="font-medium text-gray-800">
+                      <p className="text-white/70 text-sm">{t("distance")}</p>
+                      <p className="font-medium text-[#D4AF37]">
                         {selectedDelivery.distance}
                       </p>
                     </div>
@@ -780,39 +819,39 @@ const Delivery = () => {
 
                 {/* Items */}
                 <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <FiPackage className="w-5 h-5 mr-2 text-blue-600" />
-                    Items
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                    <FiPackage className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("itemsTable")}
                   </h3>
-                  <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                  <div className="bg-[#2C2C2C]/50 border border-[#D4AF37]/20 rounded-xl overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#1C1C1C]">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Item Type
+                            <th className="px-6 py-3 text-left text-xs font-medium text-[#D4AF37] uppercase tracking-wider">
+                              {t("itemType")}
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Quantity
+                            <th className="px-6 py-3 text-left text-xs font-medium text-[#D4AF37] uppercase tracking-wider">
+                              {t("quantity")}
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-transparent divide-y divide-[#D4AF37]/10">
                           {selectedDelivery.items.map((item, index) => (
                             <motion.tr
                               key={index}
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
-                              className="hover:bg-gray-50"
+                              className="hover:bg-[#D4AF37]/5"
                             >
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="font-medium text-gray-800">
+                                <span className="font-medium text-white">
                                   {item.type}
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="text-gray-600">
+                                <span className="text-white/70">
                                   {item.quantity}
                                 </span>
                               </td>
@@ -827,27 +866,27 @@ const Delivery = () => {
                 {/* Notes */}
                 {selectedDelivery.notes && (
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiAlertCircle className="w-5 h-5 mr-2 text-blue-600" />
-                      Special Notes
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                      <FiAlertCircle className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("specialNotes")}
                     </h3>
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                      <p className="text-gray-700">{selectedDelivery.notes}</p>
+                    <div className="bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl p-4">
+                      <p className="text-white/90">{selectedDelivery.notes}</p>
                     </div>
                   </div>
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <div className="flex justify-end space-x-3 pt-6 border-t border-[#D4AF37]/20">
                   <button
                     onClick={closeModal}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                    className="px-6 py-2 border border-[#D4AF37]/20 rounded-lg text-white/70 bg-[#2C2C2C] hover:bg-[#3C3C3C] transition-colors font-medium"
                   >
-                    Close
+                    {t("close")}
                   </button>
-                  <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors font-medium flex items-center space-x-2">
+                  <button className="px-6 py-2 bg-gradient-to-r from-[#D4AF37] to-[#C4941F] text-[#1C1C1C] rounded-lg hover:from-[#C4941F] hover:to-[#B8851B] transition-colors font-medium flex items-center space-x-2">
                     <FiNavigation className="w-4 h-4" />
-                    <span>Track Delivery</span>
+                    <span>{t("trackDelivery")}</span>
                   </button>
                 </div>
               </div>

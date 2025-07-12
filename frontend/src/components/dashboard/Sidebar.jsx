@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   FiHome,
   FiUsers,
@@ -11,18 +12,20 @@ import {
   FiMenu,
   FiX,
 } from "react-icons/fi";
+import LanguageSwitcher from "../common/LanguageSwitcher";
 
 const Sidebar = ({ activeComponent, setActiveComponent }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { t } = useTranslation();
 
   const menuItems = [
-    { icon: FiHome, label: "Main Panel" },
-    { icon: FiUsers, label: "Users" },
-    { icon: FiPackage, label: "Orders" },
-    { icon: FiTruck, label: "Deliveries" },
-    { icon: FiBarChart2, label: "Analytics" },
-    { icon: FiDollarSign, label: "Payments" },
-    { icon: FiSettings, label: "Settings" },
+    { icon: FiHome, label: "Main Panel", translationKey: "mainPanel" },
+    { icon: FiUsers, label: "Users", translationKey: "users" },
+    { icon: FiPackage, label: "Orders", translationKey: "orders" },
+    { icon: FiTruck, label: "Deliveries", translationKey: "deliveries" },
+    // { icon: FiBarChart2, label: "Analytics", translationKey: "analytics" },
+    // { icon: FiDollarSign, label: "Payments", translationKey: "payments" },
+    // { icon: FiSettings, label: "Settings", translationKey: "settings" },
   ];
 
   const sidebarVariants = {
@@ -51,19 +54,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
           >
             {!isCollapsed && (
               <>
-                <svg
-                  className="w-8 h-8 text-[#D4AF37]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  />
-                </svg>
+                <img src="" alt="" />
                 <h1 className="text-xl font-light tracking-wider text-white">
                   LONDARY
                 </h1>
@@ -113,7 +104,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
                   animate={isCollapsed ? "collapsed" : "expanded"}
                   transition={{ duration: 0.2 }}
                 >
-                  {!isCollapsed && item.label}
+                  {!isCollapsed && t(item.translationKey)}
                 </motion.span>
               </a>
             </motion.li>
@@ -122,8 +113,9 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
       </nav>
 
       <div className="p-4 border-t border-[#D4AF37]/30">
+        <LanguageSwitcher isCollapsed={isCollapsed} />
         <motion.div
-          className="flex items-center space-x-3 px-3 py-2"
+          className="flex items-center space-x-3 px-3 py-2 mt-3"
           animate={{ opacity: isCollapsed ? 0 : 1 }}
           transition={{ delay: isCollapsed ? 0 : 0.2 }}
         >
@@ -133,8 +125,8 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
                 <span className="text-[#1C1C1C] text-sm font-semibold">A</span>
               </div>
               <div>
-                <p className="text-white text-sm font-medium">Admin</p>
-                <p className="text-white/60 text-xs">Administrator</p>
+                <p className="text-white text-sm font-medium">{t("admin")}</p>
+                <p className="text-white/60 text-xs">{t("administrator")}</p>
               </div>
             </>
           )}

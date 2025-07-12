@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   FiPackage,
   FiUsers,
@@ -11,30 +12,32 @@ import {
 } from "react-icons/fi";
 
 const AdminPanel = () => {
+  const { t } = useTranslation();
+
   const stats = [
     {
-      title: "Total Orders",
+      title: t("totalOrders"),
       value: "248",
       change: "+12%",
       icon: FiPackage,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
     {
-      title: "Active Users",
+      title: t("totalUsers"),
       value: "156",
       change: "+8%",
       icon: FiUsers,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
     {
-      title: "Revenue",
+      title: t("revenue"),
       value: "$3,248",
       change: "+15%",
       icon: FiDollarSign,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
     {
-      title: "Deliveries",
+      title: t("pendingDeliveries"),
       value: "189",
       change: "+5%",
       icon: FiTruck,
@@ -46,38 +49,39 @@ const AdminPanel = () => {
     {
       id: "#LND001",
       customer: "John Doe",
-      status: "In Progress",
+      status: t("processing"),
       amount: "$24",
     },
     {
       id: "#LND002",
       customer: "Sarah Smith",
-      status: "Completed",
+      status: t("completed"),
       amount: "$36",
     },
     {
       id: "#LND003",
       customer: "Mike Johnson",
-      status: "Pending",
+      status: t("pending"),
       amount: "$18",
     },
     {
       id: "#LND004",
       customer: "Emma Wilson",
-      status: "Delivery",
+      status: t("delivery"),
       amount: "$42",
     },
   ];
 
   const getStatusColor = (status) => {
-    switch (status) {
-      case "Completed":
+    const statusKey = status.toLowerCase();
+    switch (statusKey) {
+      case t("completed").toLowerCase():
         return "text-[#D4AF37] bg-[#D4AF37]/10 border border-[#D4AF37]/20";
-      case "In Progress":
+      case t("processing").toLowerCase():
         return "text-[#BFA134] bg-[#BFA134]/10 border border-[#BFA134]/20";
-      case "Pending":
+      case t("pending").toLowerCase():
         return "text-white/80 bg-white/10 border border-white/20";
-      case "Delivery":
+      case t("delivery").toLowerCase():
         return "text-[#F5E1DA] bg-[#F5E1DA]/10 border border-[#F5E1DA]/20";
       default:
         return "text-white/60 bg-white/5 border border-white/10";
@@ -88,11 +92,9 @@ const AdminPanel = () => {
     <div className="p-6 bg-transparent min-h-screen">
       <div className="mb-6">
         <h1 className="text-3xl font-light text-white mb-2 tracking-wide">
-          Dashboard
+          {t("dashboard")}
         </h1>
-        <p className="text-white/70">
-          Welcome back! Here's what's happening today.
-        </p>
+        <p className="text-white/70">{t("welcomeBack")}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -137,7 +139,7 @@ const AdminPanel = () => {
           className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6"
         >
           <h2 className="text-lg font-light text-white mb-4 tracking-wide">
-            Recent Orders
+            {t("recentOrders")}
           </h2>
           <div className="space-y-3">
             {recentOrders.map((order, index) => (
@@ -178,7 +180,7 @@ const AdminPanel = () => {
           className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6"
         >
           <h2 className="text-lg font-light text-white mb-4 tracking-wide">
-            Quick Actions
+            {t("quickActions")}
           </h2>
           <div className="space-y-3">
             <button className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group">
@@ -187,10 +189,8 @@ const AdminPanel = () => {
                   <FiPackage className="w-5 h-5 text-[#1C1C1C]" />
                 </div>
                 <div>
-                  <p className="font-medium text-white">Create New Order</p>
-                  <p className="text-sm text-white/70">
-                    Add a new laundry order
-                  </p>
+                  <p className="font-medium text-white">{t("addOrder")}</p>
+                  <p className="text-sm text-white/70">{t("addOrderDesc")}</p>
                 </div>
               </div>
             </button>
@@ -201,9 +201,11 @@ const AdminPanel = () => {
                   <FiUsers className="w-5 h-5 text-[#1C1C1C]" />
                 </div>
                 <div>
-                  <p className="font-medium text-white">Manage Users</p>
+                  <p className="font-medium text-white">
+                    {t("userManagement")}
+                  </p>
                   <p className="text-sm text-white/70">
-                    View and edit user accounts
+                    {t("viewEditUsersDesc")}
                   </p>
                 </div>
               </div>
@@ -215,8 +217,12 @@ const AdminPanel = () => {
                   <FiTruck className="w-5 h-5 text-[#1C1C1C]" />
                 </div>
                 <div>
-                  <p className="font-medium text-white">Schedule Delivery</p>
-                  <p className="text-sm text-white/70">Plan delivery routes</p>
+                  <p className="font-medium text-white">
+                    {t("scheduleDelivery")}
+                  </p>
+                  <p className="text-sm text-white/70">
+                    {t("scheduleDeliveryDesc")}
+                  </p>
                 </div>
               </div>
             </button>

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import Sidebar from "../components/dashboard/Sidebar";
 import AdminPanel from "../components/dashboard/AdminPanel";
 import Users from "../components/dashboard/Users";
@@ -7,6 +8,13 @@ import Delivery from "../components/dashboard/Delivery";
 
 const Dashboard = () => {
   const [activeComponent, setActiveComponent] = useState("Main Panel");
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    // Set document direction based on language
+    document.documentElement.dir = i18n.language === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
 
   const renderActiveComponent = () => {
     switch (activeComponent) {

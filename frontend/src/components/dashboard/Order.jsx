@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   FiSearch,
   FiFilter,
@@ -21,6 +22,7 @@ import {
 } from "react-icons/fi";
 
 const Order = () => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -166,6 +168,34 @@ const Order = () => {
       : "bg-white/10 text-white/80 border border-white/20";
   };
 
+  const getStatusTranslation = (status) => {
+    switch (status) {
+      case "pending":
+        return t("pending");
+      case "in-progress":
+        return t("processing");
+      case "completed":
+        return t("completed");
+      case "delivered":
+        return t("delivered");
+      default:
+        return status;
+    }
+  };
+
+  const getPaymentStatusTranslation = (status) => {
+    switch (status) {
+      case "paid":
+        return t("paid");
+      case "pending":
+        return t("paymentPending");
+      case "unpaid":
+        return t("unpaid");
+      default:
+        return status;
+    }
+  };
+
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders(
       orders.map((order) =>
@@ -194,11 +224,9 @@ const Order = () => {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-3xl font-light text-white mb-2 tracking-wide">
-          Order Management
+          {t("orderManagement")}
         </h1>
-        <p className="text-white/70">
-          Manage and track all laundry orders efficiently
-        </p>
+        <p className="text-white/70">{t("manageCustomers")}</p>
       </motion.div>
 
       {/* Stats Cards */}
@@ -209,13 +237,13 @@ const Order = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiClock className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
               <p className="text-sm font-medium text-white/70 tracking-wide">
-                Pending Orders
+                {t("pending")} {t("orders")}
               </p>
               <p className="text-2xl font-light text-white">
                 {orders.filter((order) => order.status === "pending").length}
@@ -230,13 +258,13 @@ const Order = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiPackage className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
               <p className="text-sm font-medium text-white/70 tracking-wide">
-                In Progress
+                {t("processing")}
               </p>
               <p className="text-2xl font-light text-white">
                 {
@@ -254,13 +282,13 @@ const Order = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiCheckCircle className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
               <p className="text-sm font-medium text-white/70 tracking-wide">
-                Completed
+                {t("completed")}
               </p>
               <p className="text-2xl font-light text-white">
                 {orders.filter((order) => order.status === "completed").length}
@@ -275,13 +303,13 @@ const Order = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <div className="p-3 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#BFA134] mr-4 shadow-lg">
               <FiDollarSign className="w-6 h-6 text-[#1C1C1C]" />
             </div>
             <div>
               <p className="text-sm font-medium text-white/70 tracking-wide">
-                Total Revenue
+                {t("total")} {t("revenue")}
               </p>
               <p className="text-2xl font-light text-white">
                 ${orders.reduce((sum, order) => sum + order.total, 0)}
@@ -303,7 +331,7 @@ const Order = () => {
             <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#D4AF37]" />
             <input
               type="text"
-              placeholder="Search orders..."
+              placeholder={t("searchOrders")}
               className="w-full pl-10 pr-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -317,11 +345,11 @@ const Order = () => {
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="delivered">Delivered</option>
+                <option value="all">{t("allStatus")}</option>
+                <option value="pending">{t("pending")}</option>
+                <option value="in-progress">{t("processing")}</option>
+                <option value="completed">{t("completed")}</option>
+                <option value="delivered">{t("delivered")}</option>
               </select>
             </div>
           </div>
@@ -345,25 +373,25 @@ const Order = () => {
             <thead>
               <tr className="border-b border-[#D4AF37]/30">
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Order ID
+                  {t("orderId")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Customer
+                  {t("customer")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Date
+                  {t("date")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Total
+                  {t("amount")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Status
+                  {t("status")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Payment
+                  {t("payment")}
                 </th>
                 <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  Actions
+                  {t("view")}
                 </th>
               </tr>
             </thead>
@@ -410,7 +438,7 @@ const Order = () => {
                         order.status
                       )}`}
                     >
-                      {order.status.replace("-", " ")}
+                      {getStatusTranslation(order.status)}
                     </span>
                   </td>
                   <td className="py-4 px-6">
@@ -419,7 +447,7 @@ const Order = () => {
                         order.paymentStatus
                       )}`}
                     >
-                      {order.paymentStatus}
+                      {getPaymentStatusTranslation(order.paymentStatus)}
                     </span>
                   </td>
                   <td className="py-4 px-6">
@@ -427,7 +455,7 @@ const Order = () => {
                       <button
                         onClick={() => viewOrderDetails(order)}
                         className="p-2 text-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-lg transition-colors"
-                        title="View Details"
+                        title={t("view")}
                       >
                         <FiEye className="w-4 h-4" />
                       </button>
@@ -438,10 +466,10 @@ const Order = () => {
                           updateOrderStatus(order.id, e.target.value)
                         }
                       >
-                        <option value="pending">Pending</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                        <option value="delivered">Delivered</option>
+                        <option value="pending">{t("pending")}</option>
+                        <option value="in-progress">{t("processing")}</option>
+                        <option value="completed">{t("completed")}</option>
+                        <option value="delivered">{t("delivered")}</option>
                       </select>
                     </div>
                   </td>
@@ -462,7 +490,7 @@ const Order = () => {
           onClick={closeModal}
         >
           <motion.div
-            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+            className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-[#D4AF37]/20"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -471,16 +499,16 @@ const Order = () => {
           >
             <div className="overflow-y-auto max-h-[90vh]">
               {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <div className="sticky top-0 bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border-b border-[#D4AF37]/30 px-6 py-4 flex justify-between items-center">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    Order Details
+                  <h2 className="text-2xl font-light text-white tracking-wide">
+                    {t("orderDetails")}
                   </h2>
-                  <p className="text-sm text-gray-600">#{selectedOrder.id}</p>
+                  <p className="text-sm text-white/70">#{selectedOrder.id}</p>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  className="p-2 text-white/70 hover:text-white hover:bg-[#D4AF37]/20 rounded-full transition-colors"
                 >
                   <FiX className="w-6 h-6" />
                 </button>
@@ -490,8 +518,8 @@ const Order = () => {
                 {/* Status and Payment Info */}
                 <div className="flex flex-wrap gap-4 mb-6">
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm font-medium text-gray-600">
-                      Status:
+                    <span className="text-sm font-medium text-white/70">
+                      {t("status")}:
                     </span>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
@@ -510,12 +538,12 @@ const Order = () => {
                       {selectedOrder.status === "delivered" && (
                         <FiTruck className="w-3 h-3 inline mr-1" />
                       )}
-                      {selectedOrder.status.replace("-", " ")}
+                      {getStatusTranslation(selectedOrder.status)}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm font-medium text-gray-600">
-                      Payment:
+                    <span className="text-sm font-medium text-white/70">
+                      {t("payment")}:
                     </span>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-medium ${getPaymentStatusColor(
@@ -527,7 +555,7 @@ const Order = () => {
                       ) : (
                         <FiAlertCircle className="w-3 h-3 inline mr-1" />
                       )}
-                      {selectedOrder.paymentStatus}
+                      {getPaymentStatusTranslation(selectedOrder.paymentStatus)}
                     </span>
                   </div>
                 </div>
@@ -535,39 +563,45 @@ const Order = () => {
                 {/* Order Info Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                   {/* Order Information */}
-                  <div className="bg-gray-50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiCalendar className="w-5 h-5 mr-2 text-blue-600" />
-                      Order Information
+                  <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl p-6">
+                    <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                      <FiCalendar className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("orderInformation")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Order Date:</span>
-                        <span className="font-medium text-gray-800">
+                        <span className="text-white/70">{t("orderDate")}:</span>
+                        <span className="font-medium text-white">
                           {new Date(
                             selectedOrder.orderDate
                           ).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Pickup Date:</span>
-                        <span className="font-medium text-gray-800">
+                        <span className="text-white/70">
+                          {t("pickupDate")}:
+                        </span>
+                        <span className="font-medium text-white">
                           {new Date(
                             selectedOrder.pickupDate
                           ).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Delivery Date:</span>
-                        <span className="font-medium text-gray-800">
+                        <span className="text-white/70">
+                          {t("deliveryDate")}:
+                        </span>
+                        <span className="font-medium text-white">
                           {new Date(
                             selectedOrder.deliveryDate
                           ).toLocaleDateString()}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Total Amount:</span>
-                        <span className="font-bold text-green-600 text-lg">
+                        <span className="text-white/70">
+                          {t("totalAmount")}:
+                        </span>
+                        <span className="font-bold text-[#D4AF37] text-lg">
                           ${selectedOrder.total}
                         </span>
                       </div>
@@ -575,33 +609,33 @@ const Order = () => {
                   </div>
 
                   {/* Customer Information */}
-                  <div className="bg-blue-50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiUser className="w-5 h-5 mr-2 text-blue-600" />
-                      Customer Information
+                  <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl p-6">
+                    <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                      <FiUser className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("customerInformation")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
-                        <FiUser className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium text-gray-800">
+                        <FiUser className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="font-medium text-white">
                           {selectedOrder.customerName}
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <FiPhone className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">
+                        <FiPhone className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-white/70">
                           {selectedOrder.customerPhone}
                         </span>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <FiMail className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-600">
+                        <FiMail className="w-4 h-4 text-[#D4AF37]" />
+                        <span className="text-white/70">
                           {selectedOrder.customerEmail}
                         </span>
                       </div>
                       <div className="flex items-start space-x-3">
-                        <FiMapPin className="w-4 h-4 text-gray-500 mt-0.5" />
-                        <span className="text-gray-600">
+                        <FiMapPin className="w-4 h-4 text-[#D4AF37] mt-0.5" />
+                        <span className="text-white/70">
                           {selectedOrder.address}
                         </span>
                       </div>
@@ -611,55 +645,55 @@ const Order = () => {
 
                 {/* Order Items */}
                 <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <FiPackage className="w-5 h-5 mr-2 text-blue-600" />
-                    Order Items
+                  <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                    <FiPackage className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("orderItems")}
                   </h3>
-                  <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                  <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-[#1C1C1C] border-b border-[#D4AF37]/30">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Item
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                              {t("item")}
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Quantity
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                              {t("quantity")}
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Service
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                              {t("service")}
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Price
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                              {t("price")}
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-transparent divide-y divide-[#D4AF37]/10">
                           {selectedOrder.items.map((item, index) => (
                             <motion.tr
                               key={index}
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
-                              className="hover:bg-gray-50"
+                              className="hover:bg-[#D4AF37]/5"
                             >
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="font-medium text-gray-800">
+                                <span className="font-medium text-white">
                                   {item.type}
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="text-gray-600">
+                                <span className="text-white/70">
                                   {item.quantity}
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                                <span className="px-2 py-1 bg-[#D4AF37]/20 text-[#D4AF37] text-xs rounded-full border border-[#D4AF37]/30">
                                   {item.service}
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="font-semibold text-gray-800">
+                                <span className="font-semibold text-[#D4AF37]">
                                   ${item.price}
                                 </span>
                               </td>
@@ -668,12 +702,12 @@ const Order = () => {
                         </tbody>
                       </table>
                     </div>
-                    <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                    <div className="bg-[#1C1C1C]/70 px-6 py-4 border-t border-[#D4AF37]/20">
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-gray-800">
-                          Total Amount:
+                        <span className="text-lg font-semibold text-white">
+                          {t("totalAmount")}:
                         </span>
-                        <span className="text-2xl font-bold text-green-600">
+                        <span className="text-2xl font-bold text-[#D4AF37]">
                           ${selectedOrder.total}
                         </span>
                       </div>
@@ -684,27 +718,27 @@ const Order = () => {
                 {/* Notes */}
                 {selectedOrder.notes && (
                   <div className="mb-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                      <FiEdit className="w-5 h-5 mr-2 text-blue-600" />
-                      Notes
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                      <FiEdit className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("notes")}
                     </h3>
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                      <p className="text-gray-700">{selectedOrder.notes}</p>
+                    <div className="bg-[#D4AF37]/10 border border-[#D4AF37]/30 rounded-xl p-4">
+                      <p className="text-white/90">{selectedOrder.notes}</p>
                     </div>
                   </div>
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <div className="flex justify-end space-x-3 pt-6 border-t border-[#D4AF37]/20">
                   <button
                     onClick={closeModal}
-                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                    className="px-6 py-2 border border-[#D4AF37]/20 rounded-lg text-white/70 bg-[#2C2C2C] hover:bg-[#3C3C3C] transition-colors font-medium"
                   >
-                    Close
+                    {t("close")}
                   </button>
-                  <button className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors font-medium flex items-center space-x-2">
+                  <button className="px-6 py-2 bg-gradient-to-r from-[#D4AF37] to-[#C4941F] text-[#1C1C1C] rounded-lg hover:from-[#C4941F] hover:to-[#B8851B] transition-colors font-medium flex items-center space-x-2">
                     <FiPrinter className="w-4 h-4" />
-                    <span>Print Invoice</span>
+                    <span>{t("printInvoice")}</span>
                   </button>
                 </div>
               </div>
