@@ -1,7 +1,25 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const VIPConcierge = () => {
+  const language = useSelector((state) => state.language.language);
+
+  const content = {
+    en: {
+      heading: "Need Personalized Service?",
+      paragraph: "Our VIP concierge team is available 24/7 to handle special requests, delicate items, or bulk orders for businesses and residences.",
+      button: "Contact Concierge"
+    },
+    ar: {
+      heading: "هل تحتاج إلى خدمة مخصصة؟",
+      paragraph: "فريق الكونسيرج الخاص بنا متاح على مدار الساعة لتلبية الطلبات الخاصة، والعناية بالقطع الحساسة، أو الطلبات الكبيرة للشركات والمنازل.",
+      button: "تواصل مع الكونسيرج"
+    }
+  };
+
+  const { heading, paragraph, button } = content[language] || content.en;
+
   return (
     <div>
       {/* VIP Concierge CTA */}
@@ -14,11 +32,10 @@ const VIPConcierge = () => {
           className="max-w-4xl mx-auto"
         >
           <h3 className="text-2xl md:text-3xl font-light text-[#D4AF37] mb-6">
-            Need Personalized Service?
+            {heading}
           </h3>
           <p className="text-white/80 mb-8">
-            Our VIP concierge team is available 24/7 to handle special requests,
-            delicate items, or bulk orders for businesses and residences.
+            {paragraph}
           </p>
           <Link to="/contact">
             <motion.button
@@ -26,7 +43,7 @@ const VIPConcierge = () => {
               whileTap={{ scale: 0.95 }}
               className="px-8 py-3 bg-[#D4AF37] text-[#1C1C1C] rounded-full font-medium inline-flex items-center gap-2"
             >
-              Contact Concierge
+              {button}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"

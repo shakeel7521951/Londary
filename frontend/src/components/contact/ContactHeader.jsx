@@ -1,24 +1,45 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const ContactSlider = () => {
+  const language = useSelector((state) => state.language.language);
+
   const slides = [
     {
       id: 1,
-      title: "Contact Akoya Laundry",
-      subtitle: "Premium laundry services tailored to your needs in Doha, Qatar",
+      title: {
+        en: "Contact Akoya Laundry",
+        ar: "اتصل بغسيل أكويا"
+      },
+      subtitle: {
+        en: "Premium laundry services tailored to your needs in Doha, Qatar",
+        ar: "خدمات غسيل فاخرة مصممة حسب احتياجاتك في الدوحة، قطر"
+      },
       bgImage: "/home/exectiveCollection.jpg"
     },
     {
       id: 2,
-      title: "Professional Care",
-      subtitle: "Expert fabric handling with eco-friendly detergents",
+      title: {
+        en: "Professional Care",
+        ar: "رعاية احترافية"
+      },
+      subtitle: {
+        en: "Expert fabric handling with eco-friendly detergents",
+        ar: "معالجة أقمشة احترافية باستخدام منظفات صديقة للبيئة"
+      },
       bgImage: "/home/platinumCare.jpg"
     },
     {
       id: 3,
-      title: "Express Service",
-      subtitle: "Quick turnaround without compromising quality",
+      title: {
+        en: "Express Service",
+        ar: "خدمة سريعة"
+      },
+      subtitle: {
+        en: "Quick turnaround without compromising quality",
+        ar: "تسليم سريع دون المساومة على الجودة"
+      },
       bgImage: "/home/eco.jpg"
     }
   ];
@@ -38,7 +59,7 @@ const ContactSlider = () => {
   };
 
   return (
-    <div className="relative bg-[#1C1C1C] text-white overflow-hidden h-96 min-h-[530px] flex items-center">
+    <div className={`relative bg-[#1C1C1C] text-white overflow-hidden h-96 min-h-[530px] flex items-center ${language === "ar" ? "rtl text-right" : ""}`}>
       {/* Navigation Dots */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
         {slides.map((_, index) => (
@@ -91,10 +112,10 @@ const ContactSlider = () => {
           className="text-center"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-tight">
-            {slides[currentIndex].title}
+            {slides[currentIndex].title[language] || slides[currentIndex].title.en}
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto text-[#D4AF37]">
-            {slides[currentIndex].subtitle}
+            {slides[currentIndex].subtitle[language] || slides[currentIndex].subtitle.en}
           </p>
           
           <motion.div 

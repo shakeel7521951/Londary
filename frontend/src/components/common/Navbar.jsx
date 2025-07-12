@@ -36,6 +36,21 @@ const Navbar = () => {
     },
   };
 
+  // Arabic nav label to route mapping
+  const arNavLinkRoutes = {
+    "الرئيسية": "/home",
+    "الخدمات": "/services",
+    "من نحن": "/about",
+    "اتصل بنا": "/contact",
+  };
+
+  const getNavLinkPath = (label) => {
+    if (language === "ar") {
+      return arNavLinkRoutes[label] || "/";
+    }
+    return `/${label.toLowerCase()}`;
+  };
+
   const t = translations[language];
 
   useEffect(() => {
@@ -57,7 +72,7 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className=" mx-auto px-6 py-4">
+      <div className="mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/">
@@ -71,23 +86,27 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {t.navLinks.map((link, idx) => (
-              <motion.a
+            {t.navLinks.map((label, idx) => (
+              <motion.div
                 key={idx}
-                href={`/${link}`}
-                className={`relative text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
-                  scrolled
-                    ? "text-white/90 hover:text-white"
-                    : "text-white/80 hover:text-white"
-                }`}
                 whileHover={{ scale: 1.05 }}
+                className="relative"
               >
-                {link}
+                <Link
+                  to={getNavLinkPath(label)}
+                  className={`text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
+                    scrolled
+                      ? "text-white/90 hover:text-white"
+                      : "text-white/80 hover:text-white"
+                  }`}
+                >
+                  {label}
+                </Link>
                 <motion.span
                   className="absolute bottom-0 left-0 w-0 h-px bg-[#D4AF37] transition-all duration-300"
                   whileHover={{ width: "100%" }}
                 />
-              </motion.a>
+              </motion.div>
             ))}
           </div>
 
@@ -107,31 +126,32 @@ const Navbar = () => {
             {isAuthenticated ? (
               <UserProfileDropdown user={currentUser} />
             ) : (
-              <motion.a
-                href="/login"
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  to="/login"
+                  className={`px-6 py-2.5 text-sm font-medium rounded-full transition-all duration-300 ${
+                    scrolled
+                      ? "text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
+                      : "text-white border border-[#D4AF37] hover:bg-[#D4AF37]/10"
+                  }`}
+                >
+                  {t.login}
+                </Link>
+              </motion.div>
+            )}
+
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/book-now"
                 className={`px-6 py-2.5 text-sm font-medium rounded-full transition-all duration-300 ${
                   scrolled
-                    ? "text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
-                    : "text-white border border-[#D4AF37] hover:bg-[#D4AF37]/10"
+                    ? "text-[#1a1a1a] bg-[#D4AF37] hover:bg-[#E5C547] shadow-lg"
+                    : "text-[#1a1a1a] bg-[#D4AF37] hover:bg-[#c9a227]"
                 }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
-                {t.login}
-              </motion.a>
-            )}
-            <motion.a
-              href="/book-now"
-              className={`px-6 py-2.5 text-sm font-medium rounded-full transition-all duration-300 ${
-                scrolled
-                  ? "text-[#1a1a1a] bg-[#D4AF37] hover:bg-[#E5C547] shadow-lg"
-                  : "text-[#1a1a1a] bg-[#D4AF37] hover:bg-[#c9a227]"
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {t.bookNow}
-            </motion.a>
+                {t.bookNow}
+              </Link>
+            </motion.div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -182,22 +202,26 @@ const Navbar = () => {
                     : ""
                 }`}
               >
-                {t.navLinks.map((link, idx) => (
-                  <motion.a
+                {t.navLinks.map((label, idx) => (
+                  <motion.div
                     key={idx}
-                    href={`/${link}`}
-                    className={`block px-3 py-3 text-white rounded-lg transition-all duration-300 ${
-                      scrolled
-                        ? "hover:bg-white/10 hover:backdrop-blur-sm"
-                        : "hover:bg-[#D4AF37]/10"
-                    }`}
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {link}
-                  </motion.a>
+                    <Link
+                      to={getNavLinkPath(label)}
+                      className={`block px-3 py-3 text-white rounded-lg transition-all duration-300 ${
+                        scrolled
+                          ? "hover:bg-white/10 hover:backdrop-blur-sm"
+                          : "hover:bg-[#D4AF37]/10"
+                      }`}
+                    >
+                      {label}
+                    </Link>
+                  </motion.div>
                 ))}
+
                 <div className="pt-4 mt-4 border-t border-[#D4AF37]/20 space-y-4">
                   {isAuthenticated ? (
                     <div className="space-y-4">
@@ -224,38 +248,49 @@ const Navbar = () => {
                           </div>
                         </div>
                       </div>
+
                       {currentUser?.role === "admin" && (
-                        <motion.a
-                          href="/dashboard"
-                          className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                        <motion.div
                           initial={{ x: 20, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
                           transition={{ duration: 0.3, delay: 0.1 }}
                         >
-                          {t.dashboard}
-                        </motion.a>
+                          <Link
+                            to="/dashboard"
+                            className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                          >
+                            {t.dashboard}
+                          </Link>
+                        </motion.div>
                       )}
                     </div>
                   ) : (
-                    <motion.a
-                      href="/login"
-                      className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                    <motion.div
                       initial={{ x: 20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ duration: 0.3, delay: 0.1 }}
                     >
-                      {t.login}
-                    </motion.a>
+                      <Link
+                        to="/login"
+                        className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                      >
+                        {t.login}
+                      </Link>
+                    </motion.div>
                   )}
-                  <motion.a
-                    href="/book-now"
-                    className="block px-3 py-3 text-center text-[#1a1a1a] bg-[#D4AF37] rounded-lg hover:bg-[#c9a227] transition-colors"
+
+                  <motion.div
                     initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.3, delay: 0.15 }}
                   >
-                    {t.bookNow}
-                  </motion.a>
+                    <Link
+                      to="/book-now"
+                      className="block px-3 py-3 text-center text-[#1a1a1a] bg-[#D4AF37] rounded-lg hover:bg-[#c9a227] transition-colors"
+                    >
+                      {t.bookNow}
+                    </Link>
+                  </motion.div>
 
                   <motion.button
                     onClick={() => dispatch(toggleLanguage())}

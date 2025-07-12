@@ -4,23 +4,42 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import servicesData from "./servicesData";
 
+const categoryLabels = {
+  en: {
+    all: "All",
+    "dry-cleaning": "Dry Cleaning",
+    pressing: "Pressing",
+    specialty: "Specialty",
+    traditional: "Traditional",
+    express: "Express",
+    addon: "Add‑on",
+  },
+  ar: {
+    all: "الكل",
+    "dry-cleaning": "التنظيف الجاف",
+    pressing: "الكي",
+    specialty: "العناية الخاصة",
+    traditional: "الملابس التقليدية",
+    express: "خدمة عاجلة",
+    addon: "إضافات",
+  }
+};
+
+const sectionTitle = { en: "Our Services", ar: "خدماتنا" };
+const sectionSubtitle = { en: "LUXURY GARMENT CARE", ar: "رعاية فاخرة للملابس" };
+const orderButtonLabel = { en: "Order", ar: "اطلب الآن" };
+
 const Services = () => {
   const language = useSelector((state) => state.language.language);
   const [activeTab, setActiveTab] = useState("all");
   const services = servicesData[language] || servicesData.en;
-
-  const filteredServices =
-    activeTab === "all"
-      ? services
-      : services.filter((service) => service.category === activeTab);
-
-  const sectionTitle = { en: "Our Services", ar: "خدماتنا" };
-  const sectionSubtitle = { en: "LUXURY GARMENT CARE", ar: "رعاية فاخرة للملابس" };
-  const orderButtonLabel = { en: "Order", ar: "اطلب الآن" };
+  const filteredServices = activeTab === "all"
+    ? services
+    : services.filter((s) => s.category === activeTab);
 
   return (
     <section className="py-24 px-6 md:px-16 lg:px-24 relative overflow-hidden">
-      {/* Decor */}
+      {/* Decorative visual layers */}
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-20 left-10 w-40 h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl"></div>
         <div className="absolute bottom-10 right-10 w-60 h-60 rounded-full bg-[#1C1C1C] mix-blend-multiply filter blur-3xl"></div>
@@ -41,24 +60,26 @@ const Services = () => {
           </div>
         </motion.div>
 
-        {/* Tabs */}
+        {/* Category Tabs */}
         <motion.div className="flex flex-wrap justify-center gap-2 mb-12" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          {["all", "dry-cleaning", "pressing", "specialty", "traditional", "express", "addon"].map((tab) => (
+          {Object.keys(categoryLabels.en).map((tab) => (
             <motion.button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-5 py-2 rounded-full text-sm font-medium capitalize transition-colors ${
-                activeTab === tab ? "bg-[#1C1C1C] text-[#D4AF37]" : "bg-white text-[#1C1C1C] hover:bg-[#1C1C1C]/10"
+                activeTab === tab
+                  ? "bg-[#1C1C1C] text-[#D4AF37]"
+                  : "bg-white text-[#1C1C1C] hover:bg-[#1C1C1C]/10"
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {tab.replace("-", " ")}
+              {categoryLabels[language][tab]}
             </motion.button>
           ))}
         </motion.div>
 
-        {/* Services */}
+        {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredServices.map((service, index) => (
             <motion.div
@@ -70,7 +91,13 @@ const Services = () => {
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
             >
               <div className="relative h-48 overflow-hidden">
-                <motion.img src={service.image} alt={service.title} className="w-full h-full object-cover" whileHover={{ scale: 1.1 }} transition={{ duration: 0.5 }} />
+                <motion.img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ duration: 0.5 }}
+                />
                 <div className="absolute top-4 right-4 bg-[#D4AF37] text-[#1C1C1C] text-xl w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
                   {service.icon}
                 </div>
