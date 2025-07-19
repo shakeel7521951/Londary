@@ -24,9 +24,10 @@ const OrderPage = () => {
       title: "AKOYA PREMIUM LAUNDRY",
       step: "Step",
       of: "of",
-      washQuestion: "How would you like us to clean your garments?",
+      serviceTypeQuestion: "Choose your service type:",
       garmentsQuestion: "What clothes are you sending us?",
       steamQuestion: "Do you want us to steam the garments?",
+      incenseQuestion: "Do you want incense service?",
       fragranceQuestion:
         "Would you like us to perfume your clothes with a luxury scent?",
       packagingQuestion: "How would you like us to package your garments?",
@@ -35,6 +36,7 @@ const OrderPage = () => {
       serviceType: "Service Type:",
       garments: "Garments:",
       steamFinishing: "Steam Finishing:",
+      incenseService: "Incense Service:",
       fragrance: "Fragrance:",
       packaging: "Packaging:",
       personalizedCard: "Personalized Card:",
@@ -42,17 +44,17 @@ const OrderPage = () => {
       to: "To (optional)",
       total: "Total:",
       pcs: "pcs",
-      yes: "Yes (+20 QAR)",
+      yes: "Yes",
       no: "No",
       back: "Back",
       next: "Next",
       confirmOrder: "Confirm & Order on WhatsApp",
       placingOrder: "Placing Order...",
-      standardWash: "Standard Wash (48h)",
-      expressWash: "Express Wash (24h)",
       loginError: "Please login to place an order",
       orderSuccess: "Order placed successfully!",
       orderError: "Failed to place order. Please try again.",
+      cardFromRequired: "Please enter your name for the personalized card",
+      fieldRequired: "This field is required",
       mens: "Men's",
       womens: "Women's",
     },
@@ -60,9 +62,10 @@ const OrderPage = () => {
       title: "أكویا لخدمات الغسيل الفاخرة",
       step: "خطوة",
       of: "من",
-      washQuestion: "كيف تفضل أن نقوم بتنظيف ملابسك؟",
+      serviceTypeQuestion: "اختر نوع الخدمة:",
       garmentsQuestion: "ما هي الملابس التي ترسلها إلينا؟",
       steamQuestion: "هل تريد منا كي الملابس بالبخار؟",
+      incenseQuestion: "هل تريد خدمة البخور؟",
       fragranceQuestion: "هل ترغب في تعطير ملابسك برائحة فاخرة؟",
       packagingQuestion: "كيف تفضل أن نقوم بتغليف ملابسك؟",
       cardQuestion: "هل ترغب في إضافة بطاقة شخصية؟",
@@ -70,6 +73,7 @@ const OrderPage = () => {
       serviceType: "نوع الخدمة:",
       garments: "الملابس:",
       steamFinishing: "كي بالبخار:",
+      incenseService: "خدمة البخور:",
       fragrance: "العطر:",
       packaging: "التغليف:",
       personalizedCard: "بطاقة شخصية:",
@@ -77,17 +81,17 @@ const OrderPage = () => {
       to: "إلى (اختياري)",
       total: "المجموع:",
       pcs: "قطعة",
-      yes: "نعم (+20 ريال)",
+      yes: "نعم",
       no: "لا",
       back: "رجوع",
       next: "التالي",
       confirmOrder: "تأكيد الطلب عبر واتساب",
       placingOrder: "جاري تقديم الطلب...",
-      standardWash: "غسيل عادي (48 ساعة)",
-      expressWash: "غسيل سريع (24 ساعة)",
       loginError: "يرجى تسجيل الدخول لتقديم الطلب",
       orderSuccess: "تم تقديم الطلب بنجاح!",
       orderError: "فشل في تقديم الطلب. يرجى المحاولة مرة أخرى.",
+      cardFromRequired: "يرجى إدخال اسمك في بطاقة التهنئة",
+      fieldRequired: "هذا الحقل مطلوب",
       mens: "رجالي",
       womens: "نسائي",
     },
@@ -97,98 +101,544 @@ const OrderPage = () => {
 
   // State for each step
   const [step, setStep] = useState(1);
-  const [washType, setWashType] = useState("");
+  const [serviceType, setServiceType] = useState(""); // Changed from washType to include iron, wash_iron, dry_clean
   const [garments, setGarments] = useState([]);
   const [steamFinish, setSteamFinish] = useState(false);
+  const [incenseFinish, setIncenseFinish] = useState(false); // New state for incense
   const [fragrance, setFragrance] = useState("");
   const [packaging, setPackaging] = useState("");
   const [cardDetails, setCardDetails] = useState({ from: "", to: "" });
 
-  // Available options
-  const washOptions = [
+  // Available service options
+  const serviceOptions = [
     {
-      id: "standard",
-      name: language === "ar" ? "غسيل عادي (48 ساعة)" : "Standard Wash (48h)",
-      price: 50,
+      id: "iron",
+      name: language === "ar" ? "كي فقط" : "Iron Only",
+      description:
+        language === "ar" ? "كي الملابس بدون غسيل" : "Ironing without washing",
     },
     {
-      id: "express",
-      name: language === "ar" ? "غسيل سريع (24 ساعة)" : "Express Wash (24h)",
-      price: 80,
+      id: "wash_iron",
+      name: language === "ar" ? "غسيل وكي" : "Washing & Iron",
+      description:
+        language === "ar"
+          ? "غسيل كامل مع الكي"
+          : "Complete washing with ironing",
+    },
+    {
+      id: "dry_clean",
+      name: language === "ar" ? "تنظيف جاف" : "Dry Clean",
+      description:
+        language === "ar" ? "تنظيف جاف احترافي" : "Professional dry cleaning",
     },
   ];
 
+  // Garment pricing structure
+  const garmentPrices = {
+    // General items
+    Coat: {
+      iron: 11,
+      wash_iron: 13,
+      dry_clean: 23,
+      steam: 10,
+      incense: 10,
+      perfume: 10,
+    },
+    Pajamas: {
+      iron: 4,
+      wash_iron: 7,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Scarf: {
+      iron: 2,
+      wash_iron: 3,
+      dry_clean: 4,
+      steam: 7,
+      incense: 7,
+      perfume: 7,
+    },
+    Shawwal: {
+      iron: 0,
+      wash_iron: 0,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Shirt: {
+      iron: 3,
+      wash_iron: 5,
+      dry_clean: 6,
+      steam: 7,
+      incense: 7,
+      perfume: 7,
+    },
+    Silk: {
+      iron: 2,
+      wash_iron: 2,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Blouse: {
+      iron: 4,
+      wash_iron: 0,
+      dry_clean: 7,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "T-shirt": {
+      iron: 2,
+      wash_iron: 4,
+      dry_clean: 5,
+      steam: 7,
+      incense: 7,
+      perfume: 7,
+    },
+    Tie: {
+      iron: 2,
+      wash_iron: 3,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Inner: {
+      iron: 2,
+      wash_iron: 2,
+      dry_clean: 2,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Flannea: {
+      iron: 0,
+      wash_iron: 3,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Underwear: {
+      iron: 2,
+      wash_iron: 3,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    "Children's Abaya": {
+      iron: 3,
+      wash_iron: 5,
+      dry_clean: 7,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    "Children's Dress": {
+      iron: 2,
+      wash_iron: 5,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+
+    // Kids items
+    "Kids Dress": {
+      iron: 6,
+      wash_iron: 10,
+      dry_clean: 13,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Kids Jacket": {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 7,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Kids Shirt": {
+      iron: 1,
+      wash_iron: 3,
+      dry_clean: 3,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    "Kids Suit": {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 8,
+      steam: 6,
+      incense: 6,
+      perfume: 6,
+    },
+    "Kids Suit (3 pieces)": {
+      iron: 6,
+      wash_iron: 8,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Kids Pant": {
+      iron: 2,
+      wash_iron: 3,
+      dry_clean: 4,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    "Kids Underwear": {
+      iron: 2,
+      wash_iron: 2,
+      dry_clean: 2,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    "School Uniform": {
+      iron: 1,
+      wash_iron: 8,
+      dry_clean: 0,
+      steam: 6,
+      incense: 6,
+      perfume: 6,
+    },
+
+    // Traditional & Formal items
+    Thawb: {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Vest: {
+      iron: 3,
+      wash_iron: 5,
+      dry_clean: 6,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Bisht: {
+      iron: 25,
+      wash_iron: 40,
+      dry_clean: 40,
+      steam: 10,
+      incense: 10,
+      perfume: 10,
+    },
+    Abaya: {
+      iron: 10,
+      wash_iron: 2,
+      dry_clean: 15,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Cap: {
+      iron: 0,
+      wash_iron: 2,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Apron: {
+      iron: 6,
+      wash_iron: 8,
+      dry_clean: 10,
+      steam: 9,
+      incense: 9,
+      perfume: 9,
+    },
+    "Long Dress": {
+      iron: 15,
+      wash_iron: 20,
+      dry_clean: 20,
+      steam: 10,
+      incense: 10,
+      perfume: 10,
+    },
+    "Short Dress": {
+      iron: 10,
+      wash_iron: 15,
+      dry_clean: 20,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Men's Suit": {
+      iron: 12,
+      wash_iron: 18,
+      dry_clean: 21,
+      steam: 10,
+      incense: 10,
+      perfume: 10,
+    },
+    Ghutra: {
+      iron: 3,
+      wash_iron: 4,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Hijab: {
+      iron: 6,
+      wash_iron: 6,
+      dry_clean: 7,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Jalabiya: {
+      iron: 6,
+      wash_iron: 10,
+      dry_clean: 0,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Overcoat: {
+      iron: 4,
+      wash_iron: 8,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Military Uniform": {
+      iron: 9,
+      wash_iron: 14,
+      dry_clean: 16,
+      steam: 10,
+      incense: 10,
+      perfume: 10,
+    },
+
+    // Additional service options
+    Kandura: {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Trousers: {
+      iron: 3,
+      wash_iron: 5,
+      dry_clean: 6,
+      steam: 7,
+      incense: 7,
+      perfume: 7,
+    },
+    Thobe: {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Socks: {
+      iron: 1,
+      wash_iron: 2,
+      dry_clean: 2,
+      steam: 3,
+      incense: 3,
+      perfume: 3,
+    },
+    "Child Dishdasha": {
+      iron: 3,
+      wash_iron: 5,
+      dry_clean: 7,
+      steam: 5,
+      incense: 5,
+      perfume: 5,
+    },
+    Kameez: {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 8,
+      steam: 6,
+      incense: 6,
+      perfume: 6,
+    },
+    Kurta: {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 8,
+      steam: 6,
+      incense: 6,
+      perfume: 6,
+    },
+    "Kurta Pyjama (Set)": {
+      iron: 6,
+      wash_iron: 8,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Gent Suit (3pcs)": {
+      iron: 12,
+      wash_iron: 18,
+      dry_clean: 21,
+      steam: 10,
+      incense: 10,
+      perfume: 10,
+    },
+    Dishdasha: {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Abaya Special": {
+      iron: 15,
+      wash_iron: 25,
+      dry_clean: 25,
+      steam: 10,
+      incense: 10,
+      perfume: 10,
+    },
+    Dress: {
+      iron: 10,
+      wash_iron: 15,
+      dry_clean: 18,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    "Dress (Short)": {
+      iron: 8,
+      wash_iron: 12,
+      dry_clean: 15,
+      steam: 7,
+      incense: 7,
+      perfume: 7,
+    },
+    "Dress (Long)": {
+      iron: 12,
+      wash_iron: 18,
+      dry_clean: 22,
+      steam: 9,
+      incense: 9,
+      perfume: 9,
+    },
+    "Blouse (Special)": {
+      iron: 6,
+      wash_iron: 8,
+      dry_clean: 10,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+    Skirt: {
+      iron: 4,
+      wash_iron: 6,
+      dry_clean: 8,
+      steam: 6,
+      incense: 6,
+      perfume: 6,
+    },
+    Lingerie: {
+      iron: 2,
+      wash_iron: 3,
+      dry_clean: 4,
+      steam: 4,
+      incense: 4,
+      perfume: 4,
+    },
+    "Bath Robe": {
+      iron: 8,
+      wash_iron: 12,
+      dry_clean: 15,
+      steam: 8,
+      incense: 8,
+      perfume: 8,
+    },
+  };
+
+  // Garment categories with translated names
   const garmentTypes = {
-    [t.mens]:
-      language === "ar"
-        ? [
-            "كندورة",
-            "قميص",
-            "بنطال",
-            "بشت",
-            "ثوب",
-            "جوارب",
-            "ملابس داخلية",
-            "دشداشة أطفال",
-            "زي عسكري",
-            "معطف",
-            "قميص",
-            "كورتا",
-            "كورتا بيجامة (مجموعة)",
-            "بدلة رجالية (3 قطع)",
-            "غترة",
-            "دشداشة",
-          ]
-        : [
-            "Kandura",
-            "Shirt",
-            "Trousers",
-            "Bisht",
-            "Thobe",
-            "Socks",
-            "Underwear",
-            "Child Dishdasha",
-            "Military Uniform",
-            "Overcoat",
-            "Kameez",
-            "Kurta",
-            "Kurta Pyjama (Set)",
-            "Gent Suit (3pcs)",
-            "Ghutra",
-            "Dishdasha",
-          ],
-    [t.womens]:
-      language === "ar"
-        ? [
-            "عباية",
-            "عباية خاصة",
-            "فستان",
-            "فستان قصير",
-            "فستان طويل",
-            "بلوزة",
-            "بلوزة خاصة",
-            "تنورة",
-            "وشاح",
-            "حجاب",
-            "ملابس داخلية",
-            "جلابية",
-            "روب حمام",
-          ]
-        : [
-            "Abaya",
-            "Abaya Special",
-            "Dress",
-            "Dress (Short)",
-            "Dress (Long)",
-            "Blouse",
-            "Blouse (Special)",
-            "Skirt",
-            "Scarf",
-            "Hijab",
-            "Lingerie",
-            "Jalabiya",
-            "Bath Robe",
-          ],
+    [t.mens]: Object.keys(garmentPrices).filter((item) =>
+      [
+        "Kandura",
+        "Shirt",
+        "Trousers",
+        "Bisht",
+        "Thobe",
+        "Socks",
+        "Underwear",
+        "Child Dishdasha",
+        "Military Uniform",
+        "Overcoat",
+        "Kameez",
+        "Kurta",
+        "Kurta Pyjama (Set)",
+        "Gent Suit (3pcs)",
+        "Ghutra",
+        "Dishdasha",
+        "Men's Suit",
+        "Vest",
+        "Tie",
+        "T-shirt",
+        "Inner",
+        "Flannea",
+        "Coat",
+        "Pajamas",
+        "Kids Suit",
+        "Kids Suit (3 pieces)",
+        "Kids Shirt",
+        "Kids Pant",
+        "Kids Underwear",
+        "School Uniform",
+        "Kids Jacket",
+      ].includes(item)
+    ),
+    [t.womens]: Object.keys(garmentPrices).filter((item) =>
+      [
+        "Abaya",
+        "Abaya Special",
+        "Dress",
+        "Dress (Short)",
+        "Dress (Long)",
+        "Blouse",
+        "Blouse (Special)",
+        "Skirt",
+        "Scarf",
+        "Hijab",
+        "Lingerie",
+        "Jalabiya",
+        "Bath Robe",
+        "Long Dress",
+        "Short Dress",
+        "Children's Abaya",
+        "Children's Dress",
+        "Kids Dress",
+        "Apron",
+        "Cap",
+        "Silk",
+        "Shawwal",
+      ].includes(item)
+    ),
   };
 
   const fragranceOptions = {
@@ -264,10 +714,50 @@ const OrderPage = () => {
   };
 
   const calculateTotal = () => {
-    let total = washType === "standard" ? 50 : 80;
-    if (steamFinish) total += 20;
+    let total = 0;
+
+    // Calculate base service cost for all garments
+    garments.forEach((garment) => {
+      const priceInfo = garmentPrices[garment.type];
+      if (priceInfo && serviceType) {
+        total += (priceInfo[serviceType] || 0) * garment.quantity;
+      }
+    });
+
+    // Add steam finishing cost
+    if (steamFinish) {
+      garments.forEach((garment) => {
+        const priceInfo = garmentPrices[garment.type];
+        if (priceInfo) {
+          total += (priceInfo.steam || 0) * garment.quantity;
+        }
+      });
+    }
+
+    // Add incense finishing cost
+    if (incenseFinish) {
+      garments.forEach((garment) => {
+        const priceInfo = garmentPrices[garment.type];
+        if (priceInfo) {
+          total += (priceInfo.incense || 0) * garment.quantity;
+        }
+      });
+    }
+
+    // Add perfume cost
+    if (fragrance) {
+      garments.forEach((garment) => {
+        const priceInfo = garmentPrices[garment.type];
+        if (priceInfo) {
+          total += (priceInfo.perfume || 0) * garment.quantity;
+        }
+      });
+    }
+
+    // Add packaging cost
     if (packaging === "fabric") total += 15;
     if (packaging === "box") total += 30;
+
     return total;
   };
 
@@ -279,10 +769,18 @@ const OrderPage = () => {
       return;
     }
 
+    // Validate required fields
+    if (!cardDetails.from.trim()) {
+      toast.error(t.cardFromRequired);
+      setStep(6); // Go back to the card step
+      return;
+    }
+
     const orderDetails = {
-      washType,
+      serviceType, // Changed from washType
       garments,
       steamFinish,
+      incenseFinish, // New field
       fragrance,
       packaging,
       cardFrom: cardDetails.from,
@@ -324,6 +822,12 @@ const OrderPage = () => {
         } (${currentUser.email})`
       : "";
 
+    const serviceTypeDisplay = {
+      iron: language === "ar" ? "كي فقط" : "Iron Only",
+      wash_iron: language === "ar" ? "غسيل وكي" : "Washing & Iron",
+      dry_clean: language === "ar" ? "تنظيف جاف" : "Dry Clean",
+    };
+
     const orderInfo = `
 ${
   language === "ar"
@@ -335,20 +839,23 @@ ${userInfo}
 ${language === "ar" ? "📝 رقم الطلب" : "📝 Order ID"}: ${order._id}
 
 ${language === "ar" ? "🧺 تفاصيل الخدمة:" : "🧺 Service Details:"}
-• ${language === "ar" ? "نوع الغسيل" : "Wash Type"}: ${
-      orderDetails.washType === "standard"
-        ? language === "ar"
-          ? "غسيل عادي (48 ساعة)"
-          : "Standard Wash (48h)"
-        : language === "ar"
-        ? "غسيل سريع (24 ساعة)"
-        : "Express Wash (24h)"
+• ${language === "ar" ? "نوع الخدمة" : "Service Type"}: ${
+      serviceTypeDisplay[orderDetails.serviceType] || orderDetails.serviceType
     }
 • ${language === "ar" ? "كي بالبخار" : "Steam Finishing"}: ${
       orderDetails.steamFinish
         ? language === "ar"
-          ? "نعم (+20 ريال)"
-          : "Yes (+20 QAR)"
+          ? "نعم"
+          : "Yes"
+        : language === "ar"
+        ? "لا"
+        : "No"
+    }
+• ${language === "ar" ? "البخور" : "Incense"}: ${
+      orderDetails.incenseFinish
+        ? language === "ar"
+          ? "نعم"
+          : "Yes"
         : language === "ar"
         ? "لا"
         : "No"
@@ -372,9 +879,14 @@ ${language === "ar" ? "🧺 تفاصيل الخدمة:" : "🧺 Service Details:
 
 ${language === "ar" ? "👕 الملابس:" : "👕 Garments:"}
 ${orderDetails.garments
-  .map(
-    (g) => `• ${g.type}: ${g.quantity} ${language === "ar" ? "قطعة" : "pcs"}`
-  )
+  .map((g) => {
+    const priceInfo = garmentPrices[g.type];
+    const itemPrice = priceInfo ? priceInfo[orderDetails.serviceType] || 0 : 0;
+    const totalItemPrice = itemPrice * g.quantity;
+    return `• ${g.type}: ${g.quantity} ${
+      language === "ar" ? "قطعة" : "pcs"
+    } (${totalItemPrice} ${language === "ar" ? "ريال" : "QAR"})`;
+  })
   .join("\n")}
 
 ${
@@ -412,25 +924,25 @@ ${
   // Step components
   const Step1 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-xl font-light text-gray-700">{t.washQuestion}</h3>
-      <div className="grid gap-4 md:grid-cols-2">
-        {washOptions.map((option) => (
+      <h3 className="text-xl font-light text-gray-700">
+        {language === "ar" ? "اختر نوع الخدمة:" : "Choose Service Type:"}
+      </h3>
+      <div className="grid gap-4 md:grid-cols-3">
+        {serviceOptions.map((option) => (
           <motion.div
             key={option.id}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             className={`p-6 border rounded-xl cursor-pointer transition-all ${
-              washType === option.id
+              serviceType === option.id
                 ? "border-[#D4AF37] bg-[#FFF9E6]"
                 : "border-gray-200 hover:border-gray-300"
             }`}
-            onClick={() => setWashType(option.id)}
+            onClick={() => setServiceType(option.id)}
           >
-            <div className="flex justify-between items-center">
-              <h4 className="font-medium">{option.name}</h4>
-              <span className="text-[#D4AF37] font-bold">
-                {option.price} {language === "ar" ? "ريال" : "QAR"}
-              </span>
+            <div className="flex flex-col items-center text-center">
+              <h4 className="font-medium text-lg">{option.name}</h4>
+              <p className="text-sm text-gray-600 mt-2">{option.description}</p>
             </div>
           </motion.div>
         ))}
@@ -555,6 +1067,35 @@ ${
           {t.no}
         </motion.button>
       </div>
+
+      {/* Add incense option */}
+      <h3 className="text-xl font-light text-gray-700">
+        {language === "ar"
+          ? "هل تريد خدمة البخور؟"
+          : "Do you want incense service?"}
+      </h3>
+      <div className="flex space-x-4">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          type="button"
+          className={`px-6 py-3 rounded-lg border ${
+            incenseFinish ? "border-[#D4AF37] bg-[#FFF9E6]" : "border-gray-200"
+          }`}
+          onClick={() => setIncenseFinish(true)}
+        >
+          {language === "ar" ? "نعم" : "Yes"}
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          type="button"
+          className={`px-6 py-3 rounded-lg border ${
+            !incenseFinish ? "border-[#D4AF37] bg-[#FFF9E6]" : "border-gray-200"
+          }`}
+          onClick={() => setIncenseFinish(false)}
+        >
+          {language === "ar" ? "لا" : "No"}
+        </motion.button>
+      </div>
     </div>
   );
 
@@ -639,25 +1180,43 @@ ${
         <h3 className="text-xl font-light text-gray-700">{t.cardQuestion}</h3>
         <div className="space-y-4">
           <div>
-            <label className="block mb-1">{t.from}</label>
+            <label className="block mb-1">
+              {t.from} <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
-              placeholder={language === "ar" ? "اسمك" : "Your name"}
+              placeholder={
+                language === "ar" ? "اسمك (مطلوب)*" : "Your name (required)*"
+              }
               value={cardDetails.from}
               onChange={handleCardFromChange}
-              className="w-full p-3 border border-gray-300 rounded-lg"
+              className={`w-full p-3 border rounded-lg ${
+                cardDetails.from.trim()
+                  ? "border-gray-300 focus:border-[#D4AF37]"
+                  : "border-red-300 focus:border-red-500"
+              } focus:outline-none focus:ring-1 ${
+                cardDetails.from.trim()
+                  ? "focus:ring-[#D4AF37]"
+                  : "focus:ring-red-500"
+              }`}
+              required
             />
+            {!cardDetails.from.trim() && (
+              <p className="text-red-500 text-sm mt-1">{t.fieldRequired}</p>
+            )}
           </div>
           <div>
             <label className="block mb-1">{t.to}</label>
             <input
               type="text"
               placeholder={
-                language === "ar" ? "اسم المستلم" : "Recipient's name"
+                language === "ar"
+                  ? "اسم المستلم (اختياري)"
+                  : "Recipient's name (optional)"
               }
               value={cardDetails.to}
               onChange={handleCardToChange}
-              className="w-full p-3 border border-gray-300 rounded-lg"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#D4AF37] focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
             />
           </div>
         </div>
@@ -681,28 +1240,65 @@ ${
           <div className="flex justify-between border-b pb-2">
             <span className="font-medium">{t.serviceType}</span>
             <span>
-              {washType === "standard" ? t.standardWash : t.expressWash}
+              {serviceType === "iron"
+                ? language === "ar"
+                  ? "كي فقط"
+                  : "Iron Only"
+                : serviceType === "wash_iron"
+                ? language === "ar"
+                  ? "غسيل وكي"
+                  : "Washing & Iron"
+                : serviceType === "dry_clean"
+                ? language === "ar"
+                  ? "تنظيف جاف"
+                  : "Dry Clean"
+                : serviceType}
             </span>
           </div>
 
           <div className="border-b pb-2">
             <p className="font-medium mb-2">{t.garments}</p>
             <ul className="space-y-1">
-              {garments.map((g, i) => (
-                <li key={i} className="flex justify-between">
-                  <span>{g.type}</span>
-                  <span>
-                    {g.quantity} {t.pcs}
-                  </span>
-                </li>
-              ))}
+              {garments.map((g, i) => {
+                const priceInfo = garmentPrices[g.type];
+                const itemPrice = priceInfo ? priceInfo[serviceType] || 0 : 0;
+                const totalItemPrice = itemPrice * g.quantity;
+                return (
+                  <li key={i} className="flex justify-between">
+                    <span>{g.type}</span>
+                    <span>
+                      {g.quantity} {t.pcs} - {totalItemPrice}{" "}
+                      {language === "ar" ? "ريال" : "QAR"}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
 
           {steamFinish && (
             <div className="flex justify-between border-b pb-2">
               <span>{t.steamFinishing}</span>
-              <span>+20 {language === "ar" ? "ريال" : "QAR"}</span>
+              <span>
+                {garments.reduce((total, g) => {
+                  const priceInfo = garmentPrices[g.type];
+                  return total + (priceInfo?.steam || 0) * g.quantity;
+                }, 0)}{" "}
+                {language === "ar" ? "ريال" : "QAR"}
+              </span>
+            </div>
+          )}
+
+          {incenseFinish && (
+            <div className="flex justify-between border-b pb-2">
+              <span>{language === "ar" ? "البخور" : "Incense"}</span>
+              <span>
+                {garments.reduce((total, g) => {
+                  const priceInfo = garmentPrices[g.type];
+                  return total + (priceInfo?.incense || 0) * g.quantity;
+                }, 0)}{" "}
+                {language === "ar" ? "ريال" : "QAR"}
+              </span>
             </div>
           )}
 
@@ -714,7 +1310,13 @@ ${
                   fragranceOptions[
                     fragrance.includes("orchid") ? t.womens : t.mens
                   ].find((f) => f.id === fragrance).name
-                }
+                }{" "}
+                -{" "}
+                {garments.reduce((total, g) => {
+                  const priceInfo = garmentPrices[g.type];
+                  return total + (priceInfo?.perfume || 0) * g.quantity;
+                }, 0)}{" "}
+                {language === "ar" ? "ريال" : "QAR"}
               </span>
             </div>
           )}
@@ -856,15 +1458,17 @@ ${
                 whileTap={{ scale: 0.95 }}
                 type="button"
                 className={`ml-auto px-6 py-2 rounded-lg ${
-                  (step === 1 && !washType) ||
-                  (step === 2 && garments.length === 0)
+                  (step === 1 && !serviceType) ||
+                  (step === 2 && garments.length === 0) ||
+                  (step === 6 && !cardDetails.from.trim())
                     ? "bg-gray-300 cursor-not-allowed"
                     : "bg-[#D4AF37] text-white"
                 }`}
                 onClick={() => setStep(step + 1)}
                 disabled={
-                  (step === 1 && !washType) ||
-                  (step === 2 && garments.length === 0)
+                  (step === 1 && !serviceType) ||
+                  (step === 2 && garments.length === 0) ||
+                  (step === 6 && !cardDetails.from.trim())
                 }
               >
                 {t.next}
