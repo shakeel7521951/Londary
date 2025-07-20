@@ -38,8 +38,8 @@ const Navbar = () => {
 
   // Arabic nav label to route mapping
   const arNavLinkRoutes = {
-    "الرئيسية": "/home",
-    "الخدمات": "/services",
+    الرئيسية: "/home",
+    الخدمات: "/services",
     "من نحن": "/about",
     "اتصل بنا": "/contact",
   };
@@ -126,7 +126,10 @@ const Navbar = () => {
             {isAuthenticated ? (
               <UserProfileDropdown user={currentUser} />
             ) : (
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <Link
                   to="/login"
                   className={`px-6 py-2.5 text-sm font-medium rounded-full transition-all duration-300 ${
@@ -189,117 +192,156 @@ const Navbar = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, height: 0, y: -20 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -20 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
               className="lg:hidden overflow-hidden"
             >
               <div
-                className={`pt-4 pb-8 space-y-4 ${
+                className={`mt-4 mx-2 rounded-2xl border backdrop-blur-xl shadow-2xl ${
                   scrolled
-                    ? "bg-black/20 backdrop-blur-sm rounded-b-lg mx-2"
-                    : ""
+                    ? "bg-black/40 border-white/10 shadow-black/50"
+                    : "bg-black/60 border-[#D4AF37]/20 shadow-black/60"
                 }`}
               >
-                {t.navLinks.map((label, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ x: 20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Link
-                      to={getNavLinkPath(label)}
-                      className={`block px-3 py-3 text-white rounded-lg transition-all duration-300 ${
-                        scrolled
-                          ? "hover:bg-white/10 hover:backdrop-blur-sm"
-                          : "hover:bg-[#D4AF37]/10"
-                      }`}
+                {/* Navigation Links */}
+                <div className="p-6 space-y-2">
+                  {t.navLinks.map((label, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ x: -30, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.4, delay: idx * 0.1 }}
                     >
-                      {label}
-                    </Link>
-                  </motion.div>
-                ))}
+                      <Link
+                        to={getNavLinkPath(label)}
+                        onClick={() => setIsOpen(false)}
+                        className={`flex items-center px-4 py-3.5 text-white rounded-xl transition-all duration-300 group relative overflow-hidden ${
+                          scrolled
+                            ? "hover:bg-white/10 hover:shadow-lg active:bg-white/20"
+                            : "hover:bg-[#D4AF37]/10 hover:shadow-lg active:bg-[#D4AF37]/20"
+                        }`}
+                      >
+                        <span className="relative z-10 font-medium text-base">
+                          {label}
+                        </span>
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-transparent"
+                          initial={{ x: "-100%" }}
+                          whileHover={{ x: "0%" }}
+                          transition={{ duration: 0.3 }}
+                        />
+                        <motion.span
+                          className="ml-auto text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          whileHover={{ x: 5 }}
+                        >
+                          →
+                        </motion.span>
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
 
-                <div className="pt-4 mt-4 border-t border-[#D4AF37]/20 space-y-4">
+                {/* Divider */}
+                <div className="mx-6 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent"></div>
+
+                {/* Action Buttons */}
+                <div className="p-6 space-y-3">
                   {isAuthenticated ? (
                     <div className="space-y-4">
-                      <div className="px-3 py-3 text-white">
+                      {/* User Profile */}
+                      <motion.div
+                        initial={{ x: -30, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
+                        className="p-4 bg-gradient-to-r from-[#D4AF37]/10 to-transparent rounded-xl border border-[#D4AF37]/20"
+                      >
                         <div className="flex items-center space-x-3">
                           {currentUser?.profilePic ? (
                             <img
                               src={currentUser.profilePic}
                               alt={currentUser.name}
-                              className="w-8 h-8 rounded-full object-cover border-2 border-[#D4AF37]"
+                              className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37] shadow-lg"
                             />
                           ) : (
-                            <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center text-[#1a1a1a] font-medium text-sm">
-                              {currentUser?.name?.charAt(0)?.toUpperCase() || "U"}
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F4D03F] flex items-center justify-center text-[#1a1a1a] font-bold text-base shadow-lg">
+                              {currentUser?.name?.charAt(0)?.toUpperCase() ||
+                                "U"}
                             </div>
                           )}
-                          <div>
-                            <p className="text-sm font-medium">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-white font-medium text-sm truncate">
                               {currentUser?.name || "User"}
                             </p>
-                            <p className="text-xs text-gray-300">
+                            <p className="text-gray-300 text-xs truncate">
                               {currentUser?.email}
                             </p>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
 
+                      {/* Dashboard Link for Admin */}
                       {currentUser?.role === "admin" && (
                         <motion.div
-                          initial={{ x: 20, opacity: 0 }}
+                          initial={{ x: -30, opacity: 0 }}
                           animate={{ x: 0, opacity: 1 }}
-                          transition={{ duration: 0.3, delay: 0.1 }}
+                          transition={{ duration: 0.4, delay: 0.5 }}
                         >
                           <Link
                             to="/dashboard"
-                            className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center justify-center px-4 py-3.5 text-white border-2 border-[#D4AF37]/50 rounded-xl hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] transition-all duration-300 font-medium"
                           >
-                            {t.dashboard}
+                            <span>{t.dashboard}</span>
                           </Link>
                         </motion.div>
                       )}
                     </div>
                   ) : (
                     <motion.div
-                      initial={{ x: 20, opacity: 0 }}
+                      initial={{ x: -30, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
+                      transition={{ duration: 0.4, delay: 0.4 }}
                     >
                       <Link
                         to="/login"
-                        className="block px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center justify-center px-4 py-3.5 text-white border-2 border-[#D4AF37]/50 rounded-xl hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] transition-all duration-300 font-medium"
                       >
-                        {t.login}
+                        <span>{t.login}</span>
                       </Link>
                     </motion.div>
                   )}
 
+                  {/* Book Now Button */}
                   <motion.div
-                    initial={{ x: 20, opacity: 0 }}
+                    initial={{ x: -30, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.15 }}
+                    transition={{ duration: 0.4, delay: 0.5 }}
                   >
                     <Link
                       to="/book-now"
-                      className="block px-3 py-3 text-center text-[#1a1a1a] bg-[#D4AF37] rounded-lg hover:bg-[#c9a227] transition-colors"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-center px-4 py-4 text-[#1a1a1a] bg-gradient-to-r from-[#D4AF37] to-[#F4D03F] rounded-xl hover:from-[#F4D03F] hover:to-[#D4AF37] transition-all duration-300 font-bold text-base shadow-xl shadow-[#D4AF37]/30 transform hover:scale-105 active:scale-95"
                     >
-                      {t.bookNow}
+                      <span>{t.bookNow}</span>
                     </Link>
                   </motion.div>
 
+                  {/* Language Toggle */}
                   <motion.button
-                    onClick={() => dispatch(toggleLanguage())}
-                    className="block w-full px-3 py-3 text-center text-white border border-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/10 transition-colors"
-                    initial={{ x: 20, opacity: 0 }}
+                    onClick={() => {
+                      dispatch(toggleLanguage());
+                      setIsOpen(false);
+                    }}
+                    className="flex items-center justify-center w-full px-4 py-3.5 text-white border-2 border-[#D4AF37]/50 rounded-xl hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] transition-all duration-300 font-medium"
+                    initial={{ x: -30, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.2 }}
+                    transition={{ duration: 0.4, delay: 0.6 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    {t.languageToggle}
+                    <span>{t.languageToggle}</span>
                   </motion.button>
                 </div>
               </div>
