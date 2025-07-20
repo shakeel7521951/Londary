@@ -85,8 +85,7 @@ const PackagingOptions = () => {
         },
         {
           title: "علبة هدية فاخرة",
-          description:
-            "صندوق خشبي مصنوع يدويًا ببطانة مخملية وكبسولة عطرية.",
+          description: "صندوق خشبي مصنوع يدويًا ببطانة مخملية وكبسولة عطرية.",
           price: "+٥٠ ريال",
           features: [
             "مصنوع من خشب الصندل",
@@ -106,8 +105,8 @@ const PackagingOptions = () => {
     id: ["plastic", "fabric", "box"][i],
     image: [
       "./home/professionalCollection.jpg",
-      "./home/febricRap.jpg",
-      "./home/sehedulePickup.jpg",
+      "./home/package.jpg",
+      "./home/middle.jpg",
     ][i],
   }));
 
@@ -165,7 +164,7 @@ const PackagingOptions = () => {
                 }`}
               >
                 {/* Image */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-94 overflow-hidden">
                   <motion.img
                     src={option.image}
                     alt={option.title}
