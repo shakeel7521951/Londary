@@ -924,25 +924,29 @@ ${
   // Step components
   const Step1 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-xl font-light text-gray-700">
+      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
         {language === "ar" ? "اختر نوع الخدمة:" : "Choose Service Type:"}
       </h3>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {serviceOptions.map((option) => (
           <motion.div
             key={option.id}
-            whileHover={{ scale: 1.03 }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`p-6 border rounded-xl cursor-pointer transition-all ${
+            className={`p-4 sm:p-6 border rounded-xl cursor-pointer transition-all min-h-[120px] flex items-center ${
               serviceType === option.id
-                ? "border-[#D4AF37] bg-[#FFF9E6]"
-                : "border-gray-200 hover:border-gray-300"
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
             }`}
             onClick={() => setServiceType(option.id)}
           >
-            <div className="flex flex-col items-center text-center">
-              <h4 className="font-medium text-lg">{option.name}</h4>
-              <p className="text-sm text-gray-600 mt-2">{option.description}</p>
+            <div className="flex flex-col items-center text-center w-full">
+              <h4 className="font-medium text-base sm:text-lg">
+                {option.name}
+              </h4>
+              <p className="text-xs sm:text-sm text-gray-600 mt-2 leading-relaxed">
+                {option.description}
+              </p>
             </div>
           </motion.div>
         ))}
@@ -952,28 +956,33 @@ ${
 
   const Step2 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-xl font-light text-gray-700">{t.garmentsQuestion}</h3>
+      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
+        {t.garmentsQuestion}
+      </h3>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         {Object.entries(garmentTypes).map(([category, items]) => (
-          <div key={category}>
-            <h4 className="font-medium mb-2">{category}</h4>
+          <div key={category} className="space-y-3">
+            <h4 className="font-medium text-base sm:text-lg mb-3 text-center sm:text-left">
+              {category}
+            </h4>
             <div className="space-y-2">
               {items.map((item) => (
                 <motion.button
                   key={item}
-                  whileHover={{ x: language === "ar" ? -5 : 5 }}
+                  whileHover={{ x: language === "ar" ? -3 : 3 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
-                  className={`flex items-center w-full p-3 border border-gray-200 rounded-lg hover:bg-gray-50 ${
+                  className={`flex items-center w-full p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all ${
                     language === "ar" ? "text-right" : "text-left"
                   }`}
                   onClick={() => addGarment(item)}
                 >
-                  <span>{item}</span>
+                  <span className="text-sm sm:text-base flex-1">{item}</span>
                   <svg
-                    className={`w-5 h-5 ${
+                    className={`w-4 h-4 sm:w-5 sm:h-5 ${
                       language === "ar" ? "mr-auto" : "ml-auto"
-                    } text-[#D4AF37]`}
+                    } text-[#D4AF37] flex-shrink-0`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -993,17 +1002,19 @@ ${
       </div>
 
       {garments.length > 0 && (
-        <div className="mt-8">
-          <h4 className="font-medium mb-3">
+        <div className="mt-6 sm:mt-8">
+          <h4 className="font-medium mb-3 text-base sm:text-lg text-center sm:text-left">
             {language === "ar" ? "ملابسك" : "Your Garments"}
           </h4>
           <div className="space-y-3">
             {garments.map((garment, index) => (
               <div
                 key={index}
-                className="flex items-center p-3 bg-gray-50 rounded-lg"
+                className="flex items-center p-3 sm:p-4 bg-gray-50 rounded-lg gap-3"
               >
-                <span className="flex-grow">{garment.type}</span>
+                <span className="flex-grow text-sm sm:text-base truncate">
+                  {garment.type}
+                </span>
                 <input
                   type="number"
                   min="1"
@@ -1011,17 +1022,15 @@ ${
                   onChange={(e) =>
                     updateQuantity(index, parseInt(e.target.value))
                   }
-                  className="w-16 p-2 border border-gray-300 rounded text-center"
+                  className="w-14 sm:w-16 p-2 border border-gray-300 rounded text-center text-sm flex-shrink-0"
                 />
                 <button
                   type="button"
                   onClick={() => removeGarment(index)}
-                  className={`${
-                    language === "ar" ? "mr-3" : "ml-3"
-                  } text-red-500 hover:text-red-700`}
+                  className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4 sm:w-5 sm:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1044,23 +1053,31 @@ ${
 
   const Step3 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-xl font-light text-gray-700">{t.steamQuestion}</h3>
-      <div className="flex space-x-4">
+      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
+        {t.steamQuestion}
+      </h3>
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="button"
-          className={`px-6 py-3 rounded-lg border ${
-            steamFinish ? "border-[#D4AF37] bg-[#FFF9E6]" : "border-gray-200"
+          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+            steamFinish
+              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+              : "border-gray-200 hover:border-gray-300"
           }`}
           onClick={() => setSteamFinish(true)}
         >
           {t.yes}
         </motion.button>
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="button"
-          className={`px-6 py-3 rounded-lg border ${
-            !steamFinish ? "border-[#D4AF37] bg-[#FFF9E6]" : "border-gray-200"
+          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+            !steamFinish
+              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+              : "border-gray-200 hover:border-gray-300"
           }`}
           onClick={() => setSteamFinish(false)}
         >
@@ -1069,27 +1086,33 @@ ${
       </div>
 
       {/* Add incense option */}
-      <h3 className="text-xl font-light text-gray-700">
+      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
         {language === "ar"
           ? "هل تريد خدمة البخور؟"
           : "Do you want incense service?"}
       </h3>
-      <div className="flex space-x-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="button"
-          className={`px-6 py-3 rounded-lg border ${
-            incenseFinish ? "border-[#D4AF37] bg-[#FFF9E6]" : "border-gray-200"
+          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+            incenseFinish
+              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+              : "border-gray-200 hover:border-gray-300"
           }`}
           onClick={() => setIncenseFinish(true)}
         >
           {language === "ar" ? "نعم" : "Yes"}
         </motion.button>
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="button"
-          className={`px-6 py-3 rounded-lg border ${
-            !incenseFinish ? "border-[#D4AF37] bg-[#FFF9E6]" : "border-gray-200"
+          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+            !incenseFinish
+              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+              : "border-gray-200 hover:border-gray-300"
           }`}
           onClick={() => setIncenseFinish(false)}
         >
@@ -1101,27 +1124,30 @@ ${
 
   const Step4 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-xl font-light text-gray-700">
+      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
         {t.fragranceQuestion}
       </h3>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
         {Object.entries(fragranceOptions).map(([gender, options]) => (
-          <div key={gender}>
-            <h4 className="font-medium mb-2">{gender}</h4>
+          <div key={gender} className="space-y-3">
+            <h4 className="font-medium text-base sm:text-lg mb-3 text-center sm:text-left">
+              {gender}
+            </h4>
             <div className="space-y-2">
               {options.map((option) => (
                 <motion.button
                   key={option.id}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.98 }}
                   type="button"
-                  className={`w-full p-4 text-left border rounded-lg ${
+                  className={`w-full p-3 sm:p-4 border rounded-lg transition-all text-sm sm:text-base ${
                     fragrance === option.id
-                      ? "border-[#D4AF37] bg-[#FFF9E6]"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                      : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
                   } ${language === "ar" ? "text-right" : "text-left"}`}
                   onClick={() => setFragrance(option.id)}
                 >
-                  {option.name}
+                  <span className="block">{option.name}</span>
                 </motion.button>
               ))}
             </div>
@@ -1133,30 +1159,37 @@ ${
 
   const Step5 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-xl font-light text-gray-700">
+      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
         {t.packagingQuestion}
       </h3>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {packagingOptions.map((option) => (
           <motion.div
             key={option.id}
-            whileHover={{ scale: 1.03 }}
-            className={`p-6 border rounded-xl cursor-pointer ${
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`p-4 sm:p-6 border rounded-xl cursor-pointer transition-all min-h-[140px] flex flex-col justify-between ${
               packaging === option.id
-                ? "border-[#D4AF37] bg-[#FFF9E6]"
-                : "border-gray-200 hover:border-gray-300"
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
             }`}
             onClick={() => setPackaging(option.id)}
           >
-            <h4 className="font-medium">{option.name}</h4>
-            <p className="text-sm text-gray-600 mt-1">{option.desc}</p>
+            <div className="text-center">
+              <h4 className="font-medium text-sm sm:text-base mb-2">
+                {option.name}
+              </h4>
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                {option.desc}
+              </p>
+            </div>
             {option.id === "fabric" && (
-              <p className="text-[#D4AF37] text-sm mt-2">
+              <p className="text-[#D4AF37] text-xs sm:text-sm mt-3 text-center font-medium">
                 +15 {language === "ar" ? "ريال" : "QAR"}
               </p>
             )}
             {option.id === "box" && (
-              <p className="text-[#D4AF37] text-sm mt-2">
+              <p className="text-[#D4AF37] text-xs sm:text-sm mt-3 text-center font-medium">
                 +30 {language === "ar" ? "ريال" : "QAR"}
               </p>
             )}
@@ -1177,10 +1210,12 @@ ${
   const Step6 = useMemo(
     () => (
       <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-        <h3 className="text-xl font-light text-gray-700">{t.cardQuestion}</h3>
+        <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
+          {t.cardQuestion}
+        </h3>
         <div className="space-y-4">
           <div>
-            <label className="block mb-1">
+            <label className="block mb-2 text-sm sm:text-base font-medium">
               {t.from} <span className="text-red-500">*</span>
             </label>
             <input
@@ -1190,7 +1225,7 @@ ${
               }
               value={cardDetails.from}
               onChange={handleCardFromChange}
-              className={`w-full p-3 border rounded-lg ${
+              className={`w-full p-3 sm:p-4 border rounded-lg text-sm sm:text-base transition-all ${
                 cardDetails.from.trim()
                   ? "border-gray-300 focus:border-[#D4AF37]"
                   : "border-red-300 focus:border-red-500"
@@ -1202,11 +1237,15 @@ ${
               required
             />
             {!cardDetails.from.trim() && (
-              <p className="text-red-500 text-sm mt-1">{t.fieldRequired}</p>
+              <p className="text-red-500 text-xs sm:text-sm mt-1">
+                {t.fieldRequired}
+              </p>
             )}
           </div>
           <div>
-            <label className="block mb-1">{t.to}</label>
+            <label className="block mb-2 text-sm sm:text-base font-medium">
+              {t.to}
+            </label>
             <input
               type="text"
               placeholder={
@@ -1216,7 +1255,7 @@ ${
               }
               value={cardDetails.to}
               onChange={handleCardToChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:border-[#D4AF37] focus:outline-none focus:ring-1 focus:ring-[#D4AF37]"
+              className="w-full p-3 sm:p-4 border border-gray-300 rounded-lg focus:border-[#D4AF37] focus:outline-none focus:ring-1 focus:ring-[#D4AF37] text-sm sm:text-base transition-all"
             />
           </div>
         </div>
@@ -1234,12 +1273,16 @@ ${
 
   const Step7 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-xl font-light text-gray-700">{t.summaryTitle}</h3>
-      <div className="bg-gray-50 p-6 rounded-lg">
+      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
+        {t.summaryTitle}
+      </h3>
+      <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
         <div className="space-y-4">
-          <div className="flex justify-between border-b pb-2">
-            <span className="font-medium">{t.serviceType}</span>
-            <span>
+          <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
+            <span className="font-medium text-sm sm:text-base">
+              {t.serviceType}
+            </span>
+            <span className="text-sm sm:text-base break-words">
               {serviceType === "iron"
                 ? language === "ar"
                   ? "كي فقط"
@@ -1256,17 +1299,22 @@ ${
             </span>
           </div>
 
-          <div className="border-b pb-2">
-            <p className="font-medium mb-2">{t.garments}</p>
-            <ul className="space-y-1">
+          <div className="border-b pb-3">
+            <p className="font-medium mb-3 text-sm sm:text-base">
+              {t.garments}
+            </p>
+            <ul className="space-y-2">
               {garments.map((g, i) => {
                 const priceInfo = garmentPrices[g.type];
                 const itemPrice = priceInfo ? priceInfo[serviceType] || 0 : 0;
                 const totalItemPrice = itemPrice * g.quantity;
                 return (
-                  <li key={i} className="flex justify-between">
-                    <span>{g.type}</span>
-                    <span>
+                  <li
+                    key={i}
+                    className="flex flex-col sm:flex-row sm:justify-between gap-1 text-xs sm:text-sm"
+                  >
+                    <span className="break-words">{g.type}</span>
+                    <span className="font-medium">
                       {g.quantity} {t.pcs} - {totalItemPrice}{" "}
                       {language === "ar" ? "ريال" : "QAR"}
                     </span>
@@ -1277,9 +1325,9 @@ ${
           </div>
 
           {steamFinish && (
-            <div className="flex justify-between border-b pb-2">
-              <span>{t.steamFinishing}</span>
-              <span>
+            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
+              <span className="text-sm sm:text-base">{t.steamFinishing}</span>
+              <span className="text-sm sm:text-base font-medium">
                 {garments.reduce((total, g) => {
                   const priceInfo = garmentPrices[g.type];
                   return total + (priceInfo?.steam || 0) * g.quantity;
@@ -1290,9 +1338,11 @@ ${
           )}
 
           {incenseFinish && (
-            <div className="flex justify-between border-b pb-2">
-              <span>{language === "ar" ? "البخور" : "Incense"}</span>
-              <span>
+            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
+              <span className="text-sm sm:text-base">
+                {language === "ar" ? "البخور" : "Incense"}
+              </span>
+              <span className="text-sm sm:text-base font-medium">
                 {garments.reduce((total, g) => {
                   const priceInfo = garmentPrices[g.type];
                   return total + (priceInfo?.incense || 0) * g.quantity;
@@ -1303,55 +1353,69 @@ ${
           )}
 
           {fragrance && (
-            <div className="flex justify-between border-b pb-2">
-              <span>{t.fragrance}</span>
-              <span>
-                {
-                  fragranceOptions[
-                    fragrance.includes("orchid") ? t.womens : t.mens
-                  ].find((f) => f.id === fragrance).name
-                }{" "}
-                -{" "}
-                {garments.reduce((total, g) => {
-                  const priceInfo = garmentPrices[g.type];
-                  return total + (priceInfo?.perfume || 0) * g.quantity;
-                }, 0)}{" "}
-                {language === "ar" ? "ريال" : "QAR"}
-              </span>
+            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
+              <span className="text-sm sm:text-base">{t.fragrance}</span>
+              <div className="text-xs sm:text-sm">
+                <div className="break-words">
+                  {
+                    fragranceOptions[
+                      fragrance.includes("orchid") ? t.womens : t.mens
+                    ].find((f) => f.id === fragrance).name
+                  }
+                </div>
+                <div className="font-medium">
+                  {garments.reduce((total, g) => {
+                    const priceInfo = garmentPrices[g.type];
+                    return total + (priceInfo?.perfume || 0) * g.quantity;
+                  }, 0)}{" "}
+                  {language === "ar" ? "ريال" : "QAR"}
+                </div>
+              </div>
             </div>
           )}
 
           {packaging && (
-            <div className="flex justify-between border-b pb-2">
-              <span>{t.packaging}</span>
-              <span>
-                {packagingOptions.find((p) => p.id === packaging).name}
-                {packaging === "fabric"
-                  ? ` (+15 ${language === "ar" ? "ريال" : "QAR"})`
-                  : packaging === "box"
-                  ? ` (+30 ${language === "ar" ? "ريال" : "QAR"})`
-                  : ""}
-              </span>
+            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
+              <span className="text-sm sm:text-base">{t.packaging}</span>
+              <div className="text-xs sm:text-sm">
+                <div className="break-words">
+                  {packagingOptions.find((p) => p.id === packaging).name}
+                </div>
+                {packaging === "fabric" && (
+                  <div className="font-medium">
+                    (+15 {language === "ar" ? "ريال" : "QAR"})
+                  </div>
+                )}
+                {packaging === "box" && (
+                  <div className="font-medium">
+                    (+30 {language === "ar" ? "ريال" : "QAR"})
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
           {cardDetails.from && (
-            <div className="border-b pb-2">
-              <p className="font-medium">{t.personalizedCard}</p>
-              <p>
-                {t.from}: {cardDetails.from}
+            <div className="border-b pb-3">
+              <p className="font-medium text-sm sm:text-base mb-2">
+                {t.personalizedCard}
               </p>
-              {cardDetails.to && (
-                <p>
-                  {t.to}: {cardDetails.to}
+              <div className="text-xs sm:text-sm space-y-1">
+                <p className="break-words">
+                  {t.from}: {cardDetails.from}
                 </p>
-              )}
+                {cardDetails.to && (
+                  <p className="break-words">
+                    {t.to}: {cardDetails.to}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
-          <div className="flex justify-between font-bold text-lg">
+          <div className="flex flex-col sm:flex-row sm:justify-between font-bold text-lg sm:text-xl gap-2">
             <span>{t.total}</span>
-            <span>
+            <span className="text-[#D4AF37]">
               {calculateTotal()} {language === "ar" ? "ريال" : "QAR"}
             </span>
           </div>
@@ -1359,9 +1423,9 @@ ${
       </div>
 
       <motion.button
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.98 }}
-        className="w-full py-3 bg-[#D4AF37] text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-3 sm:py-4 bg-[#D4AF37] text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base transition-all"
         onClick={handleSubmit}
         disabled={isCreatingOrder}
       >
@@ -1394,7 +1458,7 @@ ${
 
   return (
     <div
-      className="min-h-screen py-12 pt-20 px-4 sm:px-6 lg:px-8 relative"
+      className="min-h-screen py-8 sm:py-12 pt-16 sm:pt-20 px-3 sm:px-4 lg:px-8 relative"
       style={{
         background:
           "linear-gradient(to bottom, #2C2416 0%, #4A3B2A 30%, #6B5B47 60%, #f9f7f4 100%)",
@@ -1405,15 +1469,15 @@ ${
 
       {/* Decorative elements */}
       <div className="absolute inset-0 opacity-15 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/3 w-24 h-24 rounded-full bg-[#B8941F] mix-blend-multiply filter blur-2xl animate-pulse delay-1000"></div>
-        <div className="absolute bottom-1/4 left-1/2 w-40 h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse delay-2000"></div>
-        <div className="absolute top-1/2 right-1/4 w-28 h-28 rounded-full bg-[#F4E4B8] mix-blend-multiply filter blur-2xl animate-pulse delay-3000"></div>
+        <div className="absolute top-1/4 left-1/4 w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/3 w-16 sm:w-24 h-16 sm:h-24 rounded-full bg-[#B8941F] mix-blend-multiply filter blur-2xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-1/4 left-1/2 w-28 sm:w-40 h-28 sm:h-40 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute top-1/2 right-1/4 w-20 sm:w-28 h-20 sm:h-28 rounded-full bg-[#F4E4B8] mix-blend-multiply filter blur-2xl animate-pulse delay-3000"></div>
       </div>
 
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden relative z-10">
+      <div className="max-w-2xl sm:max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden relative z-10">
         {/* Progress bar */}
-        <div className="bg-gray-100 h-2">
+        <div className="bg-gray-100 h-1.5 sm:h-2">
           <div
             className="bg-[#D4AF37] h-full transition-all duration-300"
             style={{ width: `${(step / 7) * 100}%` }}
@@ -1422,30 +1486,32 @@ ${
 
         {/* Header */}
         <div
-          className="p-6 text-center"
+          className="p-4 sm:p-6 text-center"
           style={{
             background:
               "linear-gradient(135deg, #2C2416 0%, #4A3B2A 50%, #6B5B47 100%)",
           }}
         >
-          <h2 className="text-2xl font-light text-[#D4AF37]">{t.title}</h2>
-          <p className="text-gray-300 mt-1">
+          <h2 className="text-lg sm:text-2xl font-light text-[#D4AF37]">
+            {t.title}
+          </h2>
+          <p className="text-gray-300 mt-1 text-sm sm:text-base">
             {t.step} {step} {t.of} 7
           </p>
         </div>
 
         {/* Form content */}
-        <div className="p-6 sm:p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {renderStep()}
 
           {/* Navigation buttons */}
-          <div className="mt-8 flex justify-between">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
             {step > 1 && (
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 type="button"
-                className="px-6 py-2 border border-gray-300 rounded-lg"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base font-medium transition-all"
                 onClick={() => setStep(step - 1)}
               >
                 {t.back}
@@ -1454,15 +1520,15 @@ ${
 
             {step < 7 && (
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 type="button"
-                className={`ml-auto px-6 py-2 rounded-lg ${
+                className={`w-full sm:w-auto sm:ml-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
                   (step === 1 && !serviceType) ||
                   (step === 2 && garments.length === 0) ||
                   (step === 6 && !cardDetails.from.trim())
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-[#D4AF37] text-white"
+                    ? "bg-gray-300 cursor-not-allowed text-gray-600"
+                    : "bg-[#D4AF37] text-white hover:bg-[#c9a227]"
                 }`}
                 onClick={() => setStep(step + 1)}
                 disabled={

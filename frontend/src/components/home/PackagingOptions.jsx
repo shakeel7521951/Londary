@@ -105,7 +105,7 @@ const PackagingOptions = () => {
     id: ["plastic", "fabric", "box"][i],
     image: [
       "./home/professionalCollection.jpg",
-      "./home/left.jpg",
+      "./home/package.jpg",
       "./home/middle.jpg",
     ][i],
   }));
@@ -164,7 +164,7 @@ const PackagingOptions = () => {
                 }`}
               >
                 {/* Image */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-94 overflow-hidden">
                   <motion.img
                     src={option.image}
                     alt={option.title}
