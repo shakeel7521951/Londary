@@ -700,7 +700,20 @@ const OrderPage = () => {
 
   // Helper functions
   const addGarment = (type) => {
-    setGarments([...garments, { type, quantity: 1 }]);
+    // Check if the garment already exists
+    const existingIndex = garments.findIndex(
+      (garment) => garment.type === type
+    );
+
+    if (existingIndex !== -1) {
+      // If garment exists, increase quantity
+      const updated = [...garments];
+      updated[existingIndex].quantity += 1;
+      setGarments(updated);
+    } else {
+      // If garment doesn't exist, add new entry
+      setGarments([...garments, { type, quantity: 1 }]);
+    }
   };
 
   const updateQuantity = (index, value) => {
@@ -1000,54 +1013,6 @@ ${
           </div>
         ))}
       </div>
-
-      {garments.length > 0 && (
-        <div className="mt-6 sm:mt-8">
-          <h4 className="font-medium mb-3 text-base sm:text-lg text-center sm:text-left">
-            {language === "ar" ? "ملابسك" : "Your Garments"}
-          </h4>
-          <div className="space-y-3">
-            {garments.map((garment, index) => (
-              <div
-                key={index}
-                className="flex items-center p-3 sm:p-4 bg-gray-50 rounded-lg gap-3"
-              >
-                <span className="flex-grow text-sm sm:text-base truncate">
-                  {garment.type}
-                </span>
-                <input
-                  type="number"
-                  min="1"
-                  value={garment.quantity}
-                  onChange={(e) =>
-                    updateQuantity(index, parseInt(e.target.value))
-                  }
-                  className="w-14 sm:w-16 p-2 border border-gray-300 rounded text-center text-sm flex-shrink-0"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeGarment(index)}
-                  className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
-                >
-                  <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -1293,213 +1258,143 @@ ${
 
   // Dynamic Receipt Component
   const DynamicReceipt = () => (
-    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 sticky top-20 max-h-[80vh] overflow-hidden">
-      <h3 className="text-lg sm:text-xl font-bold text-center mb-4 text-[#D4AF37]">
-        {t.summaryTitle}
-      </h3>
+    <div className="bg-white rounded-xl shadow-lg sticky top-20 max-h-[85vh] overflow-hidden flex flex-col">
+      {/* Fixed Header */}
+      <div className="p-4 sm:p-6 border-b border-gray-100">
+        <h3 className="text-lg sm:text-xl font-bold text-center text-[#D4AF37]">
+          {t.summaryTitle}
+        </h3>
+      </div>
 
-      <div className="space-y-3">
-        {/* Service Type */}
-        {serviceType && (
-          <div className="flex justify-between items-center border-b pb-2">
-            <span className="text-sm font-medium">{t.serviceType}</span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm">
-                {serviceType === "iron"
-                  ? language === "ar"
-                    ? "كي فقط"
-                    : "Iron Only"
-                  : serviceType === "wash_iron"
-                  ? language === "ar"
-                    ? "غسيل وكي"
-                    : "Washing & Iron"
-                  : serviceType === "dry_clean"
-                  ? language === "ar"
-                    ? "تنظيف جاف"
-                    : "Dry Clean"
-                  : serviceType}
-              </span>
-              <button
-                onClick={() => setServiceType("")}
-                className="text-red-500 hover:text-red-700 p-1"
-                title={language === "ar" ? "حذف" : "Remove"}
-              >
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto scrollbar-hide p-4 sm:p-6">
+        <div className="space-y-3">
+          {/* Service Type */}
+          {serviceType && (
+            <div className="flex justify-between items-center border-b pb-2">
+              <span className="text-sm font-medium">{t.serviceType}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm">
+                  {serviceType === "iron"
+                    ? language === "ar"
+                      ? "كي فقط"
+                      : "Iron Only"
+                    : serviceType === "wash_iron"
+                    ? language === "ar"
+                      ? "غسيل وكي"
+                      : "Washing & Iron"
+                    : serviceType === "dry_clean"
+                    ? language === "ar"
+                      ? "تنظيف جاف"
+                      : "Dry Clean"
+                    : serviceType}
+                </span>
+                <button
+                  onClick={() => setServiceType("")}
+                  className="text-red-500 hover:text-red-700 p-1"
+                  title={language === "ar" ? "حذف" : "Remove"}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Garments */}
-        {garments.length > 0 && (
-          <div className="border-b pb-3">
-            <p className="font-medium mb-2 text-sm">{t.garments}</p>
-            <div className="space-y-2">
-              {garments.map((g, i) => {
-                const priceInfo = garmentPrices[g.type];
-                const itemPrice =
-                  priceInfo && serviceType ? priceInfo[serviceType] || 0 : 0;
-                const totalItemPrice = itemPrice * g.quantity;
-                return (
-                  <div key={i} className="bg-gray-50 rounded-lg p-2">
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="text-xs font-medium truncate pr-2 flex-1">
-                        {g.type}
-                      </span>
-                      <button
-                        onClick={() => removeGarment(i)}
-                        className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
-                        title={language === "ar" ? "حذف" : "Remove"}
-                      >
-                        <svg
-                          className="w-3 h-3"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() =>
-                            updateQuantity(i, Math.max(1, g.quantity - 1))
-                          }
-                          className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold transition-colors"
-                          disabled={g.quantity <= 1}
-                        >
-                          -
-                        </button>
-                        <span className="text-xs font-medium min-w-[20px] text-center">
-                          {g.quantity}
+          {/* Garments */}
+          {garments.length > 0 && (
+            <div className="border-b pb-3">
+              <p className="font-medium mb-2 text-sm">{t.garments}</p>
+              <div className="space-y-2">
+                {garments.map((g, i) => {
+                  const priceInfo = garmentPrices[g.type];
+                  const itemPrice =
+                    priceInfo && serviceType ? priceInfo[serviceType] || 0 : 0;
+                  const totalItemPrice = itemPrice * g.quantity;
+                  return (
+                    <div key={i} className="bg-gray-50 rounded-lg p-2">
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="text-xs font-medium truncate pr-2 flex-1">
+                          {g.type}
                         </span>
                         <button
-                          onClick={() => updateQuantity(i, g.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold transition-colors"
+                          onClick={() => removeGarment(i)}
+                          className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+                          title={language === "ar" ? "حذف" : "Remove"}
                         >
-                          +
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
                         </button>
                       </div>
-                      <span className="text-xs font-medium">
-                        {totalItemPrice} {language === "ar" ? "ريال" : "QAR"}
-                      </span>
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() =>
+                              updateQuantity(i, Math.max(1, g.quantity - 1))
+                            }
+                            className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold transition-colors"
+                            disabled={g.quantity <= 1}
+                          >
+                            -
+                          </button>
+                          <span className="text-xs font-medium min-w-[20px] text-center">
+                            {g.quantity}
+                          </span>
+                          <button
+                            onClick={() => updateQuantity(i, g.quantity + 1)}
+                            className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="text-xs font-medium">
+                          {totalItemPrice} {language === "ar" ? "ريال" : "QAR"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Steam Finishing */}
-        {steamFinish && garments.length > 0 && (
-          <div className="flex justify-between items-center border-b pb-2">
-            <span className="text-sm">{t.steamFinishing}</span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">
-                +
-                {garments.reduce((total, g) => {
-                  const priceInfo = garmentPrices[g.type];
-                  return total + (priceInfo?.steam || 0) * g.quantity;
-                }, 0)}{" "}
-                {language === "ar" ? "ريال" : "QAR"}
-              </span>
-              <button
-                onClick={() => setSteamFinish(false)}
-                className="text-red-500 hover:text-red-700 p-1"
-                title={language === "ar" ? "حذف" : "Remove"}
-              >
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Incense Service */}
-        {incenseFinish && garments.length > 0 && (
-          <div className="flex justify-between items-center border-b pb-2">
-            <span className="text-sm">
-              {language === "ar" ? "البخور" : "Incense"}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">
-                +
-                {garments.reduce((total, g) => {
-                  const priceInfo = garmentPrices[g.type];
-                  return total + (priceInfo?.incense || 0) * g.quantity;
-                }, 0)}{" "}
-                {language === "ar" ? "ريال" : "QAR"}
-              </span>
-              <button
-                onClick={() => setIncenseFinish(false)}
-                className="text-red-500 hover:text-red-700 p-1"
-                title={language === "ar" ? "حذف" : "Remove"}
-              >
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Fragrance */}
-        {fragrance && garments.length > 0 && (
-          <div className="border-b pb-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">{t.fragrance}</span>
+          {/* Steam Finishing */}
+          {steamFinish && garments.length > 0 && (
+            <div className="flex justify-between items-center border-b pb-2">
+              <span className="text-sm">{t.steamFinishing}</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">
                   +
                   {garments.reduce((total, g) => {
                     const priceInfo = garmentPrices[g.type];
-                    return total + (priceInfo?.perfume || 0) * g.quantity;
+                    return total + (priceInfo?.steam || 0) * g.quantity;
                   }, 0)}{" "}
                   {language === "ar" ? "ريال" : "QAR"}
                 </span>
                 <button
-                  onClick={() => setFragrance("")}
+                  onClick={() => setSteamFinish(false)}
                   className="text-red-500 hover:text-red-700 p-1"
                   title={language === "ar" ? "حذف" : "Remove"}
                 >
@@ -1519,32 +1414,25 @@ ${
                 </button>
               </div>
             </div>
-            <div className="text-xs text-gray-600 mt-1">
-              {
-                fragranceOptions[
-                  fragrance.includes("orchid") ? t.womens : t.mens
-                ]?.find((f) => f.id === fragrance)?.name
-              }
-            </div>
-          </div>
-        )}
+          )}
 
-        {/* Packaging */}
-        {packaging && (
-          <div className="border-b pb-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">{t.packaging}</span>
+          {/* Incense Service */}
+          {incenseFinish && garments.length > 0 && (
+            <div className="flex justify-between items-center border-b pb-2">
+              <span className="text-sm">
+                {language === "ar" ? "البخور" : "Incense"}
+              </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium">
-                  {packaging === "fabric" &&
-                    "+15 " + (language === "ar" ? "ريال" : "QAR")}
-                  {packaging === "box" &&
-                    "+30 " + (language === "ar" ? "ريال" : "QAR")}
-                  {packaging === "plastic" &&
-                    (language === "ar" ? "مجاني" : "Free")}
+                  +
+                  {garments.reduce((total, g) => {
+                    const priceInfo = garmentPrices[g.type];
+                    return total + (priceInfo?.incense || 0) * g.quantity;
+                  }, 0)}{" "}
+                  {language === "ar" ? "ريال" : "QAR"}
                 </span>
                 <button
-                  onClick={() => setPackaging("")}
+                  onClick={() => setIncenseFinish(false)}
                   className="text-red-500 hover:text-red-700 p-1"
                   title={language === "ar" ? "حذف" : "Remove"}
                 >
@@ -1564,32 +1452,119 @@ ${
                 </button>
               </div>
             </div>
-            <div className="text-xs text-gray-600 mt-1">
-              {packagingOptions.find((p) => p.id === packaging)?.name}
-            </div>
-          </div>
-        )}
+          )}
 
-        {/* Personalized Card */}
-        {cardDetails.from && (
-          <div className="border-b pb-2">
-            <p className="font-medium text-sm mb-1">{t.personalizedCard}</p>
-            <div className="text-xs space-y-1">
-              <p>
-                {t.from}: {cardDetails.from}
+          {/* Fragrance */}
+          {fragrance && garments.length > 0 && (
+            <div className="border-b pb-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">{t.fragrance}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    +
+                    {garments.reduce((total, g) => {
+                      const priceInfo = garmentPrices[g.type];
+                      return total + (priceInfo?.perfume || 0) * g.quantity;
+                    }, 0)}{" "}
+                    {language === "ar" ? "ريال" : "QAR"}
+                  </span>
+                  <button
+                    onClick={() => setFragrance("")}
+                    className="text-red-500 hover:text-red-700 p-1"
+                    title={language === "ar" ? "حذف" : "Remove"}
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="text-xs text-gray-600 mt-1">
+                {
+                  fragranceOptions[
+                    fragrance.includes("orchid") ? t.womens : t.mens
+                  ]?.find((f) => f.id === fragrance)?.name
+                }
+              </div>
+            </div>
+          )}
+
+          {/* Packaging */}
+          {packaging && (
+            <div className="border-b pb-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm">{t.packaging}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    {packaging === "fabric" &&
+                      "+15 " + (language === "ar" ? "ريال" : "QAR")}
+                    {packaging === "box" &&
+                      "+30 " + (language === "ar" ? "ريال" : "QAR")}
+                    {packaging === "plastic" &&
+                      (language === "ar" ? "مجاني" : "Free")}
+                  </span>
+                  <button
+                    onClick={() => setPackaging("")}
+                    className="text-red-500 hover:text-red-700 p-1"
+                    title={language === "ar" ? "حذف" : "Remove"}
+                  >
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="text-xs text-gray-600 mt-1">
+                {packagingOptions.find((p) => p.id === packaging)?.name}
+              </div>
+            </div>
+          )}
+
+          {/* Personalized Card */}
+          {cardDetails.from && (
+            <div className="border-b border-gray-100 pb-3">
+              <p className="font-medium text-sm mb-2 text-gray-700">
+                {t.personalizedCard}
               </p>
-              {cardDetails.to && (
+              <div className="text-xs space-y-1 text-gray-600">
                 <p>
-                  {t.to}: {cardDetails.to}
+                  {t.from}: {cardDetails.from}
                 </p>
-              )}
+                {cardDetails.to && (
+                  <p>
+                    {t.to}: {cardDetails.to}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      </div>
 
-        {/* Total */}
-        <div className="flex justify-between font-bold text-lg pt-2 border-t-2 border-[#D4AF37]">
-          <span>{t.total}</span>
+      {/* Fixed Total Section */}
+      <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50">
+        <div className="flex justify-between font-bold text-lg mb-4">
+          <span className="text-gray-700">{t.total}</span>
           <span className="text-[#D4AF37]">
             {calculateTotal()} {language === "ar" ? "ريال" : "QAR"}
           </span>
@@ -1600,7 +1575,7 @@ ${
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="w-full mt-4 py-3 bg-[#D4AF37] text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all"
+            className="w-full py-3 bg-[#D4AF37] text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all shadow-lg hover:shadow-xl"
             onClick={handleSubmit}
             disabled={isCreatingOrder}
           >
