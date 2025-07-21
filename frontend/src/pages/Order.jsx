@@ -1271,169 +1271,6 @@ ${
     ]
   );
 
-  const Step7 = () => (
-    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
-        {t.summaryTitle}
-      </h3>
-      <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
-            <span className="font-medium text-sm sm:text-base">
-              {t.serviceType}
-            </span>
-            <span className="text-sm sm:text-base break-words">
-              {serviceType === "iron"
-                ? language === "ar"
-                  ? "كي فقط"
-                  : "Iron Only"
-                : serviceType === "wash_iron"
-                ? language === "ar"
-                  ? "غسيل وكي"
-                  : "Washing & Iron"
-                : serviceType === "dry_clean"
-                ? language === "ar"
-                  ? "تنظيف جاف"
-                  : "Dry Clean"
-                : serviceType}
-            </span>
-          </div>
-
-          <div className="border-b pb-3">
-            <p className="font-medium mb-3 text-sm sm:text-base">
-              {t.garments}
-            </p>
-            <ul className="space-y-2">
-              {garments.map((g, i) => {
-                const priceInfo = garmentPrices[g.type];
-                const itemPrice = priceInfo ? priceInfo[serviceType] || 0 : 0;
-                const totalItemPrice = itemPrice * g.quantity;
-                return (
-                  <li
-                    key={i}
-                    className="flex flex-col sm:flex-row sm:justify-between gap-1 text-xs sm:text-sm"
-                  >
-                    <span className="break-words">{g.type}</span>
-                    <span className="font-medium">
-                      {g.quantity} {t.pcs} - {totalItemPrice}{" "}
-                      {language === "ar" ? "ريال" : "QAR"}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          {steamFinish && (
-            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
-              <span className="text-sm sm:text-base">{t.steamFinishing}</span>
-              <span className="text-sm sm:text-base font-medium">
-                {garments.reduce((total, g) => {
-                  const priceInfo = garmentPrices[g.type];
-                  return total + (priceInfo?.steam || 0) * g.quantity;
-                }, 0)}{" "}
-                {language === "ar" ? "ريال" : "QAR"}
-              </span>
-            </div>
-          )}
-
-          {incenseFinish && (
-            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
-              <span className="text-sm sm:text-base">
-                {language === "ar" ? "البخور" : "Incense"}
-              </span>
-              <span className="text-sm sm:text-base font-medium">
-                {garments.reduce((total, g) => {
-                  const priceInfo = garmentPrices[g.type];
-                  return total + (priceInfo?.incense || 0) * g.quantity;
-                }, 0)}{" "}
-                {language === "ar" ? "ريال" : "QAR"}
-              </span>
-            </div>
-          )}
-
-          {fragrance && (
-            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
-              <span className="text-sm sm:text-base">{t.fragrance}</span>
-              <div className="text-xs sm:text-sm">
-                <div className="break-words">
-                  {
-                    fragranceOptions[
-                      fragrance.includes("orchid") ? t.womens : t.mens
-                    ].find((f) => f.id === fragrance).name
-                  }
-                </div>
-                <div className="font-medium">
-                  {garments.reduce((total, g) => {
-                    const priceInfo = garmentPrices[g.type];
-                    return total + (priceInfo?.perfume || 0) * g.quantity;
-                  }, 0)}{" "}
-                  {language === "ar" ? "ريال" : "QAR"}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {packaging && (
-            <div className="flex flex-col sm:flex-row sm:justify-between border-b pb-3 gap-1">
-              <span className="text-sm sm:text-base">{t.packaging}</span>
-              <div className="text-xs sm:text-sm">
-                <div className="break-words">
-                  {packagingOptions.find((p) => p.id === packaging).name}
-                </div>
-                {packaging === "fabric" && (
-                  <div className="font-medium">
-                    (+15 {language === "ar" ? "ريال" : "QAR"})
-                  </div>
-                )}
-                {packaging === "box" && (
-                  <div className="font-medium">
-                    (+30 {language === "ar" ? "ريال" : "QAR"})
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {cardDetails.from && (
-            <div className="border-b pb-3">
-              <p className="font-medium text-sm sm:text-base mb-2">
-                {t.personalizedCard}
-              </p>
-              <div className="text-xs sm:text-sm space-y-1">
-                <p className="break-words">
-                  {t.from}: {cardDetails.from}
-                </p>
-                {cardDetails.to && (
-                  <p className="break-words">
-                    {t.to}: {cardDetails.to}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-col sm:flex-row sm:justify-between font-bold text-lg sm:text-xl gap-2">
-            <span>{t.total}</span>
-            <span className="text-[#D4AF37]">
-              {calculateTotal()} {language === "ar" ? "ريال" : "QAR"}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <motion.button
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.98 }}
-        className="w-full py-3 sm:py-4 bg-[#D4AF37] text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base transition-all"
-        onClick={handleSubmit}
-        disabled={isCreatingOrder}
-      >
-        {isCreatingOrder ? t.placingOrder : t.confirmOrder}
-      </motion.button>
-    </div>
-  );
-
   // Render current step
   const renderStep = () => {
     switch (step) {
@@ -1449,12 +1286,330 @@ ${
         return <Step5 />;
       case 6:
         return Step6;
-      case 7:
-        return <Step7 />;
       default:
         return <Step1 />;
     }
   };
+
+  // Dynamic Receipt Component
+  const DynamicReceipt = () => (
+    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 sticky top-20 max-h-[80vh] overflow-hidden">
+      <h3 className="text-lg sm:text-xl font-bold text-center mb-4 text-[#D4AF37]">
+        {t.summaryTitle}
+      </h3>
+
+      <div className="space-y-3">
+        {/* Service Type */}
+        {serviceType && (
+          <div className="flex justify-between items-center border-b pb-2">
+            <span className="text-sm font-medium">{t.serviceType}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm">
+                {serviceType === "iron"
+                  ? language === "ar"
+                    ? "كي فقط"
+                    : "Iron Only"
+                  : serviceType === "wash_iron"
+                  ? language === "ar"
+                    ? "غسيل وكي"
+                    : "Washing & Iron"
+                  : serviceType === "dry_clean"
+                  ? language === "ar"
+                    ? "تنظيف جاف"
+                    : "Dry Clean"
+                  : serviceType}
+              </span>
+              <button
+                onClick={() => setServiceType("")}
+                className="text-red-500 hover:text-red-700 p-1"
+                title={language === "ar" ? "حذف" : "Remove"}
+              >
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Garments */}
+        {garments.length > 0 && (
+          <div className="border-b pb-3">
+            <p className="font-medium mb-2 text-sm">{t.garments}</p>
+            <div className="space-y-2">
+              {garments.map((g, i) => {
+                const priceInfo = garmentPrices[g.type];
+                const itemPrice =
+                  priceInfo && serviceType ? priceInfo[serviceType] || 0 : 0;
+                const totalItemPrice = itemPrice * g.quantity;
+                return (
+                  <div key={i} className="bg-gray-50 rounded-lg p-2">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="text-xs font-medium truncate pr-2 flex-1">
+                        {g.type}
+                      </span>
+                      <button
+                        onClick={() => removeGarment(i)}
+                        className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+                        title={language === "ar" ? "حذف" : "Remove"}
+                      >
+                        <svg
+                          className="w-3 h-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() =>
+                            updateQuantity(i, Math.max(1, g.quantity - 1))
+                          }
+                          className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold transition-colors"
+                          disabled={g.quantity <= 1}
+                        >
+                          -
+                        </button>
+                        <span className="text-xs font-medium min-w-[20px] text-center">
+                          {g.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(i, g.quantity + 1)}
+                          className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-xs font-bold transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <span className="text-xs font-medium">
+                        {totalItemPrice} {language === "ar" ? "ريال" : "QAR"}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Steam Finishing */}
+        {steamFinish && garments.length > 0 && (
+          <div className="flex justify-between items-center border-b pb-2">
+            <span className="text-sm">{t.steamFinishing}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">
+                +
+                {garments.reduce((total, g) => {
+                  const priceInfo = garmentPrices[g.type];
+                  return total + (priceInfo?.steam || 0) * g.quantity;
+                }, 0)}{" "}
+                {language === "ar" ? "ريال" : "QAR"}
+              </span>
+              <button
+                onClick={() => setSteamFinish(false)}
+                className="text-red-500 hover:text-red-700 p-1"
+                title={language === "ar" ? "حذف" : "Remove"}
+              >
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Incense Service */}
+        {incenseFinish && garments.length > 0 && (
+          <div className="flex justify-between items-center border-b pb-2">
+            <span className="text-sm">
+              {language === "ar" ? "البخور" : "Incense"}
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">
+                +
+                {garments.reduce((total, g) => {
+                  const priceInfo = garmentPrices[g.type];
+                  return total + (priceInfo?.incense || 0) * g.quantity;
+                }, 0)}{" "}
+                {language === "ar" ? "ريال" : "QAR"}
+              </span>
+              <button
+                onClick={() => setIncenseFinish(false)}
+                className="text-red-500 hover:text-red-700 p-1"
+                title={language === "ar" ? "حذف" : "Remove"}
+              >
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Fragrance */}
+        {fragrance && garments.length > 0 && (
+          <div className="border-b pb-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm">{t.fragrance}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  +
+                  {garments.reduce((total, g) => {
+                    const priceInfo = garmentPrices[g.type];
+                    return total + (priceInfo?.perfume || 0) * g.quantity;
+                  }, 0)}{" "}
+                  {language === "ar" ? "ريال" : "QAR"}
+                </span>
+                <button
+                  onClick={() => setFragrance("")}
+                  className="text-red-500 hover:text-red-700 p-1"
+                  title={language === "ar" ? "حذف" : "Remove"}
+                >
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="text-xs text-gray-600 mt-1">
+              {
+                fragranceOptions[
+                  fragrance.includes("orchid") ? t.womens : t.mens
+                ]?.find((f) => f.id === fragrance)?.name
+              }
+            </div>
+          </div>
+        )}
+
+        {/* Packaging */}
+        {packaging && (
+          <div className="border-b pb-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm">{t.packaging}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  {packaging === "fabric" &&
+                    "+15 " + (language === "ar" ? "ريال" : "QAR")}
+                  {packaging === "box" &&
+                    "+30 " + (language === "ar" ? "ريال" : "QAR")}
+                  {packaging === "plastic" &&
+                    (language === "ar" ? "مجاني" : "Free")}
+                </span>
+                <button
+                  onClick={() => setPackaging("")}
+                  className="text-red-500 hover:text-red-700 p-1"
+                  title={language === "ar" ? "حذف" : "Remove"}
+                >
+                  <svg
+                    className="w-3 h-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="text-xs text-gray-600 mt-1">
+              {packagingOptions.find((p) => p.id === packaging)?.name}
+            </div>
+          </div>
+        )}
+
+        {/* Personalized Card */}
+        {cardDetails.from && (
+          <div className="border-b pb-2">
+            <p className="font-medium text-sm mb-1">{t.personalizedCard}</p>
+            <div className="text-xs space-y-1">
+              <p>
+                {t.from}: {cardDetails.from}
+              </p>
+              {cardDetails.to && (
+                <p>
+                  {t.to}: {cardDetails.to}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Total */}
+        <div className="flex justify-between font-bold text-lg pt-2 border-t-2 border-[#D4AF37]">
+          <span>{t.total}</span>
+          <span className="text-[#D4AF37]">
+            {calculateTotal()} {language === "ar" ? "ريال" : "QAR"}
+          </span>
+        </div>
+
+        {/* Order Button */}
+        {step === 6 && cardDetails.from.trim() && (
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full mt-4 py-3 bg-[#D4AF37] text-white rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all"
+            onClick={handleSubmit}
+            disabled={isCreatingOrder}
+          >
+            {isCreatingOrder ? t.placingOrder : t.confirmOrder}
+          </motion.button>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -1475,71 +1630,83 @@ ${
         <div className="absolute top-1/2 right-1/4 w-20 sm:w-28 h-20 sm:h-28 rounded-full bg-[#F4E4B8] mix-blend-multiply filter blur-2xl animate-pulse delay-3000"></div>
       </div>
 
-      <div className="max-w-2xl sm:max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden relative z-10">
-        {/* Progress bar */}
-        <div className="bg-gray-100 h-1.5 sm:h-2">
-          <div
-            className="bg-[#D4AF37] h-full transition-all duration-300"
-            style={{ width: `${(step / 7) * 100}%` }}
-          ></div>
-        </div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left side - Form */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+              {/* Progress bar */}
+              <div className="bg-gray-100 h-1.5 sm:h-2">
+                <div
+                  className="bg-[#D4AF37] h-full transition-all duration-300"
+                  style={{ width: `${(step / 6) * 100}%` }}
+                ></div>
+              </div>
 
-        {/* Header */}
-        <div
-          className="p-4 sm:p-6 text-center"
-          style={{
-            background:
-              "linear-gradient(135deg, #2C2416 0%, #4A3B2A 50%, #6B5B47 100%)",
-          }}
-        >
-          <h2 className="text-lg sm:text-2xl font-light text-[#D4AF37]">
-            {t.title}
-          </h2>
-          <p className="text-gray-300 mt-1 text-sm sm:text-base">
-            {t.step} {step} {t.of} 7
-          </p>
-        </div>
-
-        {/* Form content */}
-        <div className="p-4 sm:p-6 lg:p-8">
-          {renderStep()}
-
-          {/* Navigation buttons */}
-          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
-            {step > 1 && (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="button"
-                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base font-medium transition-all"
-                onClick={() => setStep(step - 1)}
+              {/* Header */}
+              <div
+                className="p-4 sm:p-6 text-center"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #2C2416 0%, #4A3B2A 50%, #6B5B47 100%)",
+                }}
               >
-                {t.back}
-              </motion.button>
-            )}
+                <h2 className="text-lg sm:text-2xl font-light text-[#D4AF37]">
+                  {t.title}
+                </h2>
+                <p className="text-gray-300 mt-1 text-sm sm:text-base">
+                  {t.step} {step} {t.of} 6
+                </p>
+              </div>
 
-            {step < 7 && (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="button"
-                className={`w-full sm:w-auto sm:ml-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
-                  (step === 1 && !serviceType) ||
-                  (step === 2 && garments.length === 0) ||
-                  (step === 6 && !cardDetails.from.trim())
-                    ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                    : "bg-[#D4AF37] text-white hover:bg-[#c9a227]"
-                }`}
-                onClick={() => setStep(step + 1)}
-                disabled={
-                  (step === 1 && !serviceType) ||
-                  (step === 2 && garments.length === 0) ||
-                  (step === 6 && !cardDetails.from.trim())
-                }
-              >
-                {t.next}
-              </motion.button>
-            )}
+              {/* Form content */}
+              <div className="p-4 sm:p-6 lg:p-8">
+                {renderStep()}
+
+                {/* Navigation buttons */}
+                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
+                  {step > 1 && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      type="button"
+                      className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base font-medium transition-all"
+                      onClick={() => setStep(step - 1)}
+                    >
+                      {t.back}
+                    </motion.button>
+                  )}
+
+                  {step < 6 && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      type="button"
+                      className={`w-full sm:w-auto sm:ml-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
+                        (step === 1 && !serviceType) ||
+                        (step === 2 && garments.length === 0) ||
+                        (step === 6 && !cardDetails.from.trim())
+                          ? "bg-gray-300 cursor-not-allowed text-gray-600"
+                          : "bg-[#D4AF37] text-white hover:bg-[#c9a227]"
+                      }`}
+                      onClick={() => setStep(step + 1)}
+                      disabled={
+                        (step === 1 && !serviceType) ||
+                        (step === 2 && garments.length === 0) ||
+                        (step === 6 && !cardDetails.from.trim())
+                      }
+                    >
+                      {t.next}
+                    </motion.button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right side - Dynamic Receipt */}
+          <div className="lg:col-span-1">
+            <DynamicReceipt />
           </div>
         </div>
       </div>
