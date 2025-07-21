@@ -1,5 +1,5 @@
 // import User from "../models/User.js";
-import User from "../Models/User.js";
+import User from "../models/User.js";
 import sendMail from "../middleware/SendMail.js";
 
 export const register = async (req, res) => {
