@@ -256,15 +256,15 @@ const OrderPage = () => {
       dry_clean: 13,
       steam: 8,
       incense: 8,
-      perfume: 8,
+      perfume: 8, // As per your list
     },
     "Kids Jacket": {
-      iron: 4,
-      wash_iron: 6,
-      dry_clean: 7,
+      iron: 6,
+      wash_iron: 7,
+      dry_clean: 8,
       steam: 8,
       incense: 8,
-      perfume: 8,
+      perfume: 8, // As per your list
     },
     "Kids Shirt": {
       iron: 1,
@@ -272,7 +272,7 @@ const OrderPage = () => {
       dry_clean: 3,
       steam: 5,
       incense: 5,
-      perfume: 5,
+      perfume: 5, // As per your list
     },
     "Kids Suit": {
       iron: 4,
@@ -280,31 +280,31 @@ const OrderPage = () => {
       dry_clean: 8,
       steam: 6,
       incense: 6,
-      perfume: 6,
+      perfume: 6, // As per your list
     },
-    "Kids Suit (3 pieces)": {
+    "Kids 3-Piece Suit": {
       iron: 6,
       wash_iron: 8,
       dry_clean: 10,
       steam: 8,
       incense: 8,
-      perfume: 8,
+      perfume: 8, // As per your list
     },
-    "Kids Pant": {
+    "Kids Pants": {
       iron: 2,
       wash_iron: 3,
       dry_clean: 4,
       steam: 5,
       incense: 5,
-      perfume: 5,
+      perfume: 5, // As per your list
     },
     "Kids Underwear": {
-      iron: 2,
+      iron: 1,
       wash_iron: 2,
       dry_clean: 2,
       steam: 5,
       incense: 5,
-      perfume: 5,
+      perfume: 5, // As per your list
     },
     "School Uniform": {
       iron: 1,
@@ -312,7 +312,7 @@ const OrderPage = () => {
       dry_clean: 0,
       steam: 6,
       incense: 6,
-      perfume: 6,
+      perfume: 6, // As per your list
     },
 
     // Traditional & Formal items
@@ -322,7 +322,7 @@ const OrderPage = () => {
       dry_clean: 10,
       steam: 8,
       incense: 8,
-      perfume: 8,
+      perfume: 8, // As per your list
     },
     Vest: {
       iron: 3,
@@ -330,7 +330,7 @@ const OrderPage = () => {
       dry_clean: 6,
       steam: 5,
       incense: 5,
-      perfume: 5,
+      perfume: 5, // As per your list
     },
     Bisht: {
       iron: 25,
@@ -396,13 +396,21 @@ const OrderPage = () => {
       incense: 5,
       perfume: 5,
     },
+    Khatra: {
+      iron: 3,
+      wash_iron: 4,
+      dry_clean: 5,
+      steam: 5,
+      incense: 5,
+      perfume: 5, // As per your list
+    },
     Hijab: {
       iron: 6,
       wash_iron: 6,
       dry_clean: 7,
       steam: 5,
       incense: 5,
-      perfume: 5,
+      perfume: 5, // As per your list
     },
     Jalabiya: {
       iron: 6,
@@ -418,7 +426,7 @@ const OrderPage = () => {
       dry_clean: 10,
       steam: 8,
       incense: 8,
-      perfume: 8,
+      perfume: 8, // As per your list
     },
     "Military Uniform": {
       iron: 9,
@@ -426,7 +434,7 @@ const OrderPage = () => {
       dry_clean: 16,
       steam: 10,
       incense: 10,
-      perfume: 10,
+      perfume: 10, // As per your list
     },
 
     // Additional service options
@@ -585,6 +593,7 @@ const OrderPage = () => {
         "Trousers",
         "Bisht",
         "Thobe",
+        "Thawb",
         "Socks",
         "Underwear",
         "Child Dishdasha",
@@ -595,8 +604,10 @@ const OrderPage = () => {
         "Kurta Pyjama (Set)",
         "Gent Suit (3pcs)",
         "Ghutra",
+        "Khatra",
         "Dishdasha",
         "Men's Suit",
+        "Suit (Men's)",
         "Vest",
         "Tie",
         "T-shirt",
@@ -605,9 +616,9 @@ const OrderPage = () => {
         "Coat",
         "Pajamas",
         "Kids Suit",
-        "Kids Suit (3 pieces)",
+        "Kids 3-Piece Suit",
         "Kids Shirt",
-        "Kids Pant",
+        "Kids Pants",
         "Kids Underwear",
         "School Uniform",
         "Kids Jacket",
@@ -844,7 +855,7 @@ const OrderPage = () => {
     const orderInfo = `
 ${
   language === "ar"
-    ? "🏷️ أكویا لخدمات الغسيل الفاخرة - طلب جديد"
+    ? "🏷️ أكويا لخدمات الغسيل الفاخرة - طلب جديد"
     : "🏷️ AKOYA PREMIUM LAUNDRY - NEW ORDER"
 }
 
