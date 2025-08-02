@@ -38,7 +38,7 @@ const Perfumes = () => {
     <section className="py-12 bg-gray-100 px-4 md:px-12">
       <div className="text-center mb-12">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Akoya Signature Fragrances
+          Akoya Signature Fragrances 
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Premium scents crafted to elevate your laundry experience
