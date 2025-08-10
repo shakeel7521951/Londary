@@ -697,8 +697,8 @@ const OrderPage = () => {
     ],
   };
 
-  // Oud/Incense options with images
-  const incenseOptions = [
+  // Oud/Incense options with images - wrapped in useMemo to prevent dependency issues
+  const incenseOptions = useMemo(() => [
     {
       id: "cambodian_oud",
       name: language === "ar" ? "عود كمبودي فاخر" : "Premium Cambodian Oud",
@@ -711,24 +711,27 @@ const OrderPage = () => {
       image: "/home/fragrance.jpg",
       description: language === "ar" ? "عود ملكي فاخر للمناسبات الخاصة" : "Royal premium oud for special occasions"
     }
-  ];
+  ], [language]);
 
   // Packaging options
   const packagingOptions = [
     {
       id: "plastic",
       name: language === "ar" ? "تغليف بلاستيكي" : "Plastic Packaging",
-      desc: language === "ar" ? "تغليف قياسي بأكياس بلاستيكية" : "Standard plastic bag packaging"
+      desc: language === "ar" ? "تغليف قياسي بأكياس بلاستيكية" : "Standard plastic bag packaging",
+      image: "/home/professionalCollection.jpg"
     },
     {
       id: "fabric",
       name: language === "ar" ? "تغليف قماشي فاخر" : "Premium Fabric Packaging",
-      desc: language === "ar" ? "تغليف بأكياس قماشية فاخرة" : "Luxury fabric bag packaging"
+      desc: language === "ar" ? "تغليف بأكياس قماشية فاخرة" : "Luxury fabric bag packaging",
+      image: "/home/package.jpg"
     },
     {
       id: "box",
       name: language === "ar" ? "صندوق هدايا فاخر" : "Luxury Gift Box",
-      desc: language === "ar" ? "تغليف في صندوق هدايا أنيق" : "Elegant gift box packaging"
+      desc: language === "ar" ? "تغليف في صندوق هدايا أنيق" : "Elegant gift box packaging",
+      image: "/home/middle.jpg"
     }
   ];
 
@@ -759,6 +762,34 @@ const OrderPage = () => {
   const removeGarment = (index) => {
     setGarments(garments.filter((_, i) => i !== index));
   };
+
+  // Move useCallback hooks to component level
+  const handleIncenseSelect = useCallback((optionId) => {
+    setIncenseFinish(optionId);
+  }, []);
+
+  const handleIncenseChoice = useCallback((wantsIncense) => {
+    setIncenseFinish(wantsIncense);
+    if (!wantsIncense) {
+      setIncenseDisclaimer(false);
+    } else {
+      setIncenseDisclaimer(false);
+    }
+  }, []);
+
+  const handleFragranceSelect = useCallback((optionId) => {
+    setFragrance(optionId);
+  }, []);
+
+  const handlePerfumeChoice = useCallback((wantsPerfume) => {
+    setWantsPerfume(wantsPerfume);
+    if (!wantsPerfume) {
+      setFragrance("");
+      setFragranceDisclaimer(false);
+    } else {
+      setFragranceDisclaimer(false);
+    }
+  }, []);
 
   const calculateTotal = () => {
     let total = 0;
@@ -1103,20 +1134,6 @@ ${
       );
     };
 
-    const handleIncenseSelect = useCallback((optionId) => {
-      setIncenseFinish(optionId);
-      // Don't reset disclaimer here to prevent extra re-render
-    }, []);
-
-    const handleIncenseChoice = useCallback((wantsIncense) => {
-      setIncenseFinish(wantsIncense);
-      if (!wantsIncense) {
-        setIncenseDisclaimer(false);
-      } else {
-        setIncenseDisclaimer(false);
-      }
-    }, []);
-
     return (
       <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
         {/* Steam Question */}
@@ -1298,7 +1315,7 @@ ${
         </div>
       </div>
     );
-  }, [language, garments, steamFinish, incenseFinish, incenseDisclaimer, incenseOptions, t]);
+  }, [language, garments, steamFinish, incenseFinish, incenseDisclaimer, t]);
 
   const Step4 = useCallback(() => {
     // Helper function to check if any garment is for children under 8
@@ -1309,21 +1326,6 @@ ${
         garment.type.toLowerCase().includes('school')
       );
     };
-
-    const handleFragranceSelect = useCallback((optionId) => {
-      setFragrance(optionId);
-      // Don't reset disclaimer here to prevent extra re-render
-    }, []);
-
-    const handlePerfumeChoice = useCallback((wantsPerfume) => {
-      setWantsPerfume(wantsPerfume);
-      if (!wantsPerfume) {
-        setFragrance("");
-        setFragranceDisclaimer(false);
-      } else {
-        setFragranceDisclaimer(false);
-      }
-    }, []);
 
     return (
       <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
@@ -1502,37 +1504,73 @@ ${
       <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
         {t.packagingQuestion}
       </h3>
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {packagingOptions.map((option) => (
           <motion.div
             key={option.id}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`p-4 sm:p-6 border rounded-xl cursor-pointer transition-all min-h-[140px] flex flex-col justify-between ${
+            className={`p-4 sm:p-6 border rounded-xl cursor-pointer transition-all ${
               packaging === option.id
-                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md ring-2 ring-[#D4AF37]/20"
                 : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
             }`}
             onClick={() => setPackaging(option.id)}
           >
-            <div className="text-center">
-              <h4 className="font-medium text-sm sm:text-base mb-2">
-                {option.name}
-              </h4>
-              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-                {option.desc}
-              </p>
+            <div className="space-y-4">
+              {/* Image */}
+              <div className="aspect-video w-full h-50 rounded-lg overflow-hidden">
+                <img
+                  src={option.image}
+                  alt={option.name}
+                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+
+              {/* Content */}
+              <div className="text-center space-y-2">
+                <h4 className="font-medium text-sm sm:text-base">
+                  {option.name}
+                </h4>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  {option.desc}
+                </p>
+
+                {/* Pricing */}
+                <div className="mt-3">
+                  {option.id === "plastic" && (
+                    <p className="text-green-600 text-xs sm:text-sm font-medium">
+                      {language === "ar" ? "مجاني" : "Free"}
+                    </p>
+                  )}
+                  {option.id === "fabric" && (
+                    <p className="text-[#D4AF37] text-xs sm:text-sm font-medium">
+                      +15 {language === "ar" ? "ريال" : "QAR"}
+                    </p>
+                  )}
+                  {option.id === "box" && (
+                    <p className="text-[#D4AF37] text-xs sm:text-sm font-medium">
+                      +30 {language === "ar" ? "ريال" : "QAR"}
+                    </p>
+                  )}
+                </div>
+
+                {/* Selected indicator */}
+                {packaging === option.id && (
+                  <div className="flex items-center justify-center pt-2">
+                    <div className="flex items-center gap-2 text-[#D4AF37]">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      <span className="text-xs font-medium">
+                        {language === "ar" ? "محدد" : "Selected"}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-            {option.id === "fabric" && (
-              <p className="text-[#D4AF37] text-xs sm:text-sm mt-3 text-center font-medium">
-                +15 {language === "ar" ? "ريال" : "QAR"}
-              </p>
-            )}
-            {option.id === "box" && (
-              <p className="text-[#D4AF37] text-xs sm:text-sm mt-3 text-center font-medium">
-                +30 {language === "ar" ? "ريال" : "QAR"}
-              </p>
-            )}
           </motion.div>
         ))}
       </div>
@@ -2010,45 +2048,50 @@ ${
               </div>
 
               {/* Form content */}
-              <div className="p-4 sm:p-6 lg:p-8">
-                {renderStep()}
+              <div className="flex flex-col" style={{ height: '600px' }}>
+                {/* Content area with fixed height and scroll */}
+                <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-hide">
+                  {renderStep()}
+                </div>
 
-                {/* Navigation buttons */}
-                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
-                  {step > 1 && (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      type="button"
-                      className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base font-medium transition-all"
-                      onClick={() => setStep(step - 1)}
-                    >
-                      {t.back}
-                    </motion.button>
-                  )}
+                {/* Fixed Navigation buttons at bottom */}
+                <div className="border-t border-gray-100 p-4 sm:p-6 bg-gray-50">
+                  <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
+                    {step > 1 && (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="button"
+                        className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 rounded-lg text-sm sm:text-base font-medium transition-all hover:bg-gray-50"
+                        onClick={() => setStep(step - 1)}
+                      >
+                        {t.back}
+                      </motion.button>
+                    )}
 
-                  {step < 6 && (
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      type="button"
-                      className={`w-full sm:w-auto sm:ml-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
-                        (step === 1 && !serviceType) ||
-                        (step === 2 && garments.length === 0) ||
-                        (step === 6 && !cardDetails.from.trim())
-                          ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                          : "bg-[#D4AF37] text-white hover:bg-[#c9a227]"
-                      }`}
-                      onClick={() => setStep(step + 1)}
-                      disabled={
-                        (step === 1 && !serviceType) ||
-                        (step === 2 && garments.length === 0) ||
-                        (step === 6 && !cardDetails.from.trim())
-                      }
-                    >
-                      {t.next}
-                    </motion.button>
-                  )}
+                    {step < 6 && (
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="button"
+                        className={`w-full sm:w-auto sm:ml-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
+                          (step === 1 && !serviceType) ||
+                          (step === 2 && garments.length === 0) ||
+                          (step === 6 && !cardDetails.from.trim())
+                            ? "bg-gray-300 cursor-not-allowed text-gray-600"
+                            : "bg-[#D4AF37] text-white hover:bg-[#c9a227] shadow-md hover:shadow-lg"
+                        }`}
+                        onClick={() => setStep(step + 1)}
+                        disabled={
+                          (step === 1 && !serviceType) ||
+                          (step === 2 && garments.length === 0) ||
+                          (step === 6 && !cardDetails.from.trim())
+                        }
+                      >
+                        {t.next}
+                      </motion.button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
