@@ -270,7 +270,7 @@ const OrderPage = () => {
       dry_clean: 13,
       steam: 8,
       incense: 8,
-      perfume: 8, // As per your list
+      perfume: 8,
     },
     "Kids Jacket": {
       iron: 6,
@@ -278,7 +278,7 @@ const OrderPage = () => {
       dry_clean: 8,
       steam: 8,
       incense: 8,
-      perfume: 8, // As per your list
+      perfume: 8,
     },
     "Kids Shirt": {
       iron: 1,
@@ -286,7 +286,7 @@ const OrderPage = () => {
       dry_clean: 3,
       steam: 5,
       incense: 5,
-      perfume: 5, // As per your list
+      perfume: 5,
     },
     "Kids Suit": {
       iron: 4,
@@ -294,7 +294,7 @@ const OrderPage = () => {
       dry_clean: 8,
       steam: 6,
       incense: 6,
-      perfume: 6, // As per your list
+      perfume: 6,
     },
     "Kids 3-Piece Suit": {
       iron: 6,
@@ -302,7 +302,7 @@ const OrderPage = () => {
       dry_clean: 10,
       steam: 8,
       incense: 8,
-      perfume: 8, // As per your list
+      perfume: 8,
     },
     "Kids Pants": {
       iron: 2,
@@ -310,7 +310,7 @@ const OrderPage = () => {
       dry_clean: 4,
       steam: 5,
       incense: 5,
-      perfume: 5, // As per your list
+      perfume: 5,
     },
     "Kids Underwear": {
       iron: 1,
@@ -318,7 +318,7 @@ const OrderPage = () => {
       dry_clean: 2,
       steam: 5,
       incense: 5,
-      perfume: 5, // As per your list
+      perfume: 5,
     },
     "School Uniform": {
       iron: 1,
@@ -326,7 +326,7 @@ const OrderPage = () => {
       dry_clean: 0,
       steam: 6,
       incense: 6,
-      perfume: 6, // As per your list
+      perfume: 6,
     },
 
     // Traditional & Formal items
@@ -336,7 +336,7 @@ const OrderPage = () => {
       dry_clean: 10,
       steam: 8,
       incense: 8,
-      perfume: 8, // As per your list
+      perfume: 8,
     },
     Vest: {
       iron: 3,
@@ -344,7 +344,7 @@ const OrderPage = () => {
       dry_clean: 6,
       steam: 5,
       incense: 5,
-      perfume: 5, // As per your list
+      perfume: 5,
     },
     Bisht: {
       iron: 25,
@@ -396,7 +396,7 @@ const OrderPage = () => {
     },
     "Men's Suit": {
       iron: 12,
-      wash_iron: 18,
+      wash_iron: 21, // updated
       dry_clean: 21,
       steam: 10,
       incense: 10,
@@ -416,7 +416,7 @@ const OrderPage = () => {
       dry_clean: 5,
       steam: 5,
       incense: 5,
-      perfume: 5, // As per your list
+      perfume: 5,
     },
     Hijab: {
       iron: 6,
@@ -424,7 +424,7 @@ const OrderPage = () => {
       dry_clean: 7,
       steam: 5,
       incense: 5,
-      perfume: 5, // As per your list
+      perfume: 5,
     },
     Jalabiya: {
       iron: 6,
@@ -440,7 +440,7 @@ const OrderPage = () => {
       dry_clean: 10,
       steam: 8,
       incense: 8,
-      perfume: 8, // As per your list
+      perfume: 8,
     },
     "Military Uniform": {
       iron: 9,
@@ -448,7 +448,7 @@ const OrderPage = () => {
       dry_clean: 16,
       steam: 10,
       incense: 10,
-      perfume: 10, // As per your list
+      perfume: 10,
     },
 
     // Additional service options
@@ -518,7 +518,7 @@ const OrderPage = () => {
     },
     "Gent Suit (3pcs)": {
       iron: 12,
-      wash_iron: 18,
+      wash_iron: 21, // updated to match "Men's Suit"
       dry_clean: 21,
       steam: 10,
       incense: 10,
