@@ -8,6 +8,7 @@ import {
   selectCurrentUser,
   selectIsAuthenticated,
 } from "../redux/features/authSlice";
+import ThankYouDialog from "../components/common/ThankYouDialog";
 
 const OrderPage = () => {
   // Redux state and hooks
@@ -17,6 +18,9 @@ const OrderPage = () => {
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreateOrderMutation();
   const language = useSelector((state) => state.language.language);
+
+  // Thank you modal state
+  const [showThankYouModal, setShowThankYouModal] = useState(false);
 
   // Translations
   const translations = {
@@ -48,7 +52,7 @@ const OrderPage = () => {
       no: "No",
       back: "Back",
       next: "Next",
-      confirmOrder: "Confirm & Order on WhatsApp",
+      confirmOrder: "Book Now",
       placingOrder: "Placing Order...",
       loginError: "Please login to place an order",
       orderSuccess: "Order placed successfully!",
@@ -85,7 +89,7 @@ const OrderPage = () => {
       no: "لا",
       back: "رجوع",
       next: "التالي",
-      confirmOrder: "تأكيد الطلب عبر واتساب",
+      confirmOrder: "احجز الآن",
       placingOrder: "جاري تقديم الطلب...",
       loginError: "يرجى تسجيل الدخول لتقديم الطلب",
       orderSuccess: "تم تقديم الطلب بنجاح!",
@@ -886,10 +890,10 @@ const OrderPage = () => {
     };
 
     try {
-      const result = await createOrder(orderDetails).unwrap();
+      // const result = await createOrder(orderDetails).unwrap();
 
-      // Show welcome message
-      toast.success(welcomeMessage[language] || welcomeMessage.en, {
+      // Show order success message
+      toast.success(t.orderSuccess, {
         duration: 3000,
         style: {
           background: '#FFF9E6',
@@ -900,35 +904,13 @@ const OrderPage = () => {
         }
       });
 
-      // Create WhatsApp message
-      const whatsappMessage = generateWhatsAppMessage(
-        orderDetails,
-        result.order
-      );
-      const whatsappURL = `https://wa.me/+97433445566?text=${encodeURIComponent(
-        whatsappMessage
-      )}`;
+      // Show thank you modal
+      setShowThankYouModal(true);
 
-      // Open WhatsApp
-      window.open(whatsappURL, "_blank");
-
-      // Show goodbye message after a delay
-      setTimeout(() => {
-        toast.success(goodbyeMessage[language] || goodbyeMessage.en, {
-          duration: 5000,
-          style: {
-            background: '#FFF9E6',
-            color: '#D4AF37',
-            border: '1px solid #D4AF37',
-            fontSize: '14px'
-          }
-        });
-      }, 3500);
-
-      // Redirect to home page after a longer delay
+      // Redirect to home page after modal closes
       setTimeout(() => {
         navigate("/");
-      }, 8000);
+      }, 12000); // Wait for modal to auto-close plus some buffer time
     } catch (error) {
       toast.error(error?.data?.message || t.orderError);
       console.error("Order creation failed:", error);
@@ -1427,7 +1409,7 @@ ${
                           onClick={() => handleFragranceSelect(option.id)}
                         >
                           <div className="space-y-3">
-                            <div className="aspect-video w-full rounded-lg overflow-hidden">
+                            <div className="aspect-video w-full h-80 rounded-lg overflow-hidden">
                               <img
                                 src={option.image}
                                 alt={option.name}
@@ -1560,7 +1542,7 @@ ${
                 {packaging === option.id && (
                   <div className="flex items-center justify-center pt-2">
                     <div className="flex items-center gap-2 text-[#D4AF37]">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                       <span className="text-xs font-medium">
@@ -2103,6 +2085,12 @@ ${
           </div>
         </div>
       </div>
+
+      {/* Thank You Modal */}
+      <ThankYouDialog
+        isVisible={showThankYouModal}
+        onClose={() => setShowThankYouModal(false)}
+      />
     </div>
   );
 };
