@@ -5,7 +5,7 @@ const baseUrl = import.meta.env.VITE_API_BASE_URL;
 export const orderApi = createApi({
   reducerPath: "orderApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: `${baseUrl}`,
+    baseUrl: `${baseUrl}/orders`,
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {
       // Get token from auth state

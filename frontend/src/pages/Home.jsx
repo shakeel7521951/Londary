@@ -5,10 +5,12 @@ import SignatureLines from '../components/home/SignatureLines';
 import Testimonials from '../components/home/Testimonials';
 import VIPClubTeaser from '../components/home/VIPClubTeaser';
 import WashTypeSelector from '../components/home/WashTypeSelector';
+import WelcomeDialog from '../components/common/WelcomeDialog';
 
 const Home = () => {
   return (
     <div>
+        <WelcomeDialog />
         <Header />
         <SignatureLines />
         <WashTypeSelector />

@@ -105,9 +105,23 @@ const OrderPage = () => {
   const [garments, setGarments] = useState([]);
   const [steamFinish, setSteamFinish] = useState(false);
   const [incenseFinish, setIncenseFinish] = useState(false); // New state for incense
+  const [incenseDisclaimer, setIncenseDisclaimer] = useState(false); // New state for incense disclaimer
   const [fragrance, setFragrance] = useState("");
+  const [fragranceDisclaimer, setFragranceDisclaimer] = useState(false); // New state for fragrance disclaimer
+  const [wantsPerfume, setWantsPerfume] = useState(false); // New state to track if user wants perfume
   const [packaging, setPackaging] = useState("");
   const [cardDetails, setCardDetails] = useState({ from: "", to: "" });
+
+  // Welcome & Goodbye Messages
+  const welcomeMessage = {
+    ar: "هلا بكم يا يمه",
+    en: "Welcome dear guests",
+  };
+
+  const goodbyeMessage = {
+    ar: "استودعتكم الله بحفظه ورعايته ولا تنسون تسيرون علينا قريب",
+    en: "May Allah keep you safe. Don't forget to visit us again soon.",
+  };
 
   // Available service options
   const serviceOptions = [
@@ -656,57 +670,66 @@ const OrderPage = () => {
     [t.womens]: [
       {
         id: "orchid",
-        name:
-          language === "ar" ? "أوركيد - عطر زهري ناعم" : "Orchid - Soft Floral",
+        name: language === "ar" ? "أوركيد - عطر زهري ناعم" : "Orchid - Soft Floral",
+        image: "/home/fragrance.jpg",
+        description: language === "ar" ? "عطر أنثوي راقي برائحة الأوركيد الناعمة" : "Elegant feminine fragrance with soft orchid scent"
       },
       {
         id: "moony",
         name: language === "ar" ? "موني - عطر مسك جوي" : "Moony - Airy Musk",
+        image: "/home/fragrance.jpg",
+        description: language === "ar" ? "عطر مسكي خفيف ومنعش" : "Light and refreshing musky fragrance"
       },
     ],
     [t.mens]: [
       {
         id: "elixir",
-        name:
-          language === "ar"
-            ? "إكسير - عطر العود والكهرمان"
-            : "Elixir - Oud & Amber",
+        name: language === "ar" ? "إكسير - عطر العود والكهرمان" : "Elixir - Oud & Amber",
+        image: "/home/fragrance.jpg",
+        description: language === "ar" ? "عطر شرقي قوي بمزيج العود والكهرمان" : "Strong oriental fragrance with oud and amber blend"
       },
       {
         id: "imperial",
-        name:
-          language === "ar"
-            ? "إمبريال - عطر شرقي قوي"
-            : "Imperial - Oriental Bold",
+        name: language === "ar" ? "إمبريال - عطر شرقي قوي" : "Imperial - Oriental Bold",
+        image: "/home/fragrance.jpg",
+        description: language === "ar" ? "عطر إمبراطوري فاخر برائحة شرقية جذابة" : "Luxurious imperial fragrance with captivating oriental scent"
       },
     ],
   };
 
+  // Oud/Incense options with images
+  const incenseOptions = [
+    {
+      id: "cambodian_oud",
+      name: language === "ar" ? "عود كمبودي فاخر" : "Premium Cambodian Oud",
+      image: "/home/fragrance.jpg",
+      description: language === "ar" ? "عود كمبودي أصيل برائحة غنية وعميقة" : "Authentic Cambodian oud with rich, deep aroma"
+    },
+    {
+      id: "royal_oud",
+      name: language === "ar" ? "عود ملكي مميز" : "Royal Premium Oud",
+      image: "/home/fragrance.jpg",
+      description: language === "ar" ? "عود ملكي فاخر للمناسبات الخاصة" : "Royal premium oud for special occasions"
+    }
+  ];
+
+  // Packaging options
   const packagingOptions = [
     {
       id: "plastic",
-      name: language === "ar" ? "تغليف بلاستيكي" : "Plastic Wrap",
-      desc:
-        language === "ar"
-          ? "حماية نظيفة شفافة"
-          : "Clean transparent protection",
+      name: language === "ar" ? "تغليف بلاستيكي" : "Plastic Packaging",
+      desc: language === "ar" ? "تغليف قياسي بأكياس بلاستيكية" : "Standard plastic bag packaging"
     },
     {
       id: "fabric",
-      name: language === "ar" ? "تغليف قماش فاخر" : "Luxury Fabric Wrap",
-      desc:
-        language === "ar"
-          ? "تغليف مميز بملمس ناعم"
-          : "Soft-touch premium wrapping",
+      name: language === "ar" ? "تغليف قماشي فاخر" : "Premium Fabric Packaging",
+      desc: language === "ar" ? "تغليف بأكياس قماشية فاخرة" : "Luxury fabric bag packaging"
     },
     {
       id: "box",
-      name: language === "ar" ? "صندوق هدايا فاخر" : "Premium Gift Box",
-      desc:
-        language === "ar"
-          ? "صندوق أنيق بإغلاق مغناطيسي"
-          : "Elegant box with magnetic closure",
-    },
+      name: language === "ar" ? "صندوق هدايا فاخر" : "Luxury Gift Box",
+      desc: language === "ar" ? "تغليف في صندوق هدايا أنيق" : "Elegant gift box packaging"
+    }
   ];
 
   // Helper functions
@@ -800,12 +823,31 @@ const OrderPage = () => {
       return;
     }
 
+    // Validate disclaimers if services are selected
+    if (incenseFinish && !incenseDisclaimer) {
+      toast.error(language === "ar"
+        ? "يرجى الموافقة على إخلاء المسؤولية للبخور"
+        : "Please agree to the incense disclaimer");
+      setStep(3);
+      return;
+    }
+
+    if (fragrance && !fragranceDisclaimer) {
+      toast.error(language === "ar"
+        ? "يرجى الموافقة على إخلاء المسؤولية للعطر"
+        : "Please agree to the fragrance disclaimer");
+      setStep(4);
+      return;
+    }
+
     const orderDetails = {
       serviceType, // Changed from washType
       garments,
       steamFinish,
       incenseFinish, // New field
+      incenseDisclaimer, // New field
       fragrance,
+      fragranceDisclaimer, // New field
       packaging,
       cardFrom: cardDetails.from,
       cardTo: cardDetails.to,
@@ -815,7 +857,17 @@ const OrderPage = () => {
     try {
       const result = await createOrder(orderDetails).unwrap();
 
-      toast.success(t.orderSuccess);
+      // Show welcome message
+      toast.success(welcomeMessage[language] || welcomeMessage.en, {
+        duration: 3000,
+        style: {
+          background: '#FFF9E6',
+          color: '#D4AF37',
+          border: '1px solid #D4AF37',
+          fontSize: '16px',
+          fontWeight: 'bold'
+        }
+      });
 
       // Create WhatsApp message
       const whatsappMessage = generateWhatsAppMessage(
@@ -829,10 +881,23 @@ const OrderPage = () => {
       // Open WhatsApp
       window.open(whatsappURL, "_blank");
 
-      // Redirect to home page after a short delay
+      // Show goodbye message after a delay
+      setTimeout(() => {
+        toast.success(goodbyeMessage[language] || goodbyeMessage.en, {
+          duration: 5000,
+          style: {
+            background: '#FFF9E6',
+            color: '#D4AF37',
+            border: '1px solid #D4AF37',
+            fontSize: '14px'
+          }
+        });
+      }, 3500);
+
+      // Redirect to home page after a longer delay
       setTimeout(() => {
         navigate("/");
-      }, 2000);
+      }, 8000);
     } catch (error) {
       toast.error(error?.data?.message || t.orderError);
       console.error("Order creation failed:", error);
@@ -1027,111 +1092,410 @@ ${
     </div>
   );
 
-  const Step3 = () => (
-    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
-        {t.steamQuestion}
-      </h3>
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-            steamFinish
-              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-              : "border-gray-200 hover:border-gray-300"
-          }`}
-          onClick={() => setSteamFinish(true)}
-        >
-          {t.yes}
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-            !steamFinish
-              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-              : "border-gray-200 hover:border-gray-300"
-          }`}
-          onClick={() => setSteamFinish(false)}
-        >
-          {t.no}
-        </motion.button>
-      </div>
+  const Step3 = useCallback(() => {
+    // Helper function to check if any garment is for children under 8
+    const hasChildrenClothes = () => {
+      return garments.some(
+        (garment) =>
+          garment.type.toLowerCase().includes("child") ||
+          garment.type.toLowerCase().includes("kids") ||
+          garment.type.toLowerCase().includes("school")
+      );
+    };
 
-      {/* Add incense option */}
-      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
-        {language === "ar"
-          ? "هل تريد خدمة البخور؟"
-          : "Do you want incense service?"}
-      </h3>
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-            incenseFinish
-              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-              : "border-gray-200 hover:border-gray-300"
-          }`}
-          onClick={() => setIncenseFinish(true)}
-        >
-          {language === "ar" ? "نعم" : "Yes"}
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-            !incenseFinish
-              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-              : "border-gray-200 hover:border-gray-300"
-          }`}
-          onClick={() => setIncenseFinish(false)}
-        >
-          {language === "ar" ? "لا" : "No"}
-        </motion.button>
-      </div>
-    </div>
-  );
+    const handleIncenseSelect = useCallback((optionId) => {
+      setIncenseFinish(optionId);
+      // Don't reset disclaimer here to prevent extra re-render
+    }, []);
 
-  const Step4 = () => (
-    <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
-      <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
-        {t.fragranceQuestion}
-      </h3>
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-        {Object.entries(fragranceOptions).map(([gender, options]) => (
-          <div key={gender} className="space-y-3">
-            <h4 className="font-medium text-base sm:text-lg mb-3 text-center sm:text-left">
-              {gender}
-            </h4>
-            <div className="space-y-2">
-              {options.map((option) => (
-                <motion.button
-                  key={option.id}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="button"
-                  className={`w-full p-3 sm:p-4 border rounded-lg transition-all text-sm sm:text-base ${
-                    fragrance === option.id
-                      ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                      : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-                  } ${language === "ar" ? "text-right" : "text-left"}`}
-                  onClick={() => setFragrance(option.id)}
-                >
-                  <span className="block">{option.name}</span>
-                </motion.button>
-              ))}
-            </div>
+    const handleIncenseChoice = useCallback((wantsIncense) => {
+      setIncenseFinish(wantsIncense);
+      if (!wantsIncense) {
+        setIncenseDisclaimer(false);
+      } else {
+        setIncenseDisclaimer(false);
+      }
+    }, []);
+
+    return (
+      <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
+        {/* Steam Question */}
+        <div className="space-y-4">
+          <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
+            {t.steamQuestion}
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+                steamFinish
+                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => setSteamFinish(true)}
+            >
+              {t.yes}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+                !steamFinish
+                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => setSteamFinish(false)}
+            >
+              {t.no}
+            </motion.button>
           </div>
-        ))}
+        </div>
+
+        {/* Incense Question with Enhanced UI */}
+        <div className="space-y-4">
+          <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
+            {language === "ar"
+              ? "هل ترغب بتبخير الملابس بالعود؟"
+              : "Would you like your clothes to be incensed with Oud?"}
+          </h3>
+
+          {/* Warning for children's clothes */}
+          {hasChildrenClothes() && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4 shadow-sm"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="w-6 h-6 text-yellow-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-yellow-800 mb-1">
+                    {language === "ar" ? "تحذير هام" : "Important Notice"}
+                  </h4>
+                  <p className="text-sm text-yellow-700">
+                    {language === "ar"
+                      ? "لا ننصح بتبخير الملابس للأطفال دون سن ٨ سنوات لحماية صحتهم وسلامتهم."
+                      : "We do not recommend incensing clothes for children under 8 years old for their health and safety."}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+                incenseFinish
+                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => handleIncenseChoice(true)}
+            >
+              {language === "ar" ? "نعم" : "Yes"}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+                !incenseFinish
+                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => handleIncenseChoice(false)}
+            >
+              {language === "ar" ? "لا" : "No"}
+            </motion.button>
+          </div>
+
+          {/* Oud Selection with Images */}
+          {incenseFinish && (
+            <div className="space-y-4">
+              <h4 className="text-base sm:text-lg font-medium text-gray-700 text-center sm:text-left">
+                {language === "ar" ? "اختر نوع العود المفضل:" : "Choose your preferred Oud type:"}
+              </h4>
+
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                {incenseOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className={`p-4 border rounded-xl cursor-pointer transition-all ${
+                      incenseFinish === option.id
+                        ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                        : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                    }`}
+                    onClick={() => handleIncenseSelect(option.id)}
+                  >
+                    <div className="space-y-3">
+                      <div className="aspect-video w-full rounded-lg overflow-hidden">
+                        <img
+                          src={option.image}
+                          alt={option.name}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="text-center">
+                        <h5 className="font-semibold text-sm text-gray-800 mb-1">
+                          {option.name}
+                        </h5>
+                        <p className="text-xs text-gray-600 leading-relaxed">
+                          {option.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Enhanced Incense Disclaimer */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="incenseDisclaimer"
+                    checked={incenseDisclaimer}
+                    onChange={(e) => setIncenseDisclaimer(e.target.checked)}
+                    className="mt-1 w-5 h-5 text-[#D4AF37] border-gray-300 rounded focus:ring-[#D4AF37] focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <label
+                      htmlFor="incenseDisclaimer"
+                      className="text-sm text-blue-800 cursor-pointer font-medium"
+                    >
+                      {language === "ar"
+                        ? "أقر بأنه لا توجد حساسية لدي من العود ومكوناته."
+                        : "I confirm that I do not have any allergy to Oud and its components."}
+                    </label>
+                    <p className="text-xs text-blue-600 mt-1">
+                      {language === "ar"
+                        ? "هذا الإقرار مطلوب لضمان سلامتكم"
+                        : "This confirmation is required for your safety"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }, [language, garments, steamFinish, incenseFinish, incenseDisclaimer, incenseOptions, t]);
+
+  const Step4 = useCallback(() => {
+    // Helper function to check if any garment is for children under 8
+    const hasChildrenClothes = () => {
+      return garments.some(garment =>
+        garment.type.toLowerCase().includes('child') ||
+        garment.type.toLowerCase().includes('kids') ||
+        garment.type.toLowerCase().includes('school')
+      );
+    };
+
+    const handleFragranceSelect = useCallback((optionId) => {
+      setFragrance(optionId);
+      // Don't reset disclaimer here to prevent extra re-render
+    }, []);
+
+    const handlePerfumeChoice = useCallback((wantsPerfume) => {
+      setWantsPerfume(wantsPerfume);
+      if (!wantsPerfume) {
+        setFragrance("");
+        setFragranceDisclaimer(false);
+      } else {
+        setFragranceDisclaimer(false);
+      }
+    }, []);
+
+    return (
+      <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
+        {/* Perfume Question */}
+        <div className="space-y-4">
+          <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
+            {language === "ar"
+              ? "هل ترغب بتعطير الملابس؟"
+              : "Would you like your clothes to be perfumed?"}
+          </h3>
+
+          {/* Warning for children's clothes */}
+          {hasChildrenClothes() && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-yellow-50 border-l-4 border-yellow-400 rounded-lg p-4 shadow-sm"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="w-6 h-6 text-yellow-600"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-yellow-800 mb-1">
+                    {language === "ar" ? "تحذير هام" : "Important Notice"}
+                  </h4>
+                  <p className="text-sm text-yellow-700">
+                    {language === "ar"
+                      ? "لا ننصح بتعطير الملابس للأطفال دون سن ٨ سنوات لحماية صحتهم وسلامتهم."
+                      : "We do not recommend perfuming clothes for children under 8 years old for their health and safety."}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Yes/No Selection */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+                wantsPerfume
+                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => handlePerfumeChoice(true)}
+            >
+              {language === "ar" ? "نعم" : "Yes"}
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="button"
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
+                !wantsPerfume
+                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => handlePerfumeChoice(false)}
+            >
+              {language === "ar" ? "لا" : "No"}
+            </motion.button>
+          </div>
+
+          {/* Perfume Selection with Images - Show when user wants perfume */}
+          {wantsPerfume && (
+            <div className="space-y-4">
+              <h4 className="text-base sm:text-lg font-medium text-gray-700 text-center sm:text-left">
+                {language === "ar" ? "اختر العطر المفضل:" : "Choose your preferred fragrance:"}
+              </h4>
+
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                {Object.entries(fragranceOptions).map(([gender, options]) => (
+                  <div key={gender} className="space-y-4">
+                    <h5 className="font-semibold text-sm sm:text-base mb-3 text-center text-[#D4AF37] border-b border-gray-200 pb-2">
+                      {gender}
+                    </h5>
+                    <div className="space-y-3">
+                      {options.map((option) => (
+                        <div
+                          key={option.id}
+                          className={`p-4 border rounded-xl cursor-pointer transition-all ${
+                            fragrance === option.id
+                              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md ring-2 ring-[#D4AF37]/20"
+                              : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                          }`}
+                          onClick={() => handleFragranceSelect(option.id)}
+                        >
+                          <div className="space-y-3">
+                            <div className="aspect-video w-full rounded-lg overflow-hidden">
+                              <img
+                                src={option.image}
+                                alt={option.name}
+                                className="w-full h-full object-cover transition-transform hover:scale-105"
+                                loading="lazy"
+                              />
+                            </div>
+                            <div className="text-center">
+                              <h6 className="font-semibold text-sm text-gray-800 mb-1">
+                                {option.name}
+                              </h6>
+                              <p className="text-xs text-gray-600 leading-relaxed">
+                                {option.description}
+                              </p>
+                            </div>
+                            {fragrance === option.id && (
+                              <div className="flex items-center justify-center pt-2">
+                                <div className="flex items-center gap-2 text-[#D4AF37]">
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                  <span className="text-xs font-medium">
+                                    {language === "ar" ? "محدد" : "Selected"}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Enhanced Perfume Disclaimer */}
+              {fragrance && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      id="fragranceDisclaimer"
+                      checked={fragranceDisclaimer}
+                      onChange={(e) => setFragranceDisclaimer(e.target.checked)}
+                      className="mt-1 w-5 h-5 text-[#D4AF37] border-gray-300 rounded focus:ring-[#D4AF37] focus:ring-2"
+                    />
+                    <div className="flex-1">
+                      <label
+                        htmlFor="fragranceDisclaimer"
+                        className="text-sm text-blue-800 cursor-pointer font-medium"
+                      >
+                        {language === "ar"
+                          ? "أقر بأنه لا توجد لدي حساسية من مكونات العطر المختار."
+                          : "I confirm that I do not have any allergy to the selected perfume ingredients."}
+                      </label>
+                      <p className="text-xs text-blue-600 mt-1">
+                        {language === "ar"
+                          ? "هذا الإقرار مطلوب لضمان سلامتكم"
+                          : "This confirmation is required for your safety"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }, [language, garments, wantsPerfume, fragrance, fragranceDisclaimer, fragranceOptions, t]);
 
   const Step5 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
@@ -1495,8 +1859,8 @@ ${
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    />
+                  </svg>
                   </button>
                 </div>
               </div>
@@ -1540,8 +1904,8 @@ ${
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    />
+                  </svg>
                   </button>
                 </div>
               </div>
