@@ -671,13 +671,13 @@ const OrderPage = () => {
       {
         id: "orchid",
         name: language === "ar" ? "أوركيد - عطر زهري ناعم" : "Orchid - Soft Floral",
-        image: "/home/fragrance.jpg",
+        image: "/home/orchard.jpg",
         description: language === "ar" ? "عطر أنثوي راقي برائحة الأوركيد الناعمة" : "Elegant feminine fragrance with soft orchid scent"
       },
       {
         id: "moony",
         name: language === "ar" ? "موني - عطر مسك جوي" : "Moony - Airy Musk",
-        image: "/home/fragrance.jpg",
+        image: "/home/moony.jpg",
         description: language === "ar" ? "عطر مسكي خفيف ومنعش" : "Light and refreshing musky fragrance"
       },
     ],
@@ -685,13 +685,13 @@ const OrderPage = () => {
       {
         id: "elixir",
         name: language === "ar" ? "إكسير - عطر العود والكهرمان" : "Elixir - Oud & Amber",
-        image: "/home/fragrance.jpg",
+        image: "/home/elixr.jpg",
         description: language === "ar" ? "عطر شرقي قوي بمزيج العود والكهرمان" : "Strong oriental fragrance with oud and amber blend"
       },
       {
         id: "imperial",
         name: language === "ar" ? "إمبريال - عطر شرقي قوي" : "Imperial - Oriental Bold",
-        image: "/home/fragrance.jpg",
+        image: "/home/imperial.jpg",
         description: language === "ar" ? "عطر إمبراطوري فاخر برائحة شرقية جذابة" : "Luxurious imperial fragrance with captivating oriental scent"
       },
     ],
