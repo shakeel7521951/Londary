@@ -9,6 +9,8 @@ import {
   selectIsAuthenticated,
 } from "../redux/features/authSlice";
 import ThankYouDialog from "../components/common/ThankYouDialog";
+import { GiClothes, GiHanger } from "react-icons/gi";
+import { FaTshirt } from "react-icons/fa";
 
 const OrderPage = () => {
   // Redux state and hooks
@@ -134,6 +136,7 @@ const OrderPage = () => {
       name: language === "ar" ? "كي فقط" : "Iron Only",
       description:
         language === "ar" ? "كي الملابس بدون غسيل" : "Ironing without washing",
+      icon: "🧺", // laundry basket emoji
     },
     {
       id: "wash_iron",
@@ -142,73 +145,75 @@ const OrderPage = () => {
         language === "ar"
           ? "غسيل كامل مع الكي"
           : "Complete washing with ironing",
+      icon: "👕", // t-shirt emoji
     },
     {
       id: "dry_clean",
       name: language === "ar" ? "تنظيف جاف" : "Dry Clean",
       description:
         language === "ar" ? "تنظيف جاف احترافي" : "Professional dry cleaning",
+      icon: "👔", // coat/jacket emoji for dry clean
     },
-  ];
+  ]
 
   // Garment pricing structure
-// Garment pricing structure
-const garmentPrices = {
-  // Traditional & Formal items
-  Thobe: { iron: 4, wash_iron: 6, dry_clean: 10, steam: 4, perfume: 5 },
-  Bisht: { iron: 25, wash_iron: 40, dry_clean: 40, steam: 4, perfume: 5 },
-  Abaya: { iron: 10, wash_iron: 12, dry_clean: 15, steam: 4, perfume: 5 },
-  Taqiyah: { iron: 0, wash_iron: 3, dry_clean: 3, steam: 0, perfume: 0 },
-  "Long Dress": { iron: 15, wash_iron: 20, dry_clean: 20, steam: 4, perfume: 5 },
-  "Short Dress": { iron: 10, wash_iron: 15, dry_clean: 20, steam: 0, perfume: 0 },
-  "Men's Suit": { iron: 12, wash_iron: 18, dry_clean: 20, steam: 4, perfume: 5 },
-  Ghutra: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
-  Shela: { iron: 5, wash_iron: 6, dry_clean: 7, steam: 0, perfume: 0 },
-  Jalabiya: { iron: 6, wash_iron: 10, dry_clean: 0, steam: 4, perfume: 5 },
-  "Lab Coat": { iron: 4, wash_iron: 8, dry_clean: 10, steam: 4, perfume: 5 },
-  "Military Uniform": { iron: 9, wash_iron: 14, dry_clean: 16, steam: 4, perfume: 5 },
-  Coat: { iron: 11, wash_iron: 13, dry_clean: 23, steam: 4, perfume: 5 },
-  Overalls: { iron: 6, wash_iron: 8, dry_clean: 10, steam: 4, perfume: 5 },
+  // Garment pricing structure
+  const garmentPrices = {
+    // Traditional & Formal items
+    Thobe: { iron: 4, wash_iron: 6, dry_clean: 10, steam: 4, perfume: 5 },
+    Bisht: { iron: 25, wash_iron: 40, dry_clean: 40, steam: 4, perfume: 5 },
+    Abaya: { iron: 10, wash_iron: 12, dry_clean: 15, steam: 4, perfume: 5 },
+    Taqiyah: { iron: 0, wash_iron: 3, dry_clean: 3, steam: 0, perfume: 0 },
+    "Long Dress": { iron: 15, wash_iron: 20, dry_clean: 20, steam: 4, perfume: 5 },
+    "Short Dress": { iron: 10, wash_iron: 15, dry_clean: 20, steam: 0, perfume: 0 },
+    "Men's Suit": { iron: 12, wash_iron: 18, dry_clean: 20, steam: 4, perfume: 5 },
+    Ghutra: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
+    Shela: { iron: 5, wash_iron: 6, dry_clean: 7, steam: 0, perfume: 0 },
+    Jalabiya: { iron: 6, wash_iron: 10, dry_clean: 0, steam: 4, perfume: 5 },
+    "Lab Coat": { iron: 4, wash_iron: 8, dry_clean: 10, steam: 4, perfume: 5 },
+    "Military Uniform": { iron: 9, wash_iron: 14, dry_clean: 16, steam: 4, perfume: 5 },
+    Coat: { iron: 11, wash_iron: 13, dry_clean: 23, steam: 4, perfume: 5 },
+    Overalls: { iron: 6, wash_iron: 8, dry_clean: 10, steam: 4, perfume: 5 },
 
-  // General clothing
-  Pajamas: { iron: 4, wash_iron: 7, dry_clean: 10, steam: 4, perfume: 5 },
-  Scarf: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-  Shirt: { iron: 3, wash_iron: 5, dry_clean: 6, steam: 3, perfume: 4 },
-  "Silk Blouse": { iron: 4, wash_iron: 0, dry_clean: 7, steam: 3, perfume: 4 },
-  "T-shirt": { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-  Tie: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
-  Undershirt: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-  Pants: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-  Vest: { iron: 4, wash_iron: 5, dry_clean: 6, steam: 3, perfume: 4 },
+    // General clothing
+    Pajamas: { iron: 4, wash_iron: 7, dry_clean: 10, steam: 4, perfume: 5 },
+    Scarf: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
+    Shirt: { iron: 3, wash_iron: 5, dry_clean: 6, steam: 3, perfume: 4 },
+    "Silk Blouse": { iron: 4, wash_iron: 0, dry_clean: 7, steam: 3, perfume: 4 },
+    "T-shirt": { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
+    Tie: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
+    Undershirt: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
+    Pants: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
+    Vest: { iron: 4, wash_iron: 5, dry_clean: 6, steam: 3, perfume: 4 },
 
-  // Kids clothing
-  "Children's Abaya": { iron: 3, wash_iron: 5, dry_clean: 7, steam: 0, perfume: 0 },
-  "Children's Thobe": { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
-  "Children's Dress": { iron: 6, wash_iron: 10, dry_clean: 13, steam: 0, perfume: 0 },
-  "Children's Jacket": { iron: 4, wash_iron: 6, dry_clean: 7, steam: 0, perfume: 0 },
-  "Children's Shirt": { iron: 3, wash_iron: 4, dry_clean: 4, steam: 0, perfume: 0 },
-  "Children's Suit": { iron: 4, wash_iron: 6, dry_clean: 8, steam: 0, perfume: 0 },
-  "Children's 3-Piece Suit": { iron: 6, wash_iron: 8, dry_clean: 10, steam: 0, perfume: 0 },
-  "Children's Pants": { iron: 6, wash_iron: 8, dry_clean: 10, steam: 0, perfume: 0 },
-  "Children's Sweater": { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
-  "School Uniform": { iron: 0, wash_iron: 8, dry_clean: 0, steam: 0, perfume: 0 },
+    // Kids clothing
+    "Children's Abaya": { iron: 3, wash_iron: 5, dry_clean: 7, steam: 0, perfume: 0 },
+    "Children's Thobe": { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
+    "Children's Dress": { iron: 6, wash_iron: 10, dry_clean: 13, steam: 0, perfume: 0 },
+    "Children's Jacket": { iron: 4, wash_iron: 6, dry_clean: 7, steam: 0, perfume: 0 },
+    "Children's Shirt": { iron: 3, wash_iron: 4, dry_clean: 4, steam: 0, perfume: 0 },
+    "Children's Suit": { iron: 4, wash_iron: 6, dry_clean: 8, steam: 0, perfume: 0 },
+    "Children's 3-Piece Suit": { iron: 6, wash_iron: 8, dry_clean: 10, steam: 0, perfume: 0 },
+    "Children's Pants": { iron: 6, wash_iron: 8, dry_clean: 10, steam: 0, perfume: 0 },
+    "Children's Sweater": { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
+    "School Uniform": { iron: 0, wash_iron: 8, dry_clean: 0, steam: 0, perfume: 0 },
 
-  // Household items
-  "Small Towel": { iron: 3, wash_iron: 5, dry_clean: 6, steam: 4, perfume: 4 },
-  "Large Towel": { iron: 4, wash_iron: 6, dry_clean: 7, steam: 5, perfume: 5 },
-  "Double Bed Cover": { iron: 8, wash_iron: 12, dry_clean: 15, steam: 6, perfume: 6 },
-  "Single Bed Cover": { iron: 6, wash_iron: 10, dry_clean: 12, steam: 5, perfume: 5 },
-  "Double Bed Sheet": { iron: 4, wash_iron: 6, dry_clean: 8, steam: 6, perfume: 6 },
-  "Single Bed Sheet": { iron: 3, wash_iron: 5, dry_clean: 6, steam: 5, perfume: 5 },
-  "Single Blanket": { iron: 0, wash_iron: 10, dry_clean: 15, steam: 8, perfume: 8 },
-  "Double Blanket": { iron: 0, wash_iron: 15, dry_clean: 18, steam: 9, perfume: 9 },
-  Pillowcase: { iron: 3, wash_iron: 4, dry_clean: 4, steam: 0, perfume: 0 },
-  "Large Feather Pillow": { iron: 0, wash_iron: 15, dry_clean: 20, steam: 0, perfume: 0 },
+    // Household items
+    "Small Towel": { iron: 3, wash_iron: 5, dry_clean: 6, steam: 4, perfume: 4 },
+    "Large Towel": { iron: 4, wash_iron: 6, dry_clean: 7, steam: 5, perfume: 5 },
+    "Double Bed Cover": { iron: 8, wash_iron: 12, dry_clean: 15, steam: 6, perfume: 6 },
+    "Single Bed Cover": { iron: 6, wash_iron: 10, dry_clean: 12, steam: 5, perfume: 5 },
+    "Double Bed Sheet": { iron: 4, wash_iron: 6, dry_clean: 8, steam: 6, perfume: 6 },
+    "Single Bed Sheet": { iron: 3, wash_iron: 5, dry_clean: 6, steam: 5, perfume: 5 },
+    "Single Blanket": { iron: 0, wash_iron: 10, dry_clean: 15, steam: 8, perfume: 8 },
+    "Double Blanket": { iron: 0, wash_iron: 15, dry_clean: 18, steam: 9, perfume: 9 },
+    Pillowcase: { iron: 3, wash_iron: 4, dry_clean: 4, steam: 0, perfume: 0 },
+    "Large Feather Pillow": { iron: 0, wash_iron: 15, dry_clean: 20, steam: 0, perfume: 0 },
 
-  // Summer suits
-  "Men's Summer Suit": { iron: 8, wash_iron: 11, dry_clean: 13, steam: 4, perfume: 5 },
-  "Women's Summer Suit": { iron: 8, wash_iron: 11, dry_clean: 13, steam: 4, perfume: 5 },
-};
+    // Summer suits
+    "Men's Summer Suit": { iron: 8, wash_iron: 11, dry_clean: 13, steam: 4, perfume: 5 },
+    "Women's Summer Suit": { iron: 8, wash_iron: 11, dry_clean: 13, steam: 4, perfume: 5 },
+  };
 
   // Garment categories with translated names
   const garmentTypes = {
@@ -282,29 +287,29 @@ const garmentPrices = {
     [t.womens]: [
       {
         id: "orchid",
-        name: language === "ar" ? "أوركيد - عطر زهري ناعم" : "Orchid - Soft Floral",
+        name: language === "ar" ? "أوركيد أكويا" : "Orchid-Akoya",
         image: "/home/orchard.jpg",
-        description: language === "ar" ? "عطر أنثوي راقي برائحة الأوركيد الناعمة" : "Elegant feminine fragrance with soft orchid scent"
+        description: language === "ar" ? "هو عطر فاخر يجمع بين قوة العود النيبالي ونعومة الورد التركي، مدعوماً بالزعفران واللبان ليمنحك حضوراً عاطفاً وراقياً. تركيبة غنية وجذابة لعشاق الفخامة والتميز." : "A luxurious fragrance that combines the strength of Nepalese oud with the softness of Turkish rose, enriched with saffron and frankincense. Orchid is crafted for a mysterious and refined presence — an irresistible blend for lovers of elegance and distinction."
       },
       {
         id: "moony",
-        name: language === "ar" ? "موني - عطر مسك جوي" : "Moony - Airy Musk",
+        name: language === "ar" ? "موني أكويا" : "Moony Akoya",
         image: "/home/moony.jpg",
-        description: language === "ar" ? "عطر مسكي خفيف ومنعش" : "Light and refreshing musky fragrance"
+        description: language === "ar" ? "هو عطر فاخر وأنثوي مستوحى من سحر الترف والحرير، يجمع بين نضارة البرتقال الدموي واليوسفي، مع قلب زهري فاكهي ناعم، وقاعدة دافئة من الفانيليا والباتشولي والعنبر. مثالي لمحبات الأناقة والرقي." : "A luxurious and feminine fragrance inspired by the elegance of silk and opulence. Moony blends the freshness of blood orange and mandarin with a soft floral-fruity heart, resting on a warm base of vanilla, patchouli, and amber. Perfect for women who embrace grace and sophistication."
       },
     ],
     [t.mens]: [
       {
         id: "elixir",
-        name: language === "ar" ? "إكسير - عطر العود والكهرمان" : "Elixir - Oud & Amber",
+        name: language === "ar" ? "إكسير من أكويا" : "Elixr by Akoya",
         image: "/home/elixr.jpg",
-        description: language === "ar" ? "عطر شرقي قوي بمزيج العود والكهرمان" : "Strong oriental fragrance with oud and amber blend"
+        description: language === "ar" ? "هو عطر ذكوري فاخر يمزج بين نضارة الفواكه وقوة الأخشاب والجلد، يعكس شخصية قيادية وناجحة، يتميز بثبات قوي ورائحة فريدة لا تُنسى." : "A bold and masculine fragrance that fuses fresh fruits with deep woods and leather, Elixir reflects a commanding and successful personality. Its long-lasting presence and unforgettable scent make it a statement of power and confidence."
       },
       {
         id: "imperial",
-        name: language === "ar" ? "إمبريال - عطر شرقي قوي" : "Imperial - Oriental Bold",
+        name: language === "ar" ? "إمبريال أكويا" : "Imperial Akoya",
         image: "/home/imperial.jpg",
-        description: language === "ar" ? "عطر إمبراطوري فاخر برائحة شرقية جذابة" : "Luxurious imperial fragrance with captivating oriental scent"
+        description: language === "ar" ? "عطر حمضي نظيف وأنيق، يجمع بين البرغموت والشاي الأسود مع لمسة زنجبيل. مثالي للصيف والرجل العصري الباحث عن الانتعاش الفاخر." : "A fresh and refined citrus fragrance, blending bergamot and black tea with a touch of ginger. Imperial is perfect for summer and the modern man seeking luxurious freshness and clarity in every note."
       },
     ],
   };
@@ -527,9 +532,8 @@ const garmentPrices = {
 
   const generateWhatsAppMessage = (orderDetails, order) => {
     const userInfo = currentUser
-      ? `${language === "ar" ? "👤 العميل" : "👤 Customer"}: ${
-          currentUser.name
-        } (${currentUser.email})`
+      ? `${language === "ar" ? "👤 العميل" : "👤 Customer"}: ${currentUser.name
+      } (${currentUser.email})`
       : "";
 
     const serviceTypeDisplay = {
@@ -539,94 +543,80 @@ const garmentPrices = {
     };
 
     const orderInfo = `
-${
-  language === "ar"
-    ? "🏷️ أكويا لخدمات الغسيل الفاخرة - طلب جديد"
-    : "🏷️ AKOYA PREMIUM LAUNDRY - NEW ORDER"
-}
+${language === "ar"
+        ? "🏷️ أكويا لخدمات الغسيل الفاخرة - طلب جديد"
+        : "🏷️ AKOYA PREMIUM LAUNDRY - NEW ORDER"
+      }
 
 ${userInfo}
 ${language === "ar" ? "📝 رقم الطلب" : "📝 Order ID"}: ${order._id}
 
 ${language === "ar" ? "🧺 تفاصيل الخدمة:" : "🧺 Service Details:"}
-• ${language === "ar" ? "نوع الخدمة" : "Service Type"}: ${
-      serviceTypeDisplay[orderDetails.serviceType] || orderDetails.serviceType
-    }
-• ${language === "ar" ? "كي بالبخار" : "Steam Finishing"}: ${
-      orderDetails.steamFinish
+• ${language === "ar" ? "نوع الخدمة" : "Service Type"}: ${serviceTypeDisplay[orderDetails.serviceType] || orderDetails.serviceType
+      }
+• ${language === "ar" ? "كي بالبخار" : "Steam Finishing"}: ${orderDetails.steamFinish
         ? language === "ar"
           ? "نعم"
           : "Yes"
         : language === "ar"
-        ? "لا"
-        : "No"
-    }
-• ${language === "ar" ? "البخور" : "Incense"}: ${
-      orderDetails.incenseFinish
+          ? "لا"
+          : "No"
+      }
+• ${language === "ar" ? "البخور" : "Incense"}: ${orderDetails.incenseFinish
         ? language === "ar"
           ? "نعم"
           : "Yes"
         : language === "ar"
-        ? "لا"
-        : "No"
-    }
-• ${language === "ar" ? "العطر" : "Fragrance"}: ${
-      orderDetails.fragrance
+          ? "لا"
+          : "No"
+      }
+• ${language === "ar" ? "العطر" : "Fragrance"}: ${orderDetails.fragrance
         ? fragranceOptions[
-            orderDetails.fragrance.includes("orchid") ? t.womens : t.mens
-          ].find((f) => f.id === orderDetails.fragrance).name
+          orderDetails.fragrance.includes("orchid") ? t.womens : t.mens
+        ].find((f) => f.id === orderDetails.fragrance).name
         : language === "ar"
-        ? "بدون"
-        : "None"
-    }
-• ${language === "ar" ? "التغليف" : "Packaging"}: ${
-      orderDetails.packaging
+          ? "بدون"
+          : "None"
+      }
+• ${language === "ar" ? "التغليف" : "Packaging"}: ${orderDetails.packaging
         ? packagingOptions.find((p) => p.id === orderDetails.packaging).name
         : language === "ar"
-        ? "قياسي"
-        : "Standard"
-    }
+          ? "قياسي"
+          : "Standard"
+      }
 
 ${language === "ar" ? "👕 الملابس:" : "👕 Garments:"}
 ${orderDetails.garments
-  .map((g) => {
-    const priceInfo = garmentPrices[g.type];
-    const itemPrice = priceInfo ? priceInfo[orderDetails.serviceType] || 0 : 0;
-    const totalItemPrice = itemPrice * g.quantity;
-    return `• ${g.type}: ${g.quantity} ${
-      language === "ar" ? "قطعة" : "pcs"
-    } (${totalItemPrice} ${language === "ar" ? "ريال" : "QAR"})`;
-  })
-  .join("\n")}
+        .map((g) => {
+          const priceInfo = garmentPrices[g.type];
+          const itemPrice = priceInfo ? priceInfo[orderDetails.serviceType] || 0 : 0;
+          const totalItemPrice = itemPrice * g.quantity;
+          return `• ${g.type}: ${g.quantity} ${language === "ar" ? "قطعة" : "pcs"
+            } (${totalItemPrice} ${language === "ar" ? "ريال" : "QAR"})`;
+        })
+        .join("\n")}
 
-${
-  orderDetails.cardFrom
-    ? `${language === "ar" ? "💌 بطاقة شخصية:" : "💌 Personalized Card:"}\n• ${
-        language === "ar" ? "من" : "From"
-      }: ${orderDetails.cardFrom}${
-        orderDetails.cardTo
+${orderDetails.cardFrom
+        ? `${language === "ar" ? "💌 بطاقة شخصية:" : "💌 Personalized Card:"}\n• ${language === "ar" ? "من" : "From"
+        }: ${orderDetails.cardFrom}${orderDetails.cardTo
           ? `\n• ${language === "ar" ? "إلى" : "To"}: ${orderDetails.cardTo}`
           : ""
-      }`
-    : ""
-}
+        }`
+        : ""
+      }
 
-${language === "ar" ? "💰 المجموع" : "💰 Total"}: ${orderDetails.total} ${
-      language === "ar" ? "ريال" : "QAR"
-    }
+${language === "ar" ? "💰 المجموع" : "💰 Total"}: ${orderDetails.total} ${language === "ar" ? "ريال" : "QAR"
+      }
 
-${
-  language === "ar" ? "📅 تاريخ الطلب" : "📅 Order Date"
-}: ${new Date().toLocaleDateString()}
-${
-  language === "ar" ? "🕐 وقت الطلب" : "🕐 Order Time"
-}: ${new Date().toLocaleTimeString()}
+${language === "ar" ? "📅 تاريخ الطلب" : "📅 Order Date"
+      }: ${new Date().toLocaleDateString()}
+${language === "ar" ? "🕐 وقت الطلب" : "🕐 Order Time"
+      }: ${new Date().toLocaleTimeString()}
 
-${
-  language === "ar"
-    ? "يرجى تأكيد هذا الطلب وتوفير تفاصيل الاستلام."
-    : "Please confirm this order and provide pickup details."
-}
+${language === "ar"
+        ? "يرجى تأكيد هذا الطلب وتوفير تفاصيل الاستلام."
+        : "Please confirm this order and provide pickup details."
+      }
 `;
     return orderInfo.trim();
   };
@@ -643,27 +633,30 @@ ${
             key={option.id}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`p-4 sm:p-6 border rounded-xl cursor-pointer transition-all min-h-[120px] flex items-center ${
-              serviceType === option.id
-                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-            }`}
+            className={`p-6 border rounded-2xl cursor-pointer transition-all min-h-[160px] flex flex-col items-center text-center ${serviceType === option.id
+              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+              : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+              }`}
             onClick={() => setServiceType(option.id)}
           >
-            <div className="flex flex-col items-center text-center w-full">
-              <h4 className="font-medium text-base sm:text-lg">
-                {option.name}
-              </h4>
-              <p className="text-xs sm:text-sm text-gray-600 mt-2 leading-relaxed">
-                {option.description}
-              </p>
-            </div>
+            {/* Luxury Icon */}
+            <div className="text-2xl mb-3">{option.icon}</div>
+
+            {/* Title */}
+            <h4 className="font-semibold text-lg text-[#0D1B2A]">
+              {option.name}
+            </h4>
+
+            {/* Description */}
+            <p className="text-sm text-gray-600 mt-2 leading-relaxed">
+              {option.description}
+            </p>
           </motion.div>
         ))}
       </div>
     </div>
   );
-
+                                                //  There is add icon 
   const Step2 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
       <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
@@ -683,16 +676,14 @@ ${
                   whileHover={{ x: language === "ar" ? -3 : 3 }}
                   whileTap={{ scale: 0.98 }}
                   type="button"
-                  className={`flex items-center w-full p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all ${
-                    language === "ar" ? "text-right" : "text-left"
-                  }`}
+                  className={`flex items-center w-full p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all ${language === "ar" ? "text-right" : "text-left"
+                    }`}
                   onClick={() => addGarment(item)}
                 >
                   <span className="text-sm sm:text-base flex-1">{item}</span>
                   <svg
-                    className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                      language === "ar" ? "mr-auto" : "ml-auto"
-                    } text-[#D4AF37] flex-shrink-0`}
+                    className={`w-4 h-4 sm:w-5 sm:h-5 ${language === "ar" ? "mr-auto" : "ml-auto"
+                      } text-[#D4AF37] flex-shrink-0`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -736,11 +727,10 @@ ${
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
-              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-                steamFinish
-                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${steamFinish
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300"
+                }`}
               onClick={() => setSteamFinish(true)}
             >
               {t.yes}
@@ -749,11 +739,10 @@ ${
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
-              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-                !steamFinish
-                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${!steamFinish
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300"
+                }`}
               onClick={() => setSteamFinish(false)}
             >
               {t.no}
@@ -809,11 +798,10 @@ ${
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
-              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-                incenseFinish
-                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${incenseFinish
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300"
+                }`}
               onClick={() => handleIncenseChoice(true)}
             >
               {language === "ar" ? "نعم" : "Yes"}
@@ -822,11 +810,10 @@ ${
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
-              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-                !incenseFinish
-                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${!incenseFinish
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300"
+                }`}
               onClick={() => handleIncenseChoice(false)}
             >
               {language === "ar" ? "لا" : "No"}
@@ -844,11 +831,10 @@ ${
                 {incenseOptions.map((option) => (
                   <div
                     key={option.id}
-                    className={`p-4 border rounded-xl cursor-pointer transition-all ${
-                      incenseFinish === option.id
-                        ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                        : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-                    }`}
+                    className={`p-4 border rounded-xl cursor-pointer transition-all ${incenseFinish === option.id
+                      ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                      : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                      }`}
                     onClick={() => handleIncenseSelect(option.id)}
                   >
                     <div className="space-y-3">
@@ -968,11 +954,10 @@ ${
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
-              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-                wantsPerfume
-                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${wantsPerfume
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300"
+                }`}
               onClick={() => handlePerfumeChoice(true)}
             >
               {language === "ar" ? "نعم" : "Yes"}
@@ -981,11 +966,10 @@ ${
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               type="button"
-              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${
-                !wantsPerfume
-                  ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
-                  : "border-gray-200 hover:border-gray-300"
-              }`}
+              className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-lg border text-sm sm:text-base font-medium transition-all ${!wantsPerfume
+                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
+                : "border-gray-200 hover:border-gray-300"
+                }`}
               onClick={() => handlePerfumeChoice(false)}
             >
               {language === "ar" ? "لا" : "No"}
@@ -1009,15 +993,14 @@ ${
                       {options.map((option) => (
                         <div
                           key={option.id}
-                          className={`p-4 border rounded-xl cursor-pointer transition-all ${
-                            fragrance === option.id
-                              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md ring-2 ring-[#D4AF37]/20"
-                              : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-                          }`}
+                          className={`p-4 border rounded-xl cursor-pointer transition-all  ${fragrance === option.id
+                            ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md ring-2 ring-[#D4AF37]/20"
+                            : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+                            }`}
                           onClick={() => handleFragranceSelect(option.id)}
                         >
                           <div className="space-y-3">
-                            <div className="aspect-video w-full h-80 rounded-lg overflow-hidden">
+                            <div className="aspect-video w-full h-80  rounded-lg overflow-hidden">
                               <img
                                 src={option.image}
                                 alt={option.name}
@@ -1029,7 +1012,7 @@ ${
                               <h6 className="font-semibold text-sm text-gray-800 mb-1">
                                 {option.name}
                               </h6>
-                              <p className="text-xs text-gray-600 leading-relaxed">
+                              <p className={`text-xs text-gray-600 leading-relaxed ${language === "ar" ? "line-clamp-2" : "line-clamp-3" } `}>
                                 {option.description}
                               </p>
                             </div>
@@ -1100,11 +1083,10 @@ ${
             key={option.id}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`p-4 sm:p-6 border rounded-xl cursor-pointer transition-all ${
-              packaging === option.id
-                ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md ring-2 ring-[#D4AF37]/20"
-                : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
-            }`}
+            className={`p-4 sm:p-6 border rounded-xl cursor-pointer transition-all ${packaging === option.id
+              ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md ring-2 ring-[#D4AF37]/20"
+              : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
+              }`}
             onClick={() => setPackaging(option.id)}
           >
             <div className="space-y-4">
@@ -1193,15 +1175,13 @@ ${
               }
               value={cardDetails.from}
               onChange={handleCardFromChange}
-              className={`w-full p-3 sm:p-4 border rounded-lg text-sm sm:text-base transition-all ${
-                cardDetails.from.trim()
-                  ? "border-gray-300 focus:border-[#D4AF37]"
-                  : "border-red-300 focus:border-red-500"
-              } focus:outline-none focus:ring-1 ${
-                cardDetails.from.trim()
+              className={`w-full p-3 sm:p-4 border rounded-lg text-sm sm:text-base transition-all ${cardDetails.from.trim()
+                ? "border-gray-300 focus:border-[#D4AF37]"
+                : "border-red-300 focus:border-red-500"
+                } focus:outline-none focus:ring-1 ${cardDetails.from.trim()
                   ? "focus:ring-[#D4AF37]"
                   : "focus:ring-red-500"
-              }`}
+                }`}
               required
             />
             {!cardDetails.from.trim() && (
@@ -1283,14 +1263,14 @@ ${
                       ? "كي فقط"
                       : "Iron Only"
                     : serviceType === "wash_iron"
-                    ? language === "ar"
-                      ? "غسيل وكي"
-                      : "Washing & Iron"
-                    : serviceType === "dry_clean"
-                    ? language === "ar"
-                      ? "تنظيف جاف"
-                      : "Dry Clean"
-                    : serviceType}
+                      ? language === "ar"
+                        ? "غسيل وكي"
+                        : "Washing & Iron"
+                      : serviceType === "dry_clean"
+                        ? language === "ar"
+                          ? "تنظيف جاف"
+                          : "Dry Clean"
+                        : serviceType}
                 </span>
                 <button
                   onClick={() => setServiceType("")}
@@ -1487,8 +1467,8 @@ ${
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -1532,8 +1512,8 @@ ${
                         strokeLinejoin="round"
                         strokeWidth="2"
                         d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                      />
+                    </svg>
                   </button>
                 </div>
               </div>
@@ -1664,13 +1644,12 @@ ${
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         type="button"
-                        className={`w-full sm:w-auto sm:ml-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${
-                          (step === 1 && !serviceType) ||
+                        className={`w-full sm:w-auto sm:ml-auto px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all ${(step === 1 && !serviceType) ||
                           (step === 2 && garments.length === 0) ||
                           (step === 6 && !cardDetails.from.trim())
-                            ? "bg-gray-300 cursor-not-allowed text-gray-600"
-                            : "bg-[#D4AF37] text-white hover:bg-[#c9a227] shadow-md hover:shadow-lg"
-                        }`}
+                          ? "bg-gray-300 cursor-not-allowed text-gray-600"
+                          : "bg-[#D4AF37] text-white hover:bg-[#c9a227] shadow-md hover:shadow-lg"
+                          }`}
                         onClick={() => setStep(step + 1)}
                         disabled={
                           (step === 1 && !serviceType) ||
