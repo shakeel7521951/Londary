@@ -156,7 +156,7 @@ const OrderPage = () => {
     },
   ]
 
-  // Garment pricing structure
+ 
   // Garment pricing structure
   const garmentPrices = {
     // Traditional & Formal items
@@ -215,73 +215,38 @@ const OrderPage = () => {
     "Women's Summer Suit": { iron: 8, wash_iron: 11, dry_clean: 13, steam: 4, perfume: 5 },
   };
 
-  // Garment categories with translated names
   const garmentTypes = {
-    [t.mens]: Object.keys(garmentPrices).filter((item) =>
-      [
-        "Kandura",
-        "Shirt",
-        "Trousers",
-        "Bisht",
-        "Thobe",
-        "Thawb",
-        "Socks",
-        "Underwear",
-        "Child Dishdasha",
-        "Military Uniform",
-        "Overcoat",
-        "Kameez",
-        "Kurta",
-        "Kurta Pyjama (Set)",
-        "Gent Suit (3pcs)",
-        "Ghutra",
-        "Khatra",
-        "Dishdasha",
-        "Men's Suit",
-        "Suit (Men's)",
-        "Vest",
-        "Tie",
-        "T-shirt",
-        "Inner",
-        "Flannea",
-        "Coat",
-        "Pajamas",
-        "Kids Suit",
-        "Kids 3-Piece Suit",
-        "Kids Shirt",
-        "Kids Pants",
-        "Kids Underwear",
-        "School Uniform",
-        "Kids Jacket",
-      ].includes(item)
-    ),
-    [t.womens]: Object.keys(garmentPrices).filter((item) =>
-      [
-        "Abaya",
-        "Abaya Special",
-        "Dress",
-        "Dress (Short)",
-        "Dress (Long)",
-        "Blouse",
-        "Blouse (Special)",
-        "Skirt",
-        "Scarf",
-        "Hijab",
-        "Lingerie",
-        "Jalabiya",
-        "Bath Robe",
-        "Long Dress",
-        "Short Dress",
-        "Children's Abaya",
-        "Children's Dress",
-        "Kids Dress",
-        "Apron",
-        "Cap",
-        "Silk",
-        "Shawwal",
-      ].includes(item)
-    ),
+    [t.mens]: [
+      { en: "Thobe", ar: "ثوب", icon: "👔" },
+      { en: "Bisht", ar: "بشت", icon: "🧥" },
+      { en: "Men's Suit", ar: "بدلة رجالية", icon: "🤵" },
+      { en: "Ghutra", ar: "غترة", icon: "👳" },
+      { en: "Shela", ar: "شيلة", icon: "🧣" },
+      { en: "Shirt", ar: "قميص", icon: "👕" },
+      { en: "Tie", ar: "ربطة عنق", icon: "👔" },
+      { en: "T-shirt", ar: "تيشيرت", icon: "👕" },
+      { en: "Vest", ar: "سترة", icon: "🦺" },
+      { en: "Coat", ar: "معطف", icon: "🧥" },
+      { en: "Pajamas", ar: "بيجاما", icon: "🩳" },
+      { en: "Military Uniform", ar: "زي عسكري", icon: "🎖️" },
+      { en: "Overalls", ar: "زي عمل", icon: "👷" },
+      { en: "Lab Coat", ar: "معطف مختبر", icon: "🥼" },
+      { en: "Undershirt", ar: "فنيلة داخلية", icon: "👕" }, 
+      { en: "Pants", ar: "بنطال", icon: "👖" },
+    ],
+
+    [t.womens]: [
+      { en: "Abaya", ar: "عباية", icon: "🧕" },
+      { en: "Long Dress", ar: "فستان طويل", icon: "👗" },
+      { en: "Short Dress", ar: "فستان قصير", icon: "👗" },
+      { en: "Jalabiya", ar: "جلابية", icon: "👘" },
+      { en: "Scarf", ar: "وشاح", icon: "🧣" },
+      { en: "Silk Blouse", ar: "بلوزة حرير", icon: "👚" },
+      { en: "Women's Summer Suit", ar: "بدلة صيفية نسائية", icon: "👗" }, 
+    ],
   };
+
+
 
   const fragranceOptions = {
     [t.womens]: [
@@ -656,7 +621,7 @@ ${language === "ar"
       </div>
     </div>
   );
-                                                //  There is add icon 
+
   const Step2 = () => (
     <div className="space-y-6" dir={language === "ar" ? "rtl" : "ltr"}>
       <h3 className="text-lg sm:text-xl font-light text-gray-700 text-center sm:text-left">
@@ -669,18 +634,23 @@ ${language === "ar"
             <h4 className="font-medium text-base sm:text-lg mb-3 text-center sm:text-left">
               {category}
             </h4>
+
             <div className="space-y-2">
               {items.map((item) => (
                 <motion.button
-                  key={item}
+                  key={item.en}
                   whileHover={{ x: language === "ar" ? -3 : 3 }}
                   whileTap={{ scale: 0.98 }}
                   type="button"
                   className={`flex items-center w-full p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-all ${language === "ar" ? "text-right" : "text-left"
                     }`}
-                  onClick={() => addGarment(item)}
+                  onClick={() => addGarment(item.en)}
                 >
-                  <span className="text-sm sm:text-base flex-1">{item}</span>
+                  {/* Icon + Translated text */}
+                  <span className="text-sm sm:text-base flex-1">
+                    {item.icon} {language === "ar" ? item.ar : item.en}
+                  </span>
+
                   <svg
                     className={`w-4 h-4 sm:w-5 sm:h-5 ${language === "ar" ? "mr-auto" : "ml-auto"
                       } text-[#D4AF37] flex-shrink-0`}
@@ -703,6 +673,7 @@ ${language === "ar"
       </div>
     </div>
   );
+
 
   const Step3 = useCallback(() => {
     // Helper function to check if any garment is for children under 8
@@ -1012,7 +983,7 @@ ${language === "ar"
                               <h6 className="font-semibold text-sm text-gray-800 mb-1">
                                 {option.name}
                               </h6>
-                              <p className={`text-xs text-gray-600 leading-relaxed ${language === "ar" ? "line-clamp-2" : "line-clamp-3" } `}>
+                              <p className={`text-xs text-gray-600 leading-relaxed ${language === "ar" ? "line-clamp-2" : "line-clamp-3"} `}>
                                 {option.description}
                               </p>
                             </div>
@@ -1245,7 +1216,7 @@ ${language === "ar"
       {/* Fixed Header */}
       <div className="p-4 sm:p-6 border-b border-gray-100">
         <h3 className="text-lg sm:text-xl font-bold text-center text-[#D4AF37]">
-          {t.summaryTitle}
+          🧾  {t.summaryTitle}
         </h3>
       </div>
 
@@ -1260,16 +1231,16 @@ ${language === "ar"
                 <span className="text-sm">
                   {serviceType === "iron"
                     ? language === "ar"
-                      ? "كي فقط"
-                      : "Iron Only"
+                      ? "🧺 كي فقط"
+                      : "🧺 Iron Only"
                     : serviceType === "wash_iron"
                       ? language === "ar"
-                        ? "غسيل وكي"
-                        : "Washing & Iron"
+                        ? "👕 غسيل وكي"
+                        : "👕 Washing & Iron"
                       : serviceType === "dry_clean"
                         ? language === "ar"
-                          ? "تنظيف جاف"
-                          : "Dry Clean"
+                          ? "👔 تنظيف جاف"
+                          : "👔 Dry Clean"
                         : serviceType}
                 </span>
                 <button
