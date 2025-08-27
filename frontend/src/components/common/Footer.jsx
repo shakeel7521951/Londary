@@ -67,10 +67,10 @@ const Footer = () => {
         >
           <div className="flex items-center gap-2 mb-6">
             <img
-              src="./logo.png"
+              src="./companylogo.png"
               alt="company logo"
               loading="lazy"
-              className="w-24 mt-4 mx-auto md:ml-4"
+              className="w-36 h-12 mt-4 mx-auto md:ml-4"
             />
           </div>
           <p className="text-white/70 mb-4 leading-relaxed">{t.desc}</p>

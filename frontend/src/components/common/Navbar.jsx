@@ -75,12 +75,12 @@ const Navbar = () => {
       <div className="mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/">
+          <Link to="/" className="inline-block">
             <img
-              src="./logo.png"
+              src="./companylogo.png"
               alt="company logo"
               loading="lazy"
-              className="w-20 h-12"
+              className="w-24 h-10 block m-0 p-0"
             />
           </Link>
 
