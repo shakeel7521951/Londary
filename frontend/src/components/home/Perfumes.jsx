@@ -6,39 +6,47 @@ import { useSelector } from "react-redux";
 const perfumes = [
   {
     id: 1,
-    name_en: "Moony Akoya",
-    name_ar: "موني أكويا",
-    description_en: "A luxurious and feminine fragrance inspired by the elegance of silk and opulence. Moony blends the freshness of blood orange and mandarin with a soft floral-fruity heart, resting on a warm base of vanilla, patchouli, and amber. Perfect for women who embrace grace and sophistication.",
-    description_ar: "هو عطر فاخر وأنثوي مستوحى من سحر الترف والحرير، يجمع بين نضارة البرتقال الدموي واليوسفي، مع قلب زهري فاكهي ناعم، وقاعدة دافئة من الفانيليا والباتشولي والعنبر. مثالي لمحبات الأناقة والرقي.",
+    name_en: "Maknoun",
+    name_ar: "مكنون",
+    description_en:
+      "A luxurious fragrance that embodies the charm of a confident man. A refined blend of fresh fruits, elegant florals, and a warm base of musk and amber, leaving an unforgettable signature.",
+    description_ar:
+      "هو عطر الفخامة الذي يجسد حضور الرجل الواثق. مزيج أنيق من الفواكه المنعشة والزهور الراقية مع قاعدة دافئة من المسك والعنبر، ليمنحك توقيعًا عطريًا لا يُنسى.",
     price: "7 QAR",
-    image: "/home/moony.jpg",
+    image: "/home/maknoun.jpg",
   },
   {
     id: 2,
-    name_en: "Orchid Akoya",
-    name_ar: "أوركيد أكويا",
-    description_en: "A luxurious fragrance that combines the strength of Nepalese oud with the softness of Turkish rose, enriched with saffron and frankincense. Orchid is crafted for a mysterious and refined presence — an irresistible blend for lovers of elegance and distinction.",
-    description_ar: "هو عطر فاخر يجمع بين قوة العود النيبالي ونعومة الورد التركي، مدعوماً بالزعفران واللبان ليمنحك حضوراً عاطفاً وراقياً. تركيبة غنية وجذابة لعشاق الفخامة والتميز.",
+    name_en: "Mad",
+    name_ar: "مد",
+    description_en:
+      "A powerful masculine fragrance that radiates prestige and luxury. Its unique composition blends saffron, jasmine, and incense, with a leathery amber base for a timeless presence.",
+    description_ar:
+      "هو العطر الرجولي القوي الذي يعكس الهيبة والفخامة. تركيبته المميزة تمزج بين الزعفران والياسمين والبخور مع قاعدة جلدية وعنبرية تمنحك حضورًا أسطوريًا يدوم.",
     price: "7 QAR",
-    image: "/home/orchard.jpg",
+    image: "/home/mad.jpg",
   },
   {
     id: 3,
-    name_en: "Elixr by Akoya",
-    name_ar: "إكسير من أكويا",
-    description_en: "A bold and masculine fragrance that fuses fresh fruits with deep woods and leather, Elixir reflects a commanding and successful personality. Its long-lasting presence and unforgettable scent make it a statement of power and confidence.",
-    description_ar: "هو عطر ذكوري فاخر يمزج بين نضارة الفواكه وقوة الأخشاب والجلد، يعكس شخصية قيادية وناجحة، يتميز بثبات قوي ورائحة فريدة لا تُنسى.",
+    name_en: "Lulwa",
+    name_ar: "لولوه",
+    description_en:
+      "The fragrance of radiant femininity, combining modern freshness with timeless elegance. A stunning blend of bergamot, ginger, and patchouli with a soft musky touch, leaving a memorable sparkle.",
+    description_ar:
+      "هو عطر الأنوثة المتألقة، يجمع بين الانتعاش العصري والرقي الخالد. توليفة مبهرة من البرغموت والزنجبيل والباتشولي مع لمسة مسكية ناعمة تمنحك بريقًا لا يُنسى.",
     price: "7 QAR",
-    image: "/home/elixr.jpg",
+    image: "/home/lulwa.jpg",
   },
   {
     id: 4,
-    name_en: "Imperial Akoya",
-    name_ar: "إمبريال أكويا",
-    description_en: "A fresh and refined citrus fragrance, blending bergamot and black tea with a touch of ginger. Imperial is perfect for summer and the modern man seeking luxurious freshness and clarity in every note.",
-    description_ar: "عطر حمضي نظيف وأنيق، يجمع بين البرغموت والشاي الأسود مع لمسة زنجبيل. مثالي للصيف والرجل العصري الباحث عن الانتعاش الفاخر.",
+    name_en: "Sadf",
+    name_ar: "صدف",
+    description_en:
+      "A refreshing fragrance for both men and women, featuring bright citrus notes, warm ginger, and ambergris for an elegant and long-lasting touch.",
+    description_ar:
+      "هو العطر المنعش الذي يناسب الرجال والنساء، بتركيبته الحمضية المشرقة ولمسة الزنجبيل والعنبر التي تمنحه أناقة عصرية وثباتًا راقيًا.",
     price: "7 QAR",
-    image: "/home/imperial.jpg",
+    image: "/home/sadf.jpg",
   },
 ];
 
@@ -46,10 +54,15 @@ const Perfumes = () => {
   const language = useSelector((state) => state.language.language); // 'en' or 'ar'
 
   return (
-    <section className="py-12 bg-gray-100 px-4 md:px-12" dir={language === "ar" ? "rtl" : "ltr"}>
+    <section
+      className="py-12 bg-gray-100 px-4 md:px-12"
+      dir={language === "ar" ? "rtl" : "ltr"}
+    >
       <div className="text-center mb-12">
         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          {language === "ar" ? "عطور أكويا المميزة" : "Akoya Signature Fragrances"}
+          {language === "ar"
+            ? "عطور أكويا المميزة"
+            : "Akoya Signature Fragrances"}
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           {language === "ar"
@@ -82,7 +95,9 @@ const Perfumes = () => {
 
               {/* Description should grow to take available space */}
               <p className="text-sm text-gray-600 mb-4 flex-grow">
-                {language === "ar" ? perfume.description_ar : perfume.description_en}
+                {language === "ar"
+                  ? perfume.description_ar
+                  : perfume.description_en}
               </p>
 
               {/* Price + Button always at bottom */}
@@ -100,7 +115,6 @@ const Perfumes = () => {
           </motion.div>
         ))}
       </div>
-
     </section>
   );
 };
