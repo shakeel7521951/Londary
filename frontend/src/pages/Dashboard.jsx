@@ -5,6 +5,7 @@ import AdminPanel from "../components/dashboard/AdminPanel";
 import Users from "../components/dashboard/Users";
 import Order from "../components/dashboard/Order";
 import Delivery from "../components/dashboard/Delivery";
+import CouponManagement from "../components/dashboard/CouponManagement";
 
 const Dashboard = () => {
   const [activeComponent, setActiveComponent] = useState("Main Panel");
@@ -19,15 +20,17 @@ const Dashboard = () => {
   const renderActiveComponent = () => {
     switch (activeComponent) {
       case "Main Panel":
-        return <AdminPanel />;
+        return <AdminPanel setActiveComponent={setActiveComponent} />;
       case "Users":
         return <Users />;
       case "Orders":
         return <Order />;
       case "Deliveries":
         return <Delivery />;
+      case "Coupon Management":
+        return <CouponManagement />;
       default:
-        return <AdminPanel />;
+        return <AdminPanel setActiveComponent={setActiveComponent} />;
     }
   };
 

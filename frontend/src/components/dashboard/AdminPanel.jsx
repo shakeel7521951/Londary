@@ -9,9 +9,10 @@ import {
   FiClock,
   FiCheckCircle,
   FiTrendingUp,
+  FiGift,
 } from "react-icons/fi";
 
-const AdminPanel = () => {
+const AdminPanel = ({ setActiveComponent }) => {
   const { t } = useTranslation();
 
   const stats = [
@@ -222,6 +223,23 @@ const AdminPanel = () => {
                   </p>
                   <p className="text-sm text-white/70">
                     {t("scheduleDeliveryDesc")}
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setActiveComponent("Coupon Management")}
+              className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-[#D4AF37] rounded-lg flex items-center justify-center shadow-lg">
+                  <FiGift className="w-5 h-5 text-[#1C1C1C]" />
+                </div>
+                <div>
+                  <p className="font-medium text-white">{t("manageCoupons")}</p>
+                  <p className="text-sm text-white/70">
+                    {t("manageCouponsDesc")}
                   </p>
                 </div>
               </div>

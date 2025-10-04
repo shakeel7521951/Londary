@@ -13,7 +13,6 @@ import { GiClothes, GiHanger } from "react-icons/gi";
 import { FaTshirt } from "react-icons/fa";
 
 const OrderPage = () => {
-  // Redux state and hooks
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUser = useSelector(selectCurrentUser);
   const navigate = useNavigate();
@@ -21,10 +20,8 @@ const OrderPage = () => {
     useCreateOrderMutation();
   const language = useSelector((state) => state.language.language);
 
-  // Thank you modal state
   const [showThankYouModal, setShowThankYouModal] = useState(false);
 
-  // Translations
   const translations = {
     en: {
       title: "AKOYA PREMIUM LAUNDRY",
@@ -63,6 +60,19 @@ const OrderPage = () => {
       fieldRequired: "This field is required",
       mens: "Men's",
       womens: "Women's",
+      // Coupon translations
+      couponCode: "Coupon Code",
+      applyCoupon: "Apply Coupon",
+      removeCoupon: "Remove Coupon",
+      couponPlaceholder: "Enter coupon code",
+      couponApplied: "Coupon applied successfully!",
+      couponInvalid: "Invalid coupon code",
+      couponExpired: "Coupon has expired",
+      couponLimitReached: "Coupon usage limit reached",
+      discount: "Discount",
+      originalPrice: "Original Price",
+      finalPrice: "Final Price",
+      freeOrder: "FREE ORDER",
     },
     ar: {
       title: "أكویا لخدمات الغسيل الفاخرة",
@@ -100,25 +110,41 @@ const OrderPage = () => {
       fieldRequired: "هذا الحقل مطلوب",
       mens: "رجالي",
       womens: "نسائي",
+      // Coupon translations
+      couponCode: "رمز الكوبون",
+      applyCoupon: "تطبيق الكوبون",
+      removeCoupon: "إزالة الكوبون",
+      couponPlaceholder: "أدخل رمز الكوبون",
+      couponApplied: "تم تطبيق الكوبون بنجاح!",
+      couponInvalid: "رمز الكوبون غير صحيح",
+      couponExpired: "انتهت صلاحية الكوبون",
+      couponLimitReached: "تم الوصول لحد استخدام الكوبون",
+      discount: "الخصم",
+      originalPrice: "السعر الأصلي",
+      finalPrice: "السعر النهائي",
+      freeOrder: "طلب مجاني",
     },
   };
 
   const t = translations[language] || translations.en;
 
-  // State for each step
   const [step, setStep] = useState(1);
-  const [serviceType, setServiceType] = useState(""); // Changed from washType to include iron, wash_iron, dry_clean
+  const [serviceType, setServiceType] = useState("");
   const [garments, setGarments] = useState([]);
   const [steamFinish, setSteamFinish] = useState(false);
-  const [incenseFinish, setIncenseFinish] = useState(false); // New state for incense
-  const [incenseDisclaimer, setIncenseDisclaimer] = useState(false); // New state for incense disclaimer
+  const [incenseFinish, setIncenseFinish] = useState(false);
+  const [incenseDisclaimer, setIncenseDisclaimer] = useState(false);
   const [fragrance, setFragrance] = useState("");
-  const [fragranceDisclaimer, setFragranceDisclaimer] = useState(false); // New state for fragrance disclaimer
-  const [wantsPerfume, setWantsPerfume] = useState(false); // New state to track if user wants perfume
+  const [fragranceDisclaimer, setFragranceDisclaimer] = useState(false);
+  const [wantsPerfume, setWantsPerfume] = useState(false);
   const [packaging, setPackaging] = useState("");
   const [cardDetails, setCardDetails] = useState({ from: "", to: "" });
 
-  // Welcome & Goodbye Messages
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState("");
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
   const welcomeMessage = {
     ar: "هلا بكم يا يمه",
     en: "Welcome dear guests",
@@ -152,13 +178,11 @@ const OrderPage = () => {
       name: language === "ar" ? "تنظيف جاف" : "Dry Clean",
       description:
         language === "ar" ? "تنظيف جاف احترافي" : "Professional dry cleaning",
-      icon: "👔", // coat/jacket emoji for dry clean
+      icon: "👔",
     },
   ];
 
-  // Garment pricing structure
   const garmentPrices = {
-    // Traditional & Formal items
     Thobe: { iron: 4, wash_iron: 6, dry_clean: 10, steam: 4, perfume: 5 },
     Bisht: { iron: 25, wash_iron: 40, dry_clean: 40, steam: 4, perfume: 5 },
     Abaya: { iron: 10, wash_iron: 12, dry_clean: 15, steam: 4, perfume: 5 },
@@ -286,21 +310,19 @@ const OrderPage = () => {
       steam: 0,
       perfume: 0,
     },
-
-    // Household items
     "Small Towel": {
       iron: 3,
       wash_iron: 5,
       dry_clean: 6,
       steam: 4,
-      perfume: 4,
+      perfume: 5,
     },
     "Large Towel": {
       iron: 4,
       wash_iron: 6,
       dry_clean: 7,
       steam: 5,
-      perfume: 5,
+      perfume: 7,
     },
     "Double Bed Cover": {
       iron: 8,
@@ -321,28 +343,28 @@ const OrderPage = () => {
       wash_iron: 6,
       dry_clean: 8,
       steam: 6,
-      perfume: 6,
+      perfume: 8,
     },
     "Single Bed Sheet": {
       iron: 3,
       wash_iron: 5,
       dry_clean: 6,
       steam: 5,
-      perfume: 5,
+      perfume: 8,
     },
     "Single Blanket": {
       iron: 0,
       wash_iron: 10,
       dry_clean: 15,
       steam: 8,
-      perfume: 8,
+      perfume: 10,
     },
     "Double Blanket": {
       iron: 0,
       wash_iron: 15,
       dry_clean: 18,
       steam: 9,
-      perfume: 9,
+      perfume: 10,
     },
     Pillowcase: { iron: 3, wash_iron: 4, dry_clean: 4, steam: 0, perfume: 0 },
     "Large Feather Pillow": {
@@ -352,8 +374,6 @@ const OrderPage = () => {
       steam: 0,
       perfume: 0,
     },
-
-    // Summer suits
     "Men's Summer Suit": {
       iron: 8,
       wash_iron: 11,
@@ -466,7 +486,6 @@ const OrderPage = () => {
     ],
   };
 
-  // Oud/Incense options with images - wrapped in useMemo to prevent dependency issues
   const incenseOptions = useMemo(
     () => [
       {
@@ -491,7 +510,6 @@ const OrderPage = () => {
     [language]
   );
 
-  // Packaging options
   const packagingOptions = [
     {
       id: "plastic",
@@ -522,9 +540,7 @@ const OrderPage = () => {
     },
   ];
 
-  // Helper functions
   const addGarment = (type) => {
-    // Check if the garment already exists
     const existingIndex = garments.findIndex(
       (garment) => garment.type === type
     );
@@ -550,7 +566,6 @@ const OrderPage = () => {
     setGarments(garments.filter((_, i) => i !== index));
   };
 
-  // Move useCallback hooks to component level
   const handleIncenseSelect = useCallback((optionId) => {
     setIncenseFinish(optionId);
   }, []);
@@ -577,6 +592,81 @@ const OrderPage = () => {
       setFragranceDisclaimer(false);
     }
   }, []);
+
+  // Coupon validation and application functions
+  const validateCoupon = async (code) => {
+    setIsValidatingCoupon(true);
+    setCouponError("");
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/coupons/validate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ code: code }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setCouponError(data.message || t.couponInvalid);
+        setAppliedCoupon(null);
+        return false;
+      }
+
+      // Check if coupon is active
+      if (!data.coupon.isActive) {
+        setCouponError(t.couponInvalid);
+        setAppliedCoupon(null);
+        return false;
+      }
+
+      // Check if coupon has expired
+      if (new Date(data.coupon.expiryDate) < new Date()) {
+        setCouponError(t.couponExpired);
+        setAppliedCoupon(null);
+        return false;
+      }
+
+      // Check usage limit
+      if (
+        data.coupon.usageLimit &&
+        data.coupon.usedCount >= data.coupon.usageLimit
+      ) {
+        setCouponError(t.couponLimitReached);
+        setAppliedCoupon(null);
+        return false;
+      }
+
+      // Successfully validated - set the coupon
+      setAppliedCoupon(data.coupon);
+      setCouponError("");
+      return true;
+    } catch (error) {
+      setCouponError("Failed to validate coupon. Please try again.");
+      setAppliedCoupon(null);
+      return false;
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const applyCoupon = async () => {
+    if (!couponCode.trim()) return;
+
+    await validateCoupon(couponCode.trim().toUpperCase());
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponError("");
+  };
 
   const calculateTotal = () => {
     let total = 0;
@@ -626,22 +716,58 @@ const OrderPage = () => {
     return total;
   };
 
+  const calculateTotalWithDiscount = () => {
+    const originalTotal = calculateTotal();
+
+    if (!appliedCoupon) {
+      return {
+        originalTotal,
+        discount: 0,
+        finalTotal: originalTotal,
+        isFree: false,
+      };
+    }
+
+    if (appliedCoupon.type === "free") {
+      return {
+        originalTotal,
+        discount: originalTotal,
+        finalTotal: 0,
+        isFree: true,
+      };
+    }
+
+    if (appliedCoupon.type === "percentage") {
+      const discount = (originalTotal * appliedCoupon.discount) / 100;
+      return {
+        originalTotal,
+        discount,
+        finalTotal: originalTotal - discount,
+        isFree: false,
+      };
+    }
+
+    return {
+      originalTotal,
+      discount: 0,
+      finalTotal: originalTotal,
+      isFree: false,
+    };
+  };
+
   const handleSubmit = async () => {
-    // Check if user is authenticated
     if (!isAuthenticated) {
       toast.error(t.loginError);
       navigate("/login");
       return;
     }
 
-    // Validate required fields
     if (!cardDetails.from.trim()) {
       toast.error(t.cardFromRequired);
       setStep(6); // Go back to the card step
       return;
     }
 
-    // Validate disclaimers if services are selected
     if (incenseFinish && !incenseDisclaimer) {
       toast.error(
         language === "ar"
@@ -902,7 +1028,6 @@ ${
   );
 
   const Step3 = useCallback(() => {
-    // Helper function to check if any garment is for children under 8
     const hasChildrenClothes = () => {
       return garments.some(
         (garment) =>
@@ -1098,7 +1223,6 @@ ${
   }, [language, garments, steamFinish, incenseFinish, incenseDisclaimer, t]);
 
   const Step4 = useCallback(() => {
-    // Helper function to check if any garment is for children under 8
     const hasChildrenClothes = () => {
       return garments.some(
         (garment) =>
@@ -1333,7 +1457,6 @@ ${
                 />
               </div>
 
-              {/* Content */}
               <div className="text-center space-y-2">
                 <h4 className="font-medium text-sm sm:text-base">
                   {option.name}
@@ -1342,7 +1465,6 @@ ${
                   {option.desc}
                 </p>
 
-                {/* Pricing */}
                 <div className="mt-3">
                   {option.id === "plastic" && (
                     <p className="text-green-600 text-xs sm:text-sm font-medium">
@@ -1361,7 +1483,6 @@ ${
                   )}
                 </div>
 
-                {/* Selected indicator */}
                 {packaging === option.id && (
                   <div className="flex items-center justify-center pt-2">
                     <div className="flex items-center gap-2 text-[#D4AF37]">
@@ -1462,7 +1583,6 @@ ${
     ]
   );
 
-  // Render current step
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -1482,20 +1602,16 @@ ${
     }
   };
 
-  // Dynamic Receipt Component
   const DynamicReceipt = () => (
     <div className="bg-white rounded-xl shadow-lg sticky top-20 max-h-[85vh] overflow-hidden flex flex-col">
-      {/* Fixed Header */}
       <div className="p-4 sm:p-6 border-b border-gray-100">
         <h3 className="text-lg sm:text-xl font-bold text-center text-[#D4AF37]">
           🧾 {t.summaryTitle}
         </h3>
       </div>
 
-      {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto scrollbar-hide p-4 sm:p-6">
         <div className="space-y-3">
-          {/* Service Type */}
           {serviceType && (
             <div className="flex justify-between items-center border-b pb-2">
               <span className="text-sm font-medium">{t.serviceType}</span>
@@ -1538,7 +1654,6 @@ ${
             </div>
           )}
 
-          {/* Garments */}
           {garments.length > 0 && (
             <div className="border-b pb-3">
               <p className="font-medium mb-2 text-sm">{t.garments}</p>
@@ -1606,7 +1721,6 @@ ${
             </div>
           )}
 
-          {/* Steam Finishing */}
           {steamFinish && garments.length > 0 && (
             <div className="flex justify-between items-center border-b pb-2">
               <span className="text-sm">{t.steamFinishing}</span>
@@ -1642,7 +1756,6 @@ ${
             </div>
           )}
 
-          {/* Incense Service */}
           {incenseFinish && garments.length > 0 && (
             <div className="flex justify-between items-center border-b pb-2">
               <span className="text-sm">
@@ -1680,7 +1793,6 @@ ${
             </div>
           )}
 
-          {/* Fragrance */}
           {fragrance && garments.length > 0 && (
             <div className="border-b pb-2">
               <div className="flex justify-between items-center">
@@ -1725,7 +1837,6 @@ ${
             </div>
           )}
 
-          {/* Packaging */}
           {packaging && (
             <div className="border-b pb-2">
               <div className="flex justify-between items-center">
@@ -1766,7 +1877,6 @@ ${
             </div>
           )}
 
-          {/* Personalized Card */}
           {cardDetails.from && (
             <div className="border-b border-gray-100 pb-3">
               <p className="font-medium text-sm mb-2 text-gray-700">
@@ -1787,16 +1897,93 @@ ${
         </div>
       </div>
 
-      {/* Fixed Total Section */}
       <div className="border-t border-gray-200 p-4 sm:p-6 bg-gray-50">
-        <div className="flex justify-between font-bold text-lg mb-4">
-          <span className="text-gray-700">{t.total}</span>
-          <span className="text-[#D4AF37]">
-            {calculateTotal()} {language === "ar" ? "ريال" : "QAR"}
-          </span>
+        <div className="mb-4">
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value)}
+              placeholder={t.couponPlaceholder}
+              className="flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:border-[#D4AF37] focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+              disabled={appliedCoupon || isValidatingCoupon}
+            />
+            {appliedCoupon ? (
+              <button
+                onClick={removeCoupon}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                {t.removeCoupon}
+              </button>
+            ) : (
+              <button
+                onClick={applyCoupon}
+                disabled={!couponCode.trim() || isValidatingCoupon}
+                className="px-4 py-2 bg-[#D4AF37] hover:bg-[#c9a227] text-white rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {isValidatingCoupon ? "..." : t.applyCoupon}
+              </button>
+            )}
+          </div>
+
+          {couponError && <p className="text-red-500 text-sm">{couponError}</p>}
+
+          {appliedCoupon && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-2">
+              <div className="flex items-center gap-2 text-green-700">
+                <span className="text-sm font-medium">
+                  ✓ {appliedCoupon.code} -{" "}
+                  {appliedCoupon.type === "free"
+                    ? t.freeOrder
+                    : `${appliedCoupon.discount}% ${t.discount}`}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Order Button */}
+        {(() => {
+          const totals = calculateTotalWithDiscount();
+
+          return (
+            <div className="space-y-2">
+              {appliedCoupon && (
+                <>
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>{t.originalPrice}</span>
+                    <span>
+                      {totals.originalTotal}{" "}
+                      {language === "ar" ? "ريال" : "QAR"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>{t.discount}</span>
+                    <span>
+                      -{totals.discount} {language === "ar" ? "ريال" : "QAR"}
+                    </span>
+                  </div>
+                  <div className="border-t border-gray-200 pt-2"></div>
+                </>
+              )}
+
+              <div className="flex justify-between font-bold text-lg">
+                <span className="text-gray-700">{t.finalPrice}</span>
+                <span
+                  className={
+                    totals.isFree ? "text-green-600" : "text-[#D4AF37]"
+                  }
+                >
+                  {totals.isFree
+                    ? t.freeOrder
+                    : `${totals.finalTotal} ${
+                        language === "ar" ? "ريال" : "QAR"
+                      }`}
+                </span>
+              </div>
+            </div>
+          );
+        })()}
+
         {step === 6 && cardDetails.from.trim() && (
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -1820,10 +2007,8 @@ ${
           "linear-gradient(to bottom, #2C2416 0%, #4A3B2A 30%, #6B5B47 60%, #f9f7f4 100%)",
       }}
     >
-      {/* Smooth gradient overlay with golden tints */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/10 via-[#D4AF37]/5 to-transparent pointer-events-none"></div>
 
-      {/* Decorative elements */}
       <div className="absolute inset-0 opacity-15 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-24 sm:w-32 h-24 sm:h-32 rounded-full bg-[#D4AF37] mix-blend-multiply filter blur-3xl animate-pulse"></div>
         <div className="absolute top-1/3 right-1/3 w-16 sm:w-24 h-16 sm:h-24 rounded-full bg-[#B8941F] mix-blend-multiply filter blur-2xl animate-pulse delay-1000"></div>
@@ -1833,10 +2018,8 @@ ${
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left side - Form */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              {/* Progress bar */}
               <div className="bg-gray-100 h-1.5 sm:h-2">
                 <div
                   className="bg-[#D4AF37] h-full transition-all duration-300"
@@ -1844,7 +2027,6 @@ ${
                 ></div>
               </div>
 
-              {/* Header */}
               <div
                 className="p-4 sm:p-6 text-center"
                 style={{
@@ -1860,14 +2042,11 @@ ${
                 </p>
               </div>
 
-              {/* Form content */}
               <div className="flex flex-col" style={{ height: "600px" }}>
-                {/* Content area with fixed height and scroll */}
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 scrollbar-hide">
                   {renderStep()}
                 </div>
 
-                {/* Fixed Navigation buttons at bottom */}
                 <div className="border-t border-gray-100 p-4 sm:p-6 bg-gray-50">
                   <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0">
                     {step > 1 && (
@@ -1910,14 +2089,12 @@ ${
             </div>
           </div>
 
-          {/* Right side - Dynamic Receipt */}
           <div className="lg:col-span-1">
             <DynamicReceipt />
           </div>
         </div>
       </div>
 
-      {/* Thank You Modal */}
       <ThankYouDialog
         isVisible={showThankYouModal}
         onClose={() => setShowThankYouModal(false)}

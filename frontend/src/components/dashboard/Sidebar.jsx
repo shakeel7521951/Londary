@@ -11,6 +11,7 @@ import {
   FiBarChart2,
   FiMenu,
   FiX,
+  FiGift,
 } from "react-icons/fi";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 
@@ -23,6 +24,11 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
     { icon: FiUsers, label: "Users", translationKey: "users" },
     { icon: FiPackage, label: "Orders", translationKey: "orders" },
     { icon: FiTruck, label: "Deliveries", translationKey: "deliveries" },
+    {
+      icon: FiGift,
+      label: "Coupon Management",
+      translationKey: "couponManagement",
+    },
     // { icon: FiBarChart2, label: "Analytics", translationKey: "analytics" },
     // { icon: FiDollarSign, label: "Payments", translationKey: "payments" },
     // { icon: FiSettings, label: "Settings", translationKey: "settings" },
