@@ -389,11 +389,15 @@ const resources = {
   },
 };
 
+// Get saved language from localStorage or default to 'en'
+const savedLanguage = localStorage.getItem("selectedLanguage") || "en";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
+    lng: savedLanguage, // Use saved language as initial language
     fallbackLng: "en",
     debug: false,
 
@@ -404,6 +408,7 @@ i18n
     detection: {
       order: ["localStorage", "cookie", "htmlTag", "path", "subdomain"],
       caches: ["localStorage", "cookie"],
+      lookupLocalStorage: "selectedLanguage", // Use consistent key
     },
   });
 

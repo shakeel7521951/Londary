@@ -1,8 +1,18 @@
 // features/language/languageSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
+// Get saved language from localStorage or default to 'en'
+const getInitialLanguage = () => {
+  try {
+    const savedLanguage = localStorage.getItem("selectedLanguage");
+    return savedLanguage || "en";
+  } catch {
+    return "en";
+  }
+};
+
 const initialState = {
-  language: "en", // default language
+  language: getInitialLanguage(),
 };
 
 const languageSlice = createSlice({
@@ -10,10 +20,25 @@ const languageSlice = createSlice({
   initialState,
   reducers: {
     toggleLanguage: (state) => {
-      state.language = state.language === "en" ? "ar" : "en";
+      const newLanguage = state.language === "en" ? "ar" : "en";
+      state.language = newLanguage;
+
+      // Persist to localStorage
+      try {
+        localStorage.setItem("selectedLanguage", newLanguage);
+      } catch (error) {
+        console.error("Failed to save language to localStorage:", error);
+      }
     },
     setLanguage: (state, action) => {
       state.language = action.payload;
+
+      // Persist to localStorage
+      try {
+        localStorage.setItem("selectedLanguage", action.payload);
+      } catch (error) {
+        console.error("Failed to save language to localStorage:", error);
+      }
     },
   },
 });

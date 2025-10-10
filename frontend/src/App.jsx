@@ -2,6 +2,7 @@ import "./App.css";
 import Footer from "./components/common/Footer";
 import Navbar from "./components/common/Navbar";
 import AuthInitializer from "./components/common/AuthInitializer";
+import LanguageInitializer from "./components/common/LanguageInitializer";
 import AdminRoute from "./components/common/AdminRoute";
 import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
@@ -23,17 +24,18 @@ import BotpressChat from "./components/common/BotpressChat";
 const MainFunction = () => {
   return (
     <AuthInitializer>
-      <div>
-        <RouteMiddleware />
-        <Navbar />
-        <Outlet />
-        <Footer />
-        <BotpressChat />
-      </div>
+      <LanguageInitializer>
+        <div>
+          <RouteMiddleware />
+          <Navbar />
+          <Outlet />
+          <Footer />
+          <BotpressChat />
+        </div>
+      </LanguageInitializer>
     </AuthInitializer>
   );
 };
-
 
 const router = createBrowserRouter([
   {
@@ -57,7 +59,9 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: (
       <AdminRoute>
-        <Dashboard />
+        <LanguageInitializer>
+          <Dashboard />
+        </LanguageInitializer>
       </AdminRoute>
     ),
   },

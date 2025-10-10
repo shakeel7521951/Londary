@@ -1,14 +1,22 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { FiGlobe } from "react-icons/fi";
+import { toggleLanguage as toggleReduxLanguage } from "../../redux/features/languageSlice";
 
 const LanguageSwitcher = ({ isCollapsed }) => {
   const { i18n, t } = useTranslation();
+  const dispatch = useDispatch();
+  const currentLanguage = useSelector((state) => state.language.language);
 
   const toggleLanguage = () => {
-    const currentLang = i18n.language;
-    const newLang = currentLang === "en" ? "ar" : "en";
+    const newLang = currentLanguage === "en" ? "ar" : "en";
+
+    // Update Redux state (this also updates localStorage)
+    dispatch(toggleReduxLanguage());
+
+    // Update i18next
     i18n.changeLanguage(newLang);
 
     // Update document direction for RTL/LTR

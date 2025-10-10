@@ -21,13 +21,13 @@ const rootReducer = combineReducers({
   auth: authReducer,
   [userApi.reducerPath]: userApi.reducer,
   [orderApi.reducerPath]: orderApi.reducer,
-  language:languageReducer
+  language: languageReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["auth"],
+  whitelist: ["auth", "language"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 import {
   selectCurrentUser,
   selectIsAuthenticated,
@@ -17,7 +18,23 @@ const Navbar = () => {
   const currentUser = useSelector(selectCurrentUser);
 
   const dispatch = useDispatch();
+  const { i18n } = useTranslation();
   const language = useSelector((state) => state.language.language);
+
+  // Function to handle language toggle with proper sync
+  const handleLanguageToggle = () => {
+    const newLanguage = language === "en" ? "ar" : "en";
+
+    // Update Redux state (this also updates localStorage)
+    dispatch(toggleLanguage());
+
+    // Update i18next
+    i18n.changeLanguage(newLanguage);
+
+    // Update document direction for RTL/LTR
+    document.documentElement.dir = newLanguage === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = newLanguage;
+  };
 
   const translations = {
     en: {
@@ -113,7 +130,7 @@ const Navbar = () => {
           {/* CTA Buttons */}
           <div className="hidden lg:flex items-center gap-4">
             <button
-              onClick={() => dispatch(toggleLanguage())}
+              onClick={handleLanguageToggle}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                 scrolled
                   ? "text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
@@ -332,7 +349,7 @@ const Navbar = () => {
                   {/* Language Toggle */}
                   <motion.button
                     onClick={() => {
-                      dispatch(toggleLanguage());
+                      handleLanguageToggle();
                       setIsOpen(false);
                     }}
                     className="flex items-center justify-center w-full px-4 py-3.5 text-white border-2 border-[#D4AF37]/50 rounded-xl hover:bg-[#D4AF37]/10 hover:border-[#D4AF37] transition-all duration-300 font-medium"
