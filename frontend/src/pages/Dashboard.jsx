@@ -4,7 +4,7 @@ import Sidebar from "../components/dashboard/Sidebar";
 import AdminPanel from "../components/dashboard/AdminPanel";
 import Users from "../components/dashboard/Users";
 import Order from "../components/dashboard/Order";
-import Delivery from "../components/dashboard/Delivery";
+import Employees from "../components/dashboard/Employees";
 import CouponManagement from "../components/dashboard/CouponManagement";
 
 const Dashboard = () => {
@@ -25,8 +25,8 @@ const Dashboard = () => {
         return <Users />;
       case "Orders":
         return <Order />;
-      case "Deliveries":
-        return <Delivery />;
+      case "Employees":
+        return <Employees />;
       case "Coupon Management":
         return <CouponManagement />;
       default:

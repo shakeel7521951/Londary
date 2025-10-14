@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { useGetAllOrdersQuery } from "../../redux/features/ordersApi";
+import toast from "react-hot-toast";
+import {
+  useGetAllOrdersQuery,
+  useCreateOrderByAdminMutation,
+  useAssignOrderToEmployeeMutation,
+} from "../../redux/features/ordersApi";
+import { useGetAllEmployeesQuery } from "../../redux/features/employeesApi";
 import {
   FiSearch,
   FiFilter,
@@ -21,6 +27,9 @@ import {
   FiTruck,
   FiAlertCircle,
   FiUserPlus,
+  FiPlus,
+  FiSave,
+  FiMinus,
 } from "react-icons/fi";
 
 const Order = () => {
@@ -31,6 +40,31 @@ const Order = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showAddOrderModal, setShowAddOrderModal] = useState(false);
+
+  // Add Order Form State
+  const [orderForm, setOrderForm] = useState({
+    customerInfo: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      address: "",
+    },
+    serviceType: "wash_iron",
+    garments: [{ type: "", quantity: 1 }],
+    packaging: "standard",
+    steamFinish: false,
+    incenseFinish: false,
+    incenseType: "",
+    fragrance: "",
+    cardFrom: "",
+    cardTo: "",
+    originalTotal: 0,
+    total: 0,
+  });
+
+  // Form validation errors
+  const [formErrors, setFormErrors] = useState({});
 
   // API hooks
   const {
@@ -40,17 +74,19 @@ const Order = () => {
     refetch,
   } = useGetAllOrdersQuery();
 
-  // Dummy employees list
-  const employees = [
-    { id: 1, name: "Ahmed Al-Mansouri", role: "Senior Cleaner" },
-    { id: 2, name: "Fatima Al-Zahra", role: "Dry Clean Specialist" },
-    { id: 3, name: "Mohammad Al-Rashid", role: "Quality Inspector" },
-    { id: 4, name: "Aisha Al-Sabah", role: "Pressing Specialist" },
-    { id: 5, name: "Omar Al-Khalifa", role: "Delivery Driver" },
-    { id: 6, name: "Mariam Al-Thani", role: "Customer Service" },
-    { id: 7, name: "Hassan Al-Maktoum", role: "Operations Manager" },
-    { id: 8, name: "Noora Al-Nuaimi", role: "Stain Removal Expert" },
-  ];
+  const {
+    data: employeesData,
+    isLoading: isLoadingEmployees,
+    error: employeesError,
+  } = useGetAllEmployeesQuery();
+
+  const [createOrderByAdmin, { isLoading: isCreatingOrder }] =
+    useCreateOrderByAdminMutation();
+  const [assignOrderToEmployee] = useAssignOrderToEmployeeMutation();
+
+  // Get employees from API - only active employees
+  const employees =
+    employeesData?.employees?.filter((emp) => emp.status === "active") || [];
 
   // Load orders from API
   useEffect(() => {
@@ -58,10 +94,17 @@ const Order = () => {
       // Transform API data to match the component format
       const transformedOrders = ordersData.orders.map((order) => ({
         id: order._id,
-        customerName: order.userId?.name || "Unknown Customer",
-        customerPhone: order.userId?.email || "N/A", // Using email as phone for now
-        customerEmail: order.userId?.email || "N/A",
-        address: order.cardFrom || "No address provided",
+        // Prioritize customerInfo over userId for customer details
+        customerName:
+          order.customerInfo?.name || order.userId?.name || "Unknown Customer",
+        customerPhone:
+          order.customerInfo?.phoneNumber || order.userId?.phoneNumber || "N/A",
+        customerEmail:
+          order.customerInfo?.email || order.userId?.email || "N/A",
+        address:
+          order.customerInfo?.address ||
+          order.cardFrom ||
+          "No address provided",
         items:
           order.garments?.map((garment) => ({
             type: garment.type,
@@ -79,7 +122,7 @@ const Order = () => {
         notes: order.cardTo
           ? `Card message: From ${order.cardFrom} to ${order.cardTo}`
           : "",
-        assignedEmployee: null,
+        assignedEmployee: order.assignedEmployee || null,
         steamFinish: order.steamFinish,
         incenseFinish: order.incenseFinish,
         incenseType: order.incenseType,
@@ -242,13 +285,194 @@ const Order = () => {
     }
   };
 
-  const assignEmployee = (orderId, employeeId) => {
-    const employee = employees.find((emp) => emp.id === employeeId);
-    setOrders(
-      orders.map((order) =>
-        order.id === orderId ? { ...order, assignedEmployee: employee } : order
-      )
-    );
+  const assignEmployee = async (orderId, employeeId) => {
+    try {
+      const result = await assignOrderToEmployee({
+        orderId,
+        employeeId,
+      }).unwrap();
+
+      // Find employee for success message
+      const employee = employees.find((emp) => emp._id === employeeId);
+
+      // Show success message
+      if (employee) {
+        const whatsappStatus =
+          result.whatsappSent && result.customerNotified
+            ? "WhatsApp notifications sent to both employee and customer!"
+            : result.whatsappSent
+            ? "WhatsApp notification sent to employee. Customer notification failed."
+            : "Note: WhatsApp notifications failed to send.";
+
+        toast.success(`Order assigned to ${employee.name}. ${whatsappStatus}`, {
+          duration: 5000,
+          style: {
+            background: "#FFF9E6",
+            color: "#D4AF37",
+            border: "1px solid #D4AF37",
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Failed to assign employee:", error);
+      toast.error(
+        error?.data?.message || "Failed to assign employee to order",
+        {
+          duration: 4000,
+          style: {
+            background: "#FFE6E6",
+            color: "#D32F2F",
+            border: "1px solid #D32F2F",
+          },
+        }
+      );
+    }
+  };
+
+  // Add Order Form Handlers
+  const handleAddOrderFormChange = (field, value) => {
+    if (field.includes(".")) {
+      const [parent, child] = field.split(".");
+      setOrderForm((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setOrderForm((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
+
+    // Clear error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [field]: "",
+      }));
+    }
+  };
+
+  const addGarment = () => {
+    setOrderForm((prev) => ({
+      ...prev,
+      garments: [...prev.garments, { type: "", quantity: 1 }],
+    }));
+  };
+
+  const removeGarment = (index) => {
+    setOrderForm((prev) => ({
+      ...prev,
+      garments: prev.garments.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateGarment = (index, field, value) => {
+    setOrderForm((prev) => ({
+      ...prev,
+      garments: prev.garments.map((garment, i) =>
+        i === index ? { ...garment, [field]: value } : garment
+      ),
+    }));
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    // Customer Info Validation
+    if (!orderForm.customerInfo.name.trim()) {
+      errors["customerInfo.name"] = "Customer name is required";
+    }
+
+    if (!orderForm.customerInfo.email.trim()) {
+      errors["customerInfo.email"] = "Customer email is required";
+    } else if (!/\S+@\S+\.\S+/.test(orderForm.customerInfo.email)) {
+      errors["customerInfo.email"] = "Please enter a valid email";
+    }
+
+    if (!orderForm.customerInfo.phoneNumber.trim()) {
+      errors["customerInfo.phoneNumber"] = "Phone number is required";
+    } else if (!/^\+[1-9]\d{1,14}$/.test(orderForm.customerInfo.phoneNumber)) {
+      errors["customerInfo.phoneNumber"] =
+        "Phone number must include country code (+1234567890)";
+    }
+
+    // Garments Validation
+    if (orderForm.garments.length === 0) {
+      errors.garments = "At least one garment is required";
+    } else {
+      orderForm.garments.forEach((garment, index) => {
+        if (!garment.type.trim()) {
+          errors[`garments.${index}.type`] = "Garment type is required";
+        }
+        if (garment.quantity < 1) {
+          errors[`garments.${index}.quantity`] = "Quantity must be at least 1";
+        }
+      });
+    }
+
+    if (orderForm.total <= 0) {
+      errors.total = "Total amount must be greater than 0";
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmitOrder = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      await createOrderByAdmin({
+        customerInfo: orderForm.customerInfo,
+        serviceType: orderForm.serviceType,
+        garments: orderForm.garments,
+        packaging: orderForm.packaging,
+        steamFinish: orderForm.steamFinish,
+        incenseFinish: orderForm.incenseFinish,
+        incenseType: orderForm.incenseType,
+        fragrance: orderForm.fragrance,
+        cardFrom: orderForm.cardFrom,
+        cardTo: orderForm.cardTo,
+        originalTotal: orderForm.originalTotal,
+        discountAmount: 0,
+        total: orderForm.total,
+      }).unwrap();
+
+      // Reset form and close modal
+      setOrderForm({
+        customerInfo: {
+          name: "",
+          email: "",
+          phoneNumber: "",
+          address: "",
+        },
+        serviceType: "wash_iron",
+        garments: [{ type: "", quantity: 1 }],
+        packaging: "standard",
+        steamFinish: false,
+        incenseFinish: false,
+        incenseType: "",
+        fragrance: "",
+        cardFrom: "",
+        cardTo: "",
+        originalTotal: 0,
+        total: 0,
+      });
+      setFormErrors({});
+      setShowAddOrderModal(false);
+
+      // Refresh orders list
+      refetch();
+    } catch (error) {
+      console.error("Failed to create order:", error);
+      // You might want to show an error toast here
+    }
   };
 
   const viewOrderDetails = (order) => {
@@ -278,10 +502,21 @@ const Order = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-light text-white mb-2 tracking-wide">
-          {t("orderManagement")}
-        </h1>
-        <p className="text-white/70">{t("manageCustomers")}</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-3xl font-light text-white mb-2 tracking-wide">
+              {t("orderManagement")}
+            </h1>
+            <p className="text-white/70">{t("manageCustomers")}</p>
+          </div>
+          <button
+            onClick={() => setShowAddOrderModal(true)}
+            className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#BFA134] text-[#1C1C1C] rounded-lg hover:from-[#BFA134] hover:to-[#A08B28] transition-all duration-300 font-medium flex items-center space-x-2 shadow-lg"
+          >
+            <FiPlus className="w-5 h-5" />
+            <span>{t("addOrderButton")}</span>
+          </button>
+        </div>
       </motion.div>
 
       {/* Stats Cards */}
@@ -421,7 +656,7 @@ const Order = () => {
         >
           <div className="flex items-center justify-center space-x-3">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
-            <span className="text-white/70">Loading orders...</span>
+            <span className="text-white/70">{t("loadingOrdersText")}</span>
           </div>
         </motion.div>
       )}
@@ -437,14 +672,14 @@ const Order = () => {
           <div className="flex items-center justify-center space-x-3 mb-4">
             <FiAlertCircle className="w-8 h-8 text-red-400" />
             <span className="text-red-400 font-medium">
-              Error loading orders
+              {t("errorLoadingOrders")}
             </span>
           </div>
           <button
             onClick={refetch}
             className="px-4 py-2 bg-[#D4AF37] text-[#1C1C1C] rounded-lg hover:bg-[#BFA134] transition-colors"
           >
-            Try Again
+            {t("tryAgain")}
           </button>
         </motion.div>
       )}
@@ -459,7 +694,7 @@ const Order = () => {
         >
           <div className="px-6 py-4 border-b border-[#D4AF37]/30">
             <h2 className="text-lg font-light text-white tracking-wide">
-              Orders ({filteredOrders.length})
+              {t("ordersCount")} ({filteredOrders.length})
             </h2>
           </div>
           <div
@@ -485,7 +720,7 @@ const Order = () => {
                     {t("amount")}
                   </th>
                   <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                    Assigned To
+                    {t("assignedTo")}
                   </th>
                   <th className="text-left py-3 px-6 font-light text-white tracking-wide">
                     Status
@@ -541,7 +776,8 @@ const Order = () => {
                                 {order.assignedEmployee.name}
                               </p>
                               <p className="text-xs text-white/60">
-                                {order.assignedEmployee.role}
+                                {order.assignedEmployee.department ||
+                                  order.assignedEmployee.role}
                               </p>
                             </div>
                           </div>
@@ -550,15 +786,18 @@ const Order = () => {
                             className="text-sm bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg px-2 py-1 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none min-w-[140px]"
                             defaultValue=""
                             onChange={(e) =>
-                              assignEmployee(order.id, parseInt(e.target.value))
+                              assignEmployee(order.id, e.target.value)
                             }
+                            disabled={employees.length === 0}
                           >
                             <option value="" disabled>
-                              Select Employee
+                              {employees.length === 0
+                                ? t("loadingEmployeesDropdown")
+                                : t("selectEmployee")}
                             </option>
                             {employees.map((employee) => (
-                              <option key={employee.id} value={employee.id}>
-                                {employee.name}
+                              <option key={employee._id} value={employee._id}>
+                                {employee.name} - {employee.department}
                               </option>
                             ))}
                           </select>
@@ -845,6 +1084,496 @@ const Order = () => {
                   <button className="px-6 py-2 bg-gradient-to-r from-[#D4AF37] to-[#C4941F] text-[#1C1C1C] rounded-lg hover:from-[#C4941F] hover:to-[#B8851B] transition-colors font-medium flex items-center space-x-2">
                     <FiPrinter className="w-4 h-4" />
                     <span>{t("printInvoice")}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* Add Order Modal */}
+      {showAddOrderModal && (
+        <motion.div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowAddOrderModal(false)}
+        >
+          <motion.div
+            className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-[#D4AF37]/20"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", duration: 0.5 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="overflow-y-auto max-h-[90vh]"
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border-b border-[#D4AF37]/30 px-6 py-4 flex justify-between items-center">
+                <div>
+                  <h2 className="text-2xl font-light text-white tracking-wide">
+                    {t("addNewOrder")}
+                  </h2>
+                  <p className="text-sm text-white/70">
+                    {t("createOrderManually")}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddOrderModal(false)}
+                  className="p-2 text-white/70 hover:text-white hover:bg-[#D4AF37]/20 rounded-full transition-colors"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="p-6">
+                {/* Customer Information */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                    <FiUser className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("customerInformation")}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("customerNameRequired")}
+                      </label>
+                      <input
+                        type="text"
+                        value={orderForm.customerInfo.name}
+                        onChange={(e) =>
+                          handleAddOrderFormChange(
+                            "customerInfo.name",
+                            e.target.value
+                          )
+                        }
+                        className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                          formErrors["customerInfo.name"]
+                            ? "border-red-500"
+                            : "border-[#D4AF37]/30"
+                        } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                        placeholder={t("enterCustomerName")}
+                      />
+                      {formErrors["customerInfo.name"] && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {formErrors["customerInfo.name"]}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("emailFieldRequired")}
+                      </label>
+                      <input
+                        type="email"
+                        value={orderForm.customerInfo.email}
+                        onChange={(e) =>
+                          handleAddOrderFormChange(
+                            "customerInfo.email",
+                            e.target.value
+                          )
+                        }
+                        className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                          formErrors["customerInfo.email"]
+                            ? "border-red-500"
+                            : "border-[#D4AF37]/30"
+                        } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                        placeholder={t("customerEmailPlaceholder")}
+                      />
+                      {formErrors["customerInfo.email"] && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {formErrors["customerInfo.email"]}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("phoneNumberRequired")}
+                      </label>
+                      <input
+                        type="tel"
+                        value={orderForm.customerInfo.phoneNumber}
+                        onChange={(e) =>
+                          handleAddOrderFormChange(
+                            "customerInfo.phoneNumber",
+                            e.target.value
+                          )
+                        }
+                        className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                          formErrors["customerInfo.phoneNumber"]
+                            ? "border-red-500"
+                            : "border-[#D4AF37]/30"
+                        } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                        placeholder={t("phoneNumberPlaceholder")}
+                      />
+                      {formErrors["customerInfo.phoneNumber"] && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {formErrors["customerInfo.phoneNumber"]}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("customerAddress")}
+                      </label>
+                      <input
+                        type="text"
+                        value={orderForm.customerInfo.address}
+                        onChange={(e) =>
+                          handleAddOrderFormChange(
+                            "customerInfo.address",
+                            e.target.value
+                          )
+                        }
+                        className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
+                        placeholder={t("enterCustomerAddress")}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Service Details */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                    <FiPackage className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("serviceDetails")}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("serviceTypeRequired")}
+                      </label>
+                      <select
+                        value={orderForm.serviceType}
+                        onChange={(e) =>
+                          handleAddOrderFormChange(
+                            "serviceType",
+                            e.target.value
+                          )
+                        }
+                        className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none"
+                      >
+                        <option value="iron">{t("ironOnly")}</option>
+                        <option value="wash_iron">{t("washIron")}</option>
+                        <option value="dry_clean">{t("dryClean")}</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("packagingType")}
+                      </label>
+                      <select
+                        value={orderForm.packaging}
+                        onChange={(e) =>
+                          handleAddOrderFormChange("packaging", e.target.value)
+                        }
+                        className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none"
+                      >
+                        <option value="standard">
+                          {t("standardPackaging")}
+                        </option>
+                        <option value="premium">{t("premiumPackaging")}</option>
+                        <option value="eco">{t("ecoPackaging")}</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Garments */}
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <label className="block text-sm font-medium text-white/70">
+                        {t("garmentsRequired")}
+                      </label>
+                      <button
+                        type="button"
+                        onClick={addGarment}
+                        className="px-3 py-1 bg-[#D4AF37]/20 text-[#D4AF37] rounded-lg hover:bg-[#D4AF37]/30 transition-colors text-sm flex items-center space-x-1"
+                      >
+                        <FiPlus className="w-4 h-4" />
+                        <span>{t("addItem")}</span>
+                      </button>
+                    </div>
+
+                    {orderForm.garments.map((garment, index) => (
+                      <div key={index} className="flex gap-3 mb-3 items-end">
+                        <div className="flex-1">
+                          <input
+                            type="text"
+                            value={garment.type}
+                            onChange={(e) =>
+                              updateGarment(index, "type", e.target.value)
+                            }
+                            className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                              formErrors[`garments.${index}.type`]
+                                ? "border-red-500"
+                                : "border-[#D4AF37]/30"
+                            } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                            placeholder={t("garmentTypePlaceholder")}
+                          />
+                          {formErrors[`garments.${index}.type`] && (
+                            <p className="text-red-400 text-xs mt-1">
+                              {formErrors[`garments.${index}.type`]}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="w-24">
+                          <input
+                            type="number"
+                            min="1"
+                            value={garment.quantity}
+                            onChange={(e) =>
+                              updateGarment(
+                                index,
+                                "quantity",
+                                parseInt(e.target.value) || 1
+                              )
+                            }
+                            className={`w-full px-3 py-2 bg-[#1C1C1C] border ${
+                              formErrors[`garments.${index}.quantity`]
+                                ? "border-red-500"
+                                : "border-[#D4AF37]/30"
+                            } text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                            placeholder={t("quantityShort")}
+                          />
+                          {formErrors[`garments.${index}.quantity`] && (
+                            <p className="text-red-400 text-xs mt-1">
+                              {formErrors[`garments.${index}.quantity`]}
+                            </p>
+                          )}
+                        </div>
+
+                        {orderForm.garments.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeGarment(index)}
+                            className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
+                          >
+                            <FiMinus className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    {formErrors.garments && (
+                      <p className="text-red-400 text-xs mt-1">
+                        {formErrors.garments}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Additional Options */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          checked={orderForm.steamFinish}
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "steamFinish",
+                              e.target.checked
+                            )
+                          }
+                          className="w-4 h-4 text-[#D4AF37] bg-[#1C1C1C] border-[#D4AF37]/30 rounded focus:ring-[#D4AF37] focus:ring-2"
+                        />
+                        <span className="text-white/70">
+                          {t("steamFinish")}
+                        </span>
+                      </label>
+
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          checked={orderForm.incenseFinish}
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "incenseFinish",
+                              e.target.checked
+                            )
+                          }
+                          className="w-4 h-4 text-[#D4AF37] bg-[#1C1C1C] border-[#D4AF37]/30 rounded focus:ring-[#D4AF37] focus:ring-2"
+                        />
+                        <span className="text-white/70">
+                          {t("incenseFinish")}
+                        </span>
+                      </label>
+                    </div>
+
+                    <div className="space-y-3">
+                      {orderForm.incenseFinish && (
+                        <div>
+                          <input
+                            type="text"
+                            value={orderForm.incenseType}
+                            onChange={(e) =>
+                              handleAddOrderFormChange(
+                                "incenseType",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
+                            placeholder={t("incenseTypePlaceholder")}
+                          />
+                        </div>
+                      )}
+
+                      <div>
+                        <input
+                          type="text"
+                          value={orderForm.fragrance}
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "fragrance",
+                              e.target.value
+                            )
+                          }
+                          className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
+                          placeholder={t("fragrancePlaceholder")}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Pricing */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                    <FiDollarSign className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("pricingSection")}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("originalTotalRequired")}
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={orderForm.originalTotal}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          handleAddOrderFormChange("originalTotal", value);
+                          // Auto-update total if it's 0 or equal to original total
+                          if (
+                            orderForm.total === 0 ||
+                            orderForm.total === orderForm.originalTotal
+                          ) {
+                            handleAddOrderFormChange("total", value);
+                          }
+                        }}
+                        className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
+                        placeholder={t("originalTotalPlaceholder")}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("finalTotalRequired")}
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={orderForm.total}
+                        onChange={(e) =>
+                          handleAddOrderFormChange(
+                            "total",
+                            parseFloat(e.target.value) || 0
+                          )
+                        }
+                        className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                          formErrors.total
+                            ? "border-red-500"
+                            : "border-[#D4AF37]/30"
+                        } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                        placeholder={t("finalTotalPlaceholder")}
+                      />
+                      {formErrors.total && (
+                        <p className="text-red-400 text-xs mt-1">
+                          {formErrors.total}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Notes */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                    <FiEdit className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("additionalInformation")}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("cardFrom")}
+                      </label>
+                      <input
+                        type="text"
+                        value={orderForm.cardFrom}
+                        onChange={(e) =>
+                          handleAddOrderFormChange("cardFrom", e.target.value)
+                        }
+                        className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
+                        placeholder={t("cardFromPlaceholder")}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-white/70 mb-2">
+                        {t("cardTo")}
+                      </label>
+                      <input
+                        type="text"
+                        value={orderForm.cardTo}
+                        onChange={(e) =>
+                          handleAddOrderFormChange("cardTo", e.target.value)
+                        }
+                        className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
+                        placeholder={t("cardToPlaceholder")}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex justify-end space-x-3 pt-6 border-t border-[#D4AF37]/20">
+                  <button
+                    onClick={() => setShowAddOrderModal(false)}
+                    className="px-6 py-2 border border-[#D4AF37]/20 rounded-lg text-white/70 bg-[#2C2C2C] hover:bg-[#3C3C3C] transition-colors font-medium"
+                  >
+                    {t("cancel")}
+                  </button>
+                  <button
+                    onClick={handleSubmitOrder}
+                    disabled={isCreatingOrder}
+                    className="px-6 py-2 bg-gradient-to-r from-[#D4AF37] to-[#C4941F] text-[#1C1C1C] rounded-lg hover:from-[#C4941F] hover:to-[#B8851B] transition-colors font-medium flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isCreatingOrder ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#1C1C1C]"></div>
+                        <span>{t("creatingOrder")}</span>
+                      </>
+                    ) : (
+                      <>
+                        <FiSave className="w-4 h-4" />
+                        <span>{t("createOrder")}</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

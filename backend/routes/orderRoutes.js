@@ -7,6 +7,7 @@ import {
   updateOrderStatus,
   deleteOrder,
   assignOrderToEmployee,
+  testWhatsApp,
 } from "../controller/orderController.js";
 import auth from "../middleware/AuthMiddleWare.js";
 
@@ -19,5 +20,6 @@ router.get("/:id", auth, getOrderById);
 router.put("/status/:id", auth, updateOrderStatus);
 router.put("/assign/:id", auth, assignOrderToEmployee);
 router.delete("/:id", auth, deleteOrder);
+router.get("/test/whatsapp", testWhatsApp); // Test WhatsApp connection (no auth for testing)
 
 export default router;

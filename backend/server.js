@@ -10,6 +10,7 @@ import userRoute from "./routes/userRoutes.js";
 import orderRoute from "./routes/orderRoutes.js";
 import couponRoute from "./routes/couponRoutes.js";
 import employeeRoute from "./routes/employeeRoutes.js";
+import dashboardRoute from "./routes/dashboardRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -39,6 +40,7 @@ app.use("/api/v1/users", userRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use("/api/v1/coupons", couponRoute);
 app.use("/api/v1/employees", employeeRoute);
+app.use("/api/v1/dashboard", dashboardRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running at PORT no. ${PORT}`);

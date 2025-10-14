@@ -199,6 +199,7 @@ export const getAllOrders = async (req, res) => {
     // Fetch orders with pagination
     const orders = await Order.find(filter)
       .populate("userId", "name email phoneNumber")
+      .populate("assignedEmployee", "name department role phoneNumber status")
       .sort({ createdAt: -1 }) // Most recent first
       .skip(skip)
       .limit(parseInt(limit));
@@ -234,10 +235,9 @@ export const getOrderById = async (req, res) => {
       return res.status(400).json({ message: "Invalid order ID format" });
     }
 
-    const order = await Order.findById(id).populate(
-      "userId",
-      "name email phoneNumber"
-    );
+    const order = await Order.findById(id)
+      .populate("userId", "name email phoneNumber")
+      .populate("assignedEmployee", "name department role phoneNumber status");
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
@@ -477,17 +477,18 @@ export const createOrderByAdmin = async (req, res) => {
 
 export const assignOrderToEmployee = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { id } = req.params;
     const { employeeId } = req.body;
 
     const Employee = (await import("../models/Employee.js")).default;
-    const { sendOrderAssignmentMessage } = await import(
-      "../services/whatsappService.js"
-    );
+    const {
+      sendOrderAssignmentMessage,
+      sendEmployeeAssignmentNotificationToCustomer,
+    } = await import("../services/whatsappService.js");
 
     // Find employee and order
     const employee = await Employee.findById(employeeId);
-    const order = await Order.findById(orderId).populate("userId");
+    const order = await Order.findById(id).populate("userId");
 
     if (!employee) {
       return res.status(404).json({ message: "Employee not found" });
@@ -504,16 +505,20 @@ export const assignOrderToEmployee = async (req, res) => {
     }
 
     // Add order to employee's assigned orders if not already assigned
-    if (!employee.assignedOrders.includes(orderId)) {
-      employee.assignedOrders.push(orderId);
+    if (!employee.assignedOrders.includes(id)) {
+      employee.assignedOrders.push(id);
       await employee.save();
     }
+
+    // Assign employee to the order
+    order.assignedEmployee = employeeId;
 
     // Update order status to processing if it's pending
     if (order.status === "pending") {
       order.status = "processing";
-      await order.save();
     }
+
+    await order.save();
 
     // Send WhatsApp notification to employee
     const orderDetails = {
@@ -537,18 +542,68 @@ export const assignOrderToEmployee = async (req, res) => {
       orderDetails
     );
 
+    // Also notify the customer about the employee assignment
+    const customerWhatsApp =
+      order.customerInfo?.phoneNumber || order.userId?.phoneNumber;
+    let customerNotificationResult = { success: false };
+
+    if (customerWhatsApp) {
+      try {
+        customerNotificationResult =
+          await sendEmployeeAssignmentNotificationToCustomer(
+            customerWhatsApp,
+            order.customerInfo?.name || order.userId?.name || "Valued Customer",
+            orderDetails,
+            employee.name
+          );
+      } catch (customerNotifyError) {
+        console.error(
+          "Failed to notify customer about employee assignment:",
+          customerNotifyError
+        );
+      }
+    }
+
     res.status(200).json({
       success: true,
       message: "Order assigned successfully",
       employee: employee,
       order: order,
       whatsappSent: whatsappResult.success,
+      customerNotified: customerNotificationResult.success,
       whatsappMessage: whatsappResult.success
-        ? "WhatsApp notification sent"
+        ? `WhatsApp notification sent to employee${
+            customerNotificationResult.success ? " and customer" : ""
+          }`
         : whatsappResult.error,
     });
   } catch (error) {
     console.error("Error assigning order to employee:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Test Twilio WhatsApp connection
+export const testWhatsApp = async (req, res) => {
+  try {
+    const { testTwilioConnection } = await import(
+      "../services/whatsappService.js"
+    );
+    const result = await testTwilioConnection();
+
+    if (result.success) {
+      res.status(200).json({
+        message: "Twilio connection successful",
+        account: result.account,
+      });
+    } else {
+      res.status(401).json({
+        message: "Twilio authentication failed",
+        error: result.error,
+      });
+    }
+  } catch (error) {
+    console.error("Error testing WhatsApp:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };

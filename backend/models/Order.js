@@ -125,6 +125,11 @@ const OrderSchema = new mongoose.Schema({
     enum: ["pending", "processing", "completed", "cancelled"],
     default: "pending",
   },
+  assignedEmployee: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Employee",
+    default: null,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

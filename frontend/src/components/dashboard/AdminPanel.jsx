@@ -10,66 +10,53 @@ import {
   FiCheckCircle,
   FiTrendingUp,
   FiGift,
+  FiLoader,
 } from "react-icons/fi";
+import { useGetAllUsersQuery } from "../../redux/features/usersApi";
+import { useGetComprehensiveDashboardQuery } from "../../redux/features/dashboardApi";
 
 const AdminPanel = ({ setActiveComponent }) => {
   const { t } = useTranslation();
 
+  // Fetch real data from backend
+  const { data: usersData, isLoading: usersLoading } = useGetAllUsersQuery();
+  const { data: dashboardData, isLoading: dashboardLoading } =
+    useGetComprehensiveDashboardQuery();
+
+  const isLoading = usersLoading || dashboardLoading;
+
+  // Extract data from dashboard response
+  const orderStats = dashboardData?.stats || {};
+  const recentOrders = dashboardData?.recentOrders || [];
+
   const stats = [
     {
       title: t("totalOrders"),
-      value: "248",
-      change: "+12%",
+      value: isLoading ? "..." : (orderStats?.totalOrders || 0).toString(),
+      change: orderStats?.ordersChange || "+0%",
       icon: FiPackage,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
     {
       title: t("totalUsers"),
-      value: "156",
-      change: "+8%",
+      value: isLoading ? "..." : (usersData?.length || 0).toString(),
+      change: orderStats?.usersChange || "+8%", // Use from dashboard stats
       icon: FiUsers,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
     {
       title: t("revenue"),
-      value: "$3,248",
-      change: "+15%",
+      value: isLoading ? "..." : `$${orderStats?.totalRevenue || 0}`,
+      change: orderStats?.revenueChange || "+0%",
       icon: FiDollarSign,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
     {
       title: t("pendingDeliveries"),
-      value: "189",
-      change: "+5%",
+      value: isLoading ? "..." : (orderStats?.pendingOrders || 0).toString(),
+      change: "+5%", // Static for pending orders change
       icon: FiTruck,
       color: "from-[#D4AF37] to-[#BFA134]",
-    },
-  ];
-
-  const recentOrders = [
-    {
-      id: "#LND001",
-      customer: "John Doe",
-      status: t("processing"),
-      amount: "$24",
-    },
-    {
-      id: "#LND002",
-      customer: "Sarah Smith",
-      status: t("completed"),
-      amount: "$36",
-    },
-    {
-      id: "#LND003",
-      customer: "Mike Johnson",
-      status: t("pending"),
-      amount: "$18",
-    },
-    {
-      id: "#LND004",
-      customer: "Emma Wilson",
-      status: t("delivery"),
-      amount: "$42",
     },
   ];
 
@@ -113,7 +100,14 @@ const AdminPanel = ({ setActiveComponent }) => {
                   {stat.title}
                 </p>
                 <p className="text-2xl font-light text-white mt-1">
-                  {stat.value}
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <FiLoader className="w-4 h-4 animate-spin mr-2 text-[#D4AF37]" />
+                      <span className="text-white/50">Loading...</span>
+                    </div>
+                  ) : (
+                    stat.value
+                  )}
                 </p>
                 <div className="flex items-center mt-2">
                   <FiTrendingUp className="w-4 h-4 text-[#D4AF37] mr-1" />
@@ -143,34 +137,51 @@ const AdminPanel = ({ setActiveComponent }) => {
             {t("recentOrders")}
           </h2>
           <div className="space-y-3">
-            {recentOrders.map((order, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 border border-[#D4AF37]/10 rounded-lg hover:bg-[#D4AF37]/5 transition-colors"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-[#D4AF37]/20 rounded-lg flex items-center justify-center">
-                    <FiPackage className="w-5 h-5 text-[#D4AF37]" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-white">{order.id}</p>
-                    <p className="text-sm text-white/70">{order.customer}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                      order.status
-                    )}`}
-                  >
-                    {order.status}
-                  </span>
-                  <p className="text-sm font-semibold text-[#D4AF37] mt-1">
-                    {order.amount}
-                  </p>
-                </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center p-8">
+                <FiLoader className="w-6 h-6 text-[#D4AF37] animate-spin" />
+                <span className="ml-2 text-white/70">
+                  Loading recent orders...
+                </span>
               </div>
-            ))}
+            ) : recentOrders && recentOrders.length > 0 ? (
+              recentOrders.map((order, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 border border-[#D4AF37]/10 rounded-lg hover:bg-[#D4AF37]/5 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-[#D4AF37]/20 rounded-lg flex items-center justify-center">
+                      <FiPackage className="w-5 h-5 text-[#D4AF37]" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-white">{order.id}</p>
+                      <p className="text-sm text-white/70">{order.customer}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                        order.status
+                      )}`}
+                    >
+                      {order.status}
+                    </span>
+                    <p className="text-sm font-semibold text-[#D4AF37] mt-1">
+                      {order.amount}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center p-8">
+                <FiPackage className="w-12 h-12 text-white/30 mx-auto mb-4" />
+                <p className="text-white/70 mb-2">No recent orders</p>
+                <p className="text-white/50 text-sm">
+                  Orders will appear here once customers place them
+                </p>
+              </div>
+            )}
           </div>
         </motion.div>
 
@@ -184,7 +195,10 @@ const AdminPanel = ({ setActiveComponent }) => {
             {t("quickActions")}
           </h2>
           <div className="space-y-3">
-            <button className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group">
+            <button
+              onClick={() => setActiveComponent("Orders")}
+              className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group"
+            >
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-[#D4AF37] rounded-lg flex items-center justify-center shadow-lg">
                   <FiPackage className="w-5 h-5 text-[#1C1C1C]" />
@@ -196,7 +210,10 @@ const AdminPanel = ({ setActiveComponent }) => {
               </div>
             </button>
 
-            <button className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group">
+            <button
+              onClick={() => setActiveComponent("Users")}
+              className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group"
+            >
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-[#D4AF37] rounded-lg flex items-center justify-center shadow-lg">
                   <FiUsers className="w-5 h-5 text-[#1C1C1C]" />
@@ -212,7 +229,10 @@ const AdminPanel = ({ setActiveComponent }) => {
               </div>
             </button>
 
-            <button className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group">
+            <button
+              onClick={() => setActiveComponent("Employees")}
+              className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group"
+            >
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-[#D4AF37] rounded-lg flex items-center justify-center shadow-lg">
                   <FiTruck className="w-5 h-5 text-[#1C1C1C]" />

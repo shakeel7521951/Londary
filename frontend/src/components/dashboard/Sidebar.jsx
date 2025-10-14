@@ -5,7 +5,7 @@ import {
   FiHome,
   FiUsers,
   FiPackage,
-  FiTruck,
+  FiUserCheck,
   FiDollarSign,
   FiSettings,
   FiBarChart2,
@@ -23,7 +23,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
     { icon: FiHome, label: "Main Panel", translationKey: "mainPanel" },
     { icon: FiUsers, label: "Users", translationKey: "users" },
     { icon: FiPackage, label: "Orders", translationKey: "orders" },
-    { icon: FiTruck, label: "Deliveries", translationKey: "deliveries" },
+    { icon: FiUserCheck, label: "Employees", translationKey: "employees" },
     {
       icon: FiGift,
       label: "Coupon Management",

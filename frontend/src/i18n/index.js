@@ -193,6 +193,169 @@ const resources = {
       errorDeleting: "Error deleting coupon",
       requiredFields: "Please fill in all required fields",
       copy: "Copy Code",
+
+      // Employee Management
+      employees: "Employees",
+      employeeManagement: "Employee Management",
+      manageEmployees: "Manage your workforce",
+      addEmployee: "Add Employee",
+      editEmployee: "Edit Employee",
+      employeeDetails: "Employee Details",
+      createEmployee: "Create Employee",
+      updateEmployee: "Update Employee",
+      deleteEmployee: "Delete Employee",
+      totalEmployees: "Total Employees",
+      activeEmployees: "Active Employees",
+      inactiveEmployees: "Inactive Employees",
+      assignedOrders: "Assigned Orders",
+      searchEmployees: "Search employees...",
+      employeeName: "Employee Name",
+      employeeEmail: "Email Address",
+      employeePhone: "Phone Number",
+      whatsappNumber: "WhatsApp Number",
+      department: "Department",
+      role: "Role",
+      hireDate: "Hire Date",
+      salary: "Salary",
+      password: "Password",
+      confirmPassword: "Confirm Password",
+
+      // Departments
+      allDepartments: "All Departments",
+      laundryDept: "Laundry Department",
+      deliveryDept: "Delivery Department",
+      customerService: "Customer Service",
+      management: "Management",
+
+      // Employee Status
+      employeeStatus: "Employee Status",
+      activeStatus: "Active",
+      inactiveStatus: "Inactive",
+
+      // Employee Actions
+      viewEmployee: "View Employee",
+      editEmployeeInfo: "Edit Employee Info",
+      deleteEmployeeConfirm: "Are you sure you want to delete this employee?",
+
+      // Form Placeholders
+      namePlaceholder: "Enter full name",
+      emailPlaceholder: "Enter email address",
+      phonePlaceholder: "Enter phone number",
+      whatsappPlaceholder: "Enter WhatsApp number (+1234567890)",
+      passwordPlaceholder: "Enter password",
+      confirmPasswordPlaceholder: "Re-enter password",
+
+      // Form Validation
+      nameRequired: "Name is required",
+      emailRequired: "Email is required",
+      emailInvalid: "Please enter a valid email",
+      phoneRequired: "Phone number is required",
+      phoneInvalid: "Please enter a valid phone number",
+      whatsappRequired: "WhatsApp number is required",
+      whatsappInvalid:
+        "WhatsApp number must be in E.164 format (e.g., +1234567890)",
+      passwordRequired: "Password is required",
+      passwordTooShort: "Password must be at least 6 characters",
+      passwordMismatch: "Passwords do not match",
+
+      // Success Messages
+      employeeCreated: "Employee created successfully!",
+      employeeUpdated: "Employee updated successfully!",
+      employeeDeleted: "Employee deleted successfully!",
+
+      // Error Messages
+      loadingEmployees: "Loading employees...",
+      failedToLoadEmployees: "Failed to load employees",
+      failedToCreateEmployee: "Failed to create employee",
+      failedToUpdateEmployee: "Failed to update employee",
+      failedToDeleteEmployee: "Failed to delete employee",
+      retry: "Retry",
+
+      // Employee Information
+      personalInformation: "Personal Information",
+      contactInformation: "Contact Information",
+      workInformation: "Work Information",
+      orderHistory: "Order History",
+      performance: "Performance",
+
+      // Additional Employee Fields
+      employee: "Employee",
+      contact: "Contact",
+      joinedDate: "Joined Date",
+      assignedTo: "Assigned To",
+
+      // Modal Actions
+      saveChanges: "Save Changes",
+      createNew: "Create New",
+      discardChanges: "Discard Changes",
+
+      // Order Page Specific
+      addOrderButton: "Add Order",
+      loadingOrdersText: "Loading orders...",
+      errorLoadingOrders: "Error loading orders",
+      tryAgain: "Try Again",
+      ordersCount: "Orders",
+      loadingEmployeesDropdown: "Loading employees...",
+      selectEmployee: "Select Employee",
+
+      // Add Order Modal
+      addNewOrder: "Add New Order",
+      createOrderManually: "Create a new order manually",
+      customerNameField: "Customer Name",
+      customerNameRequired: "Customer Name *",
+      enterCustomerName: "Enter customer name",
+      emailAddressField: "Email",
+      emailFieldRequired: "Email *",
+      customerEmailPlaceholder: "customer@email.com",
+      phoneNumberField: "Phone Number",
+      phoneNumberRequired: "Phone Number *",
+      phoneNumberPlaceholder: "+1234567890",
+      customerAddress: "Address",
+      enterCustomerAddress: "Customer address",
+
+      // Service Details
+      serviceDetails: "Service Details",
+      serviceType: "Service Type",
+      serviceTypeRequired: "Service Type *",
+      ironOnly: "Iron Only",
+      washIron: "Wash & Iron",
+      dryClean: "Dry Clean",
+      packagingType: "Packaging",
+      standardPackaging: "Standard",
+      premiumPackaging: "Premium",
+      ecoPackaging: "Eco-Friendly",
+
+      // Garments
+      garmentsRequired: "Garments *",
+      addItem: "Add Item",
+      garmentTypePlaceholder: "Garment type (e.g., Shirts, Pants)",
+      quantityShort: "Qty",
+
+      // Additional Options
+      steamFinish: "Steam Finish",
+      incenseFinish: "Incense Finish",
+      incenseTypePlaceholder: "Incense type",
+      fragrancePlaceholder: "Fragrance",
+
+      // Pricing Section
+      pricingSection: "Pricing",
+      originalTotal: "Original Total",
+      originalTotalRequired: "Original Total *",
+      originalTotalPlaceholder: "0.00",
+      finalTotal: "Final Total",
+      finalTotalRequired: "Final Total *",
+      finalTotalPlaceholder: "0.00",
+
+      // Additional Information
+      additionalInformation: "Additional Information",
+      cardFrom: "Card From",
+      cardFromPlaceholder: "From (for card message)",
+      cardTo: "Card To",
+      cardToPlaceholder: "To (for card message)",
+
+      // Order Modal Actions
+      createOrder: "Create Order",
+      creatingOrder: "Creating...",
     },
   },
   ar: {
@@ -385,6 +548,169 @@ const resources = {
       errorDeleting: "خطأ في حذف الكوبون",
       requiredFields: "يرجى ملء جميع الحقول المطلوبة",
       copy: "نسخ الرمز",
+
+      // Employee Management
+      employees: "الموظفون",
+      employeeManagement: "إدارة الموظفين",
+      manageEmployees: "إدارة القوى العاملة",
+      addEmployee: "إضافة موظف",
+      editEmployee: "تعديل الموظف",
+      employeeDetails: "تفاصيل الموظف",
+      createEmployee: "إنشاء موظف",
+      updateEmployee: "تحديث الموظف",
+      deleteEmployee: "حذف الموظف",
+      totalEmployees: "إجمالي الموظفين",
+      activeEmployees: "الموظفون النشطون",
+      inactiveEmployees: "الموظفون غير النشطين",
+      assignedOrders: "الطلبات المخصصة",
+      searchEmployees: "البحث عن الموظفين...",
+      employeeName: "اسم الموظف",
+      employeeEmail: "عنوان البريد الإلكتروني",
+      employeePhone: "رقم الهاتف",
+      whatsappNumber: "رقم الواتساب",
+      department: "القسم",
+      role: "الدور",
+      hireDate: "تاريخ التوظيف",
+      salary: "الراتب",
+      password: "كلمة المرور",
+      confirmPassword: "تأكيد كلمة المرور",
+
+      // Departments
+      allDepartments: "جميع الأقسام",
+      laundryDept: "قسم الغسيل",
+      deliveryDept: "قسم التوصيل",
+      customerService: "خدمة العملاء",
+      management: "الإدارة",
+
+      // Employee Status
+      employeeStatus: "حالة الموظف",
+      activeStatus: "نشط",
+      inactiveStatus: "غير نشط",
+
+      // Employee Actions
+      viewEmployee: "عرض الموظف",
+      editEmployeeInfo: "تعديل معلومات الموظف",
+      deleteEmployeeConfirm: "هل أنت متأكد من حذف هذا الموظف؟",
+
+      // Form Placeholders
+      namePlaceholder: "أدخل الاسم الكامل",
+      emailPlaceholder: "أدخل عنوان البريد الإلكتروني",
+      phonePlaceholder: "أدخل رقم الهاتف",
+      whatsappPlaceholder: "أدخل رقم الواتساب (+1234567890)",
+      passwordPlaceholder: "أدخل كلمة المرور",
+      confirmPasswordPlaceholder: "أعد إدخال كلمة المرور",
+
+      // Form Validation
+      nameRequired: "الاسم مطلوب",
+      emailRequired: "البريد الإلكتروني مطلوب",
+      emailInvalid: "يرجى إدخال بريد إلكتروني صحيح",
+      phoneRequired: "رقم الهاتف مطلوب",
+      phoneInvalid: "يرجى إدخال رقم هاتف صحيح",
+      whatsappRequired: "رقم الواتساب مطلوب",
+      whatsappInvalid:
+        "يجب أن يكون رقم الواتساب بتنسيق E.164 (مثل: +1234567890)",
+      passwordRequired: "كلمة المرور مطلوبة",
+      passwordTooShort: "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+      passwordMismatch: "كلمات المرور غير متطابقة",
+
+      // Success Messages
+      employeeCreated: "تم إنشاء الموظف بنجاح!",
+      employeeUpdated: "تم تحديث الموظف بنجاح!",
+      employeeDeleted: "تم حذف الموظف بنجاح!",
+
+      // Error Messages
+      loadingEmployees: "جاري تحميل الموظفين...",
+      failedToLoadEmployees: "فشل في تحميل الموظفين",
+      failedToCreateEmployee: "فشل في إنشاء الموظف",
+      failedToUpdateEmployee: "فشل في تحديث الموظف",
+      failedToDeleteEmployee: "فشل في حذف الموظف",
+      retry: "إعادة المحاولة",
+
+      // Employee Information
+      personalInformation: "المعلومات الشخصية",
+      contactInformation: "معلومات الاتصال",
+      workInformation: "معلومات العمل",
+      orderHistory: "تاريخ الطلبات",
+      performance: "الأداء",
+
+      // Additional Employee Fields
+      employee: "الموظف",
+      contact: "الاتصال",
+      joinedDate: "تاريخ الانضمام",
+      assignedTo: "مخصص إلى",
+
+      // Modal Actions
+      saveChanges: "حفظ التغييرات",
+      createNew: "إنشاء جديد",
+      discardChanges: "تجاهل التغييرات",
+
+      // Order Page Specific
+      addOrderButton: "إضافة طلب",
+      loadingOrdersText: "جاري تحميل الطلبات...",
+      errorLoadingOrders: "خطأ في تحميل الطلبات",
+      tryAgain: "حاول مرة أخرى",
+      ordersCount: "الطلبات",
+      loadingEmployeesDropdown: "جاري تحميل الموظفين...",
+      selectEmployee: "اختر موظف",
+
+      // Add Order Modal
+      addNewOrder: "إضافة طلب جديد",
+      createOrderManually: "إنشاء طلب جديد يدوياً",
+      customerNameField: "اسم العميل",
+      customerNameRequired: "اسم العميل *",
+      enterCustomerName: "أدخل اسم العميل",
+      emailAddressField: "البريد الإلكتروني",
+      emailFieldRequired: "البريد الإلكتروني *",
+      customerEmailPlaceholder: "customer@email.com",
+      phoneNumberField: "رقم الهاتف",
+      phoneNumberRequired: "رقم الهاتف *",
+      phoneNumberPlaceholder: "+1234567890",
+      customerAddress: "العنوان",
+      enterCustomerAddress: "عنوان العميل",
+
+      // Service Details
+      serviceDetails: "تفاصيل الخدمة",
+      serviceType: "نوع الخدمة",
+      serviceTypeRequired: "نوع الخدمة *",
+      ironOnly: "كي فقط",
+      washIron: "غسيل وكي",
+      dryClean: "تنظيف جاف",
+      packagingType: "نوع التغليف",
+      standardPackaging: "عادي",
+      premiumPackaging: "مميز",
+      ecoPackaging: "صديق للبيئة",
+
+      // Garments
+      garmentsRequired: "الملابس *",
+      addItem: "إضافة عنصر",
+      garmentTypePlaceholder: "نوع الملبس (مثل: قمصان، بناطيل)",
+      quantityShort: "الكمية",
+
+      // Additional Options
+      steamFinish: "لمسة البخار",
+      incenseFinish: "لمسة العطر",
+      incenseTypePlaceholder: "نوع العطر",
+      fragrancePlaceholder: "العطر",
+
+      // Pricing Section
+      pricingSection: "التسعير",
+      originalTotal: "المجموع الأصلي",
+      originalTotalRequired: "المجموع الأصلي *",
+      originalTotalPlaceholder: "0.00",
+      finalTotal: "المجموع النهائي",
+      finalTotalRequired: "المجموع النهائي *",
+      finalTotalPlaceholder: "0.00",
+
+      // Additional Information
+      additionalInformation: "معلومات إضافية",
+      cardFrom: "البطاقة من",
+      cardFromPlaceholder: "من (لرسالة البطاقة)",
+      cardTo: "البطاقة إلى",
+      cardToPlaceholder: "إلى (لرسالة البطاقة)",
+
+      // Order Modal Actions
+      createOrder: "إنشاء الطلب",
+      creatingOrder: "جاري الإنشاء...",
     },
   },
 };

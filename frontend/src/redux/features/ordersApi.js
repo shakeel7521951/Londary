@@ -27,6 +27,27 @@ export const orderApi = createApi({
       invalidatesTags: ["Orders"],
     }),
 
+    createOrderByAdmin: builder.mutation({
+      query: (data) => ({
+        url: "/admin",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Orders"],
+    }),
+
+    assignOrderToEmployee: builder.mutation({
+      query: ({ orderId, employeeId }) => ({
+        url: `/assign/${orderId}`,
+        method: "PUT",
+        body: { employeeId },
+      }),
+      invalidatesTags: (result, error, { orderId }) => [
+        { type: "Order", id: orderId },
+        "Orders",
+      ],
+    }),
+
     getAllOrders: builder.query({
       query: () => "/",
       providesTags: ["Orders"],
@@ -61,6 +82,8 @@ export const orderApi = createApi({
 
 export const {
   useCreateOrderMutation,
+  useCreateOrderByAdminMutation,
+  useAssignOrderToEmployeeMutation,
   useGetAllOrdersQuery,
   useGetOrderByIdQuery,
   useUpdateOrderStatusMutation,
