@@ -13,6 +13,11 @@ import { protect, admin } from "../middleware/AuthMiddleWare.js";
 
 const router = express.Router();
 
+// Test route
+router.get("/test", (req, res) => {
+  res.json({ success: true, message: "Coupon routes are working!" });
+});
+
 // Admin routes (protected)
 router
   .route("/")

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useGetAllOrdersQuery } from "../../redux/features/ordersApi";
 import {
   FiSearch,
   FiFilter,
@@ -19,6 +20,7 @@ import {
   FiCheckCircle,
   FiTruck,
   FiAlertCircle,
+  FiUserPlus,
 } from "react-icons/fi";
 
 const Order = () => {
@@ -30,102 +32,165 @@ const Order = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // Mock data for orders
+  // API hooks
+  const {
+    data: ordersData,
+    isLoading,
+    error,
+    refetch,
+  } = useGetAllOrdersQuery();
+
+  // Dummy employees list
+  const employees = [
+    { id: 1, name: "Ahmed Al-Mansouri", role: "Senior Cleaner" },
+    { id: 2, name: "Fatima Al-Zahra", role: "Dry Clean Specialist" },
+    { id: 3, name: "Mohammad Al-Rashid", role: "Quality Inspector" },
+    { id: 4, name: "Aisha Al-Sabah", role: "Pressing Specialist" },
+    { id: 5, name: "Omar Al-Khalifa", role: "Delivery Driver" },
+    { id: 6, name: "Mariam Al-Thani", role: "Customer Service" },
+    { id: 7, name: "Hassan Al-Maktoum", role: "Operations Manager" },
+    { id: 8, name: "Noora Al-Nuaimi", role: "Stain Removal Expert" },
+  ];
+
+  // Load orders from API
   useEffect(() => {
-    const mockOrders = [
-      {
-        id: "ORD001",
-        customerName: "John Doe",
-        customerPhone: "+1 (555) 123-4567",
-        customerEmail: "john.doe@email.com",
-        address: "123 Main St, City, State 12345",
-        items: [
-          { type: "Shirts", quantity: 3, service: "Wash & Iron", price: 15 },
-          { type: "Pants", quantity: 2, service: "Dry Clean", price: 20 },
-        ],
-        total: 35,
-        status: "pending",
-        orderDate: "2025-07-01",
-        pickupDate: "2025-07-02",
-        deliveryDate: "2025-07-04",
-        paymentStatus: "paid",
-        notes: "Please handle with care",
-      },
-      {
-        id: "ORD002",
-        customerName: "Sarah Wilson",
-        customerPhone: "+1 (555) 987-6543",
-        customerEmail: "sarah.wilson@email.com",
-        address: "456 Oak Ave, City, State 12345",
-        items: [
-          { type: "Dresses", quantity: 2, service: "Dry Clean", price: 30 },
-          { type: "Blouses", quantity: 4, service: "Wash & Iron", price: 20 },
-        ],
-        total: 50,
-        status: "in-progress",
-        orderDate: "2025-06-30",
-        pickupDate: "2025-07-01",
-        deliveryDate: "2025-07-03",
-        paymentStatus: "paid",
-        notes: "Urgent delivery required",
-      },
-      {
-        id: "ORD003",
-        customerName: "Michael Brown",
-        customerPhone: "+1 (555) 456-7890",
-        customerEmail: "michael.brown@email.com",
-        address: "789 Pine Rd, City, State 12345",
-        items: [
-          { type: "Suits", quantity: 2, service: "Dry Clean", price: 40 },
-          { type: "Ties", quantity: 3, service: "Dry Clean", price: 15 },
-        ],
-        total: 55,
-        status: "completed",
-        orderDate: "2025-06-28",
-        pickupDate: "2025-06-29",
-        deliveryDate: "2025-07-01",
-        paymentStatus: "paid",
-        notes: "",
-      },
-      {
-        id: "ORD004",
-        customerName: "Emily Davis",
-        customerPhone: "+1 (555) 321-9876",
-        customerEmail: "emily.davis@email.com",
-        address: "321 Elm St, City, State 12345",
-        items: [
-          { type: "Bedsheets", quantity: 2, service: "Wash & Fold", price: 25 },
-          { type: "Towels", quantity: 6, service: "Wash & Fold", price: 18 },
-        ],
-        total: 43,
-        status: "delivered",
-        orderDate: "2025-06-27",
-        pickupDate: "2025-06-28",
-        deliveryDate: "2025-06-30",
-        paymentStatus: "paid",
-        notes: "Customer satisfied",
-      },
-      {
-        id: "ORD005",
-        customerName: "David Miller",
-        customerPhone: "+1 (555) 654-3210",
-        customerEmail: "david.miller@email.com",
-        address: "654 Maple Dr, City, State 12345",
-        items: [
-          { type: "Jackets", quantity: 1, service: "Dry Clean", price: 25 },
-        ],
-        total: 25,
-        status: "pending",
-        orderDate: "2025-07-02",
-        pickupDate: "2025-07-03",
-        deliveryDate: "2025-07-05",
-        paymentStatus: "pending",
-        notes: "Payment pending",
-      },
-    ];
-    setOrders(mockOrders);
-    setFilteredOrders(mockOrders);
-  }, []);
+    if (ordersData?.orders) {
+      // Transform API data to match the component format
+      const transformedOrders = ordersData.orders.map((order) => ({
+        id: order._id,
+        customerName: order.userId?.name || "Unknown Customer",
+        customerPhone: order.userId?.email || "N/A", // Using email as phone for now
+        customerEmail: order.userId?.email || "N/A",
+        address: order.cardFrom || "No address provided",
+        items:
+          order.garments?.map((garment) => ({
+            type: garment.type,
+            quantity: garment.quantity,
+            service: order.serviceType,
+            price: Math.round(order.total / order.garments.length), // Approximate price per item
+          })) || [],
+        total: order.total,
+        status: order.status,
+        orderDate: order.createdAt,
+        pickupDate: order.createdAt,
+        deliveryDate: new Date(
+          new Date(order.createdAt).getTime() + 2 * 24 * 60 * 60 * 1000
+        ).toISOString(), // 2 days later
+        notes: order.cardTo
+          ? `Card message: From ${order.cardFrom} to ${order.cardTo}`
+          : "",
+        assignedEmployee: null,
+        steamFinish: order.steamFinish,
+        incenseFinish: order.incenseFinish,
+        incenseType: order.incenseType,
+        fragrance: order.fragrance,
+        packaging: order.packaging,
+        appliedCoupon: order.appliedCoupon,
+        originalTotal: order.originalTotal,
+        discountAmount: order.discountAmount,
+      }));
+      setOrders(transformedOrders);
+    }
+  }, [ordersData]);
+
+  // Fallback to mock data if API fails or for testing
+  useEffect(() => {
+    if (error || (!isLoading && !ordersData)) {
+      const mockOrders = [
+        {
+          id: "ORD001",
+          customerName: "John Doe",
+          customerPhone: "+1 (555) 123-4567",
+          customerEmail: "john.doe@email.com",
+          address: "123 Main St, City, State 12345",
+          items: [
+            { type: "Shirts", quantity: 3, service: "Wash & Iron", price: 15 },
+            { type: "Pants", quantity: 2, service: "Dry Clean", price: 20 },
+          ],
+          total: 35,
+          status: "pending",
+          orderDate: "2025-07-01",
+          pickupDate: "2025-07-02",
+          deliveryDate: "2025-07-04",
+          notes: "Please handle with care",
+        },
+        {
+          id: "ORD002",
+          customerName: "Sarah Wilson",
+          customerPhone: "+1 (555) 987-6543",
+          customerEmail: "sarah.wilson@email.com",
+          address: "456 Oak Ave, City, State 12345",
+          items: [
+            { type: "Dresses", quantity: 2, service: "Dry Clean", price: 30 },
+            { type: "Blouses", quantity: 4, service: "Wash & Iron", price: 20 },
+          ],
+          total: 50,
+          status: "processing",
+          orderDate: "2025-06-30",
+          pickupDate: "2025-07-01",
+          deliveryDate: "2025-07-03",
+          notes: "Urgent delivery required",
+        },
+        {
+          id: "ORD003",
+          customerName: "Michael Brown",
+          customerPhone: "+1 (555) 456-7890",
+          customerEmail: "michael.brown@email.com",
+          address: "789 Pine Rd, City, State 12345",
+          items: [
+            { type: "Suits", quantity: 2, service: "Dry Clean", price: 40 },
+            { type: "Ties", quantity: 3, service: "Dry Clean", price: 15 },
+          ],
+          total: 55,
+          status: "completed",
+          orderDate: "2025-06-28",
+          pickupDate: "2025-06-29",
+          deliveryDate: "2025-07-01",
+          notes: "",
+        },
+        {
+          id: "ORD004",
+          customerName: "Emily Davis",
+          customerPhone: "+1 (555) 321-9876",
+          customerEmail: "emily.davis@email.com",
+          address: "321 Elm St, City, State 12345",
+          items: [
+            {
+              type: "Bedsheets",
+              quantity: 2,
+              service: "Wash & Fold",
+              price: 25,
+            },
+            { type: "Towels", quantity: 6, service: "Wash & Fold", price: 18 },
+          ],
+          total: 43,
+          status: "completed",
+          orderDate: "2025-06-27",
+          pickupDate: "2025-06-28",
+          deliveryDate: "2025-06-30",
+          notes: "Customer satisfied",
+        },
+        {
+          id: "ORD005",
+          customerName: "David Miller",
+          customerPhone: "+1 (555) 654-3210",
+          customerEmail: "david.miller@email.com",
+          address: "654 Maple Dr, City, State 12345",
+          items: [
+            { type: "Jackets", quantity: 1, service: "Dry Clean", price: 25 },
+          ],
+          total: 25,
+          status: "cancelled",
+          orderDate: "2025-07-02",
+          pickupDate: "2025-07-03",
+          deliveryDate: "2025-07-05",
+          notes: "Order cancelled by customer",
+        },
+      ];
+      setOrders(mockOrders);
+      setFilteredOrders(mockOrders);
+    }
+  }, [error, isLoading, ordersData]);
 
   // Filter orders based on search term and status
   useEffect(() => {
@@ -151,55 +216,37 @@ const Order = () => {
     switch (status) {
       case "pending":
         return "bg-white/10 text-white/80 border border-white/20";
-      case "in-progress":
+      case "processing":
         return "bg-[#BFA134]/10 text-[#BFA134] border border-[#BFA134]/20";
       case "completed":
         return "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20";
-      case "delivered":
-        return "bg-[#F5E1DA]/10 text-[#F5E1DA] border border-[#F5E1DA]/20";
+      case "cancelled":
+        return "bg-red-500/10 text-red-400 border border-red-500/20";
       default:
         return "bg-white/5 text-white/60 border border-white/10";
     }
-  };
-
-  const getPaymentStatusColor = (status) => {
-    return status === "paid"
-      ? "bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20"
-      : "bg-white/10 text-white/80 border border-white/20";
   };
 
   const getStatusTranslation = (status) => {
     switch (status) {
       case "pending":
         return t("pending");
-      case "in-progress":
+      case "processing":
         return t("processing");
       case "completed":
         return t("completed");
-      case "delivered":
-        return t("delivered");
+      case "cancelled":
+        return t("cancelled");
       default:
         return status;
     }
   };
 
-  const getPaymentStatusTranslation = (status) => {
-    switch (status) {
-      case "paid":
-        return t("paid");
-      case "pending":
-        return t("paymentPending");
-      case "unpaid":
-        return t("unpaid");
-      default:
-        return status;
-    }
-  };
-
-  const updateOrderStatus = (orderId, newStatus) => {
+  const assignEmployee = (orderId, employeeId) => {
+    const employee = employees.find((emp) => emp.id === employeeId);
     setOrders(
       orders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
+        order.id === orderId ? { ...order, assignedEmployee: employee } : order
       )
     );
   };
@@ -216,6 +263,14 @@ const Order = () => {
 
   return (
     <div className="p-6 bg-transparent min-h-screen">
+      <style>
+        {`
+          .overflow-x-auto::-webkit-scrollbar,
+          .overflow-y-auto::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
       {/* Header */}
       <motion.div
         className="mb-8"
@@ -267,10 +322,7 @@ const Order = () => {
                 {t("processing")}
               </p>
               <p className="text-2xl font-light text-white">
-                {
-                  orders.filter((order) => order.status === "in-progress")
-                    .length
-                }
+                {orders.filter((order) => order.status === "processing").length}
               </p>
             </div>
           </div>
@@ -312,7 +364,10 @@ const Order = () => {
                 {t("total")} {t("revenue")}
               </p>
               <p className="text-2xl font-light text-white">
-                ${orders.reduce((sum, order) => sum + order.total, 0)}
+                $
+                {orders
+                  .filter((order) => order.status === "completed")
+                  .reduce((sum, order) => sum + order.total, 0)}
               </p>
             </div>
           </div>
@@ -347,138 +402,194 @@ const Order = () => {
               >
                 <option value="all">{t("allStatus")}</option>
                 <option value="pending">{t("pending")}</option>
-                <option value="in-progress">{t("processing")}</option>
+                <option value="processing">{t("processing")}</option>
                 <option value="completed">{t("completed")}</option>
-                <option value="delivered">{t("delivered")}</option>
+                <option value="cancelled">{t("cancelled")}</option>
               </select>
             </div>
           </div>
         </div>
       </motion.div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <motion.div
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-8 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <div className="flex items-center justify-center space-x-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
+            <span className="text-white/70">Loading orders...</span>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <motion.div
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-red-500/20 p-8 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <FiAlertCircle className="w-8 h-8 text-red-400" />
+            <span className="text-red-400 font-medium">
+              Error loading orders
+            </span>
+          </div>
+          <button
+            onClick={refetch}
+            className="px-4 py-2 bg-[#D4AF37] text-[#1C1C1C] rounded-lg hover:bg-[#BFA134] transition-colors"
+          >
+            Try Again
+          </button>
+        </motion.div>
+      )}
+
       {/* Orders Table */}
-      <motion.div
-        className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 overflow-hidden"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-      >
-        <div className="px-6 py-4 border-b border-[#D4AF37]/30">
-          <h2 className="text-lg font-light text-white tracking-wide">
-            Orders ({filteredOrders.length})
-          </h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[#D4AF37]/30">
-                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  {t("orderId")}
-                </th>
-                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  {t("customer")}
-                </th>
-                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  {t("date")}
-                </th>
-                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  {t("amount")}
-                </th>
-                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  {t("status")}
-                </th>
-                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  {t("payment")}
-                </th>
-                <th className="text-left py-3 px-6 font-light text-white tracking-wide">
-                  {t("view")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((order, index) => (
-                <motion.tr
-                  key={order.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * index }}
-                  className="border-b border-[#D4AF37]/10 hover:bg-[#D4AF37]/5 transition-colors"
-                >
-                  <td className="py-4 px-6">
-                    <span className="font-medium text-white">{order.id}</span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#BFA134] rounded-full flex items-center justify-center shadow-lg">
-                        <FiUser className="w-5 h-5 text-[#1C1C1C]" />
+      {!isLoading && !error && (
+        <motion.div
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <div className="px-6 py-4 border-b border-[#D4AF37]/30">
+            <h2 className="text-lg font-light text-white tracking-wide">
+              Orders ({filteredOrders.length})
+            </h2>
+          </div>
+          <div
+            className="overflow-x-auto"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-[#D4AF37]/30">
+                  <th className="text-left py-3 px-6 font-light text-white tracking-wide">
+                    {t("orderId")}
+                  </th>
+                  <th className="text-left py-3 px-6 font-light text-white tracking-wide">
+                    {t("customer")}
+                  </th>
+                  <th className="text-left py-3 px-6 font-light text-white tracking-wide">
+                    {t("date")}
+                  </th>
+                  <th className="text-left py-3 px-6 font-light text-white tracking-wide">
+                    {t("amount")}
+                  </th>
+                  <th className="text-left py-3 px-6 font-light text-white tracking-wide">
+                    Assigned To
+                  </th>
+                  <th className="text-left py-3 px-6 font-light text-white tracking-wide">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredOrders.map((order, index) => (
+                  <motion.tr
+                    key={order.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                    className="border-b border-[#D4AF37]/10 hover:bg-[#D4AF37]/5 transition-colors"
+                  >
+                    <td className="py-4 px-6">
+                      <span className="font-medium text-white">{order.id}</span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-[#D4AF37] to-[#BFA134] rounded-full flex items-center justify-center shadow-lg">
+                          <FiUser className="w-5 h-5 text-[#1C1C1C]" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-white">
+                            {order.customerName}
+                          </p>
+                          <p className="text-sm text-white/70">
+                            {order.customerPhone}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-white">
-                          {order.customerName}
-                        </p>
-                        <p className="text-sm text-white/70">
-                          {order.customerPhone}
-                        </p>
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className="text-white/70">
+                        {new Date(order.orderDate).toLocaleDateString()}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className="font-semibold text-[#D4AF37]">
+                        ${order.total}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center space-x-2">
+                        {order.assignedEmployee ? (
+                          <div className="flex items-center space-x-2">
+                            <div className="w-8 h-8 bg-gradient-to-r from-[#D4AF37] to-[#BFA134] rounded-full flex items-center justify-center">
+                              <FiUser className="w-4 h-4 text-[#1C1C1C]" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-white">
+                                {order.assignedEmployee.name}
+                              </p>
+                              <p className="text-xs text-white/60">
+                                {order.assignedEmployee.role}
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          <select
+                            className="text-sm bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg px-2 py-1 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none min-w-[140px]"
+                            defaultValue=""
+                            onChange={(e) =>
+                              assignEmployee(order.id, parseInt(e.target.value))
+                            }
+                          >
+                            <option value="" disabled>
+                              Select Employee
+                            </option>
+                            {employees.map((employee) => (
+                              <option key={employee.id} value={employee.id}>
+                                {employee.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                       </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6">
-                    <span className="text-white/70">
-                      {new Date(order.orderDate).toLocaleDateString()}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <span className="font-semibold text-[#D4AF37]">
-                      ${order.total}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        order.status
-                      )}`}
-                    >
-                      {getStatusTranslation(order.status)}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getPaymentStatusColor(
-                        order.paymentStatus
-                      )}`}
-                    >
-                      {getPaymentStatusTranslation(order.paymentStatus)}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => viewOrderDetails(order)}
-                        className="p-2 text-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-lg transition-colors"
-                        title={t("view")}
-                      >
-                        <FiEye className="w-4 h-4" />
-                      </button>
-                      <select
-                        className="text-sm bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg px-2 py-1 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none"
-                        value={order.status}
-                        onChange={(e) =>
-                          updateOrderStatus(order.id, e.target.value)
-                        }
-                      >
-                        <option value="pending">{t("pending")}</option>
-                        <option value="in-progress">{t("processing")}</option>
-                        <option value="completed">{t("completed")}</option>
-                        <option value="delivered">{t("delivered")}</option>
-                      </select>
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+                    </td>
+                    <td className="py-4 px-6">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                            order.status
+                          )}`}
+                        >
+                          {getStatusTranslation(order.status)}
+                        </span>
+                        <button
+                          onClick={() => viewOrderDetails(order)}
+                          className="p-2 text-[#D4AF37] hover:bg-[#D4AF37]/20 rounded-lg transition-colors"
+                          title="View Details"
+                        >
+                          <FiEye className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      )}
 
       {/* Order Details Modal */}
       {showModal && selectedOrder && (
@@ -497,7 +608,13 @@ const Order = () => {
             transition={{ type: "spring", duration: 0.5 }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="overflow-y-auto max-h-[90vh]">
+            <div
+              className="overflow-y-auto max-h-[90vh]"
+              style={{
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
               {/* Modal Header */}
               <div className="sticky top-0 bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border-b border-[#D4AF37]/30 px-6 py-4 flex justify-between items-center">
                 <div>
@@ -515,7 +632,7 @@ const Order = () => {
               </div>
 
               <div className="p-6">
-                {/* Status and Payment Info */}
+                {/* Status Info */}
                 <div className="flex flex-wrap gap-4 mb-6">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-medium text-white/70">
@@ -529,33 +646,16 @@ const Order = () => {
                       {selectedOrder.status === "pending" && (
                         <FiClock className="w-3 h-3 inline mr-1" />
                       )}
-                      {selectedOrder.status === "in-progress" && (
+                      {selectedOrder.status === "processing" && (
                         <FiPackage className="w-3 h-3 inline mr-1" />
                       )}
                       {selectedOrder.status === "completed" && (
                         <FiCheckCircle className="w-3 h-3 inline mr-1" />
                       )}
-                      {selectedOrder.status === "delivered" && (
-                        <FiTruck className="w-3 h-3 inline mr-1" />
-                      )}
-                      {getStatusTranslation(selectedOrder.status)}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm font-medium text-white/70">
-                      {t("payment")}:
-                    </span>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getPaymentStatusColor(
-                        selectedOrder.paymentStatus
-                      )}`}
-                    >
-                      {selectedOrder.paymentStatus === "paid" ? (
-                        <FiCheckCircle className="w-3 h-3 inline mr-1" />
-                      ) : (
+                      {selectedOrder.status === "cancelled" && (
                         <FiAlertCircle className="w-3 h-3 inline mr-1" />
                       )}
-                      {getPaymentStatusTranslation(selectedOrder.paymentStatus)}
+                      {getStatusTranslation(selectedOrder.status)}
                     </span>
                   </div>
                 </div>
@@ -650,7 +750,13 @@ const Order = () => {
                     {t("orderItems")}
                   </h3>
                   <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl overflow-hidden">
-                    <div className="overflow-x-auto">
+                    <div
+                      className="overflow-x-auto"
+                      style={{
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                    >
                       <table className="w-full">
                         <thead className="bg-[#1C1C1C] border-b border-[#D4AF37]/30">
                           <tr>

@@ -1,15 +1,42 @@
 // import User from "../models/User.js";
 import User from "../models/User.js";
 import sendMail from "../middleware/SendMail.js";
+import { sendWelcomeMessage } from "../services/whatsappService.js";
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phoneNumber } = req.body;
+
+    // Validate phone number format
+    if (!phoneNumber) {
+      return res.status(400).json({ message: "Phone number is required" });
+    }
+
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    if (!phoneRegex.test(phoneNumber)) {
+      return res.status(400).json({
+        message:
+          "Phone number must include country code and be in format: +1234567890",
+      });
+    }
 
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: "User already exists" });
 
-    user = new User({ name, email, password, status: "unverified" });
+    // Check if phone number already exists
+    const existingPhone = await User.findOne({ phoneNumber });
+    if (existingPhone)
+      return res
+        .status(400)
+        .json({ message: "Phone number already registered" });
+
+    user = new User({
+      name,
+      email,
+      password,
+      phoneNumber,
+      status: "unverified",
+    });
 
     const otp = await user.generateOTP();
 
@@ -54,6 +81,14 @@ export const verifyUser = async (req, res) => {
     user.status = "verified";
     await user.save();
 
+    // Send welcome WhatsApp message
+    try {
+      await sendWelcomeMessage(user.phoneNumber, user.name);
+    } catch (whatsappError) {
+      console.error("Failed to send welcome WhatsApp message:", whatsappError);
+      // Don't fail the verification if WhatsApp fails
+    }
+
     const token = user.generateToken();
     res.cookie("token", token, {
       httpOnly: true,
@@ -88,6 +123,14 @@ export const appVerifyUser = async (req, res) => {
     user.status = "verified";
     await user.save();
 
+    // Send welcome WhatsApp message
+    try {
+      await sendWelcomeMessage(user.phoneNumber, user.name);
+    } catch (whatsappError) {
+      console.error("Failed to send welcome WhatsApp message:", whatsappError);
+      // Don't fail the verification if WhatsApp fails
+    }
+
     const token = user.generateToken();
 
     res.status(200).json({
@@ -95,7 +138,9 @@ export const appVerifyUser = async (req, res) => {
       token,
       user: {
         id: user._id,
+        name: user.name,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         status: user.status,
       },
     });
@@ -238,6 +283,7 @@ export const login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         profilePic: user.profilePic,
         role: user.role,
         status: user.status,
@@ -271,12 +317,14 @@ export const appLogin = async (req, res) => {
 
     const token = user.generateToken();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Login successful",
       token,
       user: {
         id: user._id,
+        name: user.name,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         status: user.status,
       },
     });
@@ -300,6 +348,7 @@ export const myProfile = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         profilePic: user.profilePic,
         role: user.role,
         status: user.status,
@@ -309,6 +358,30 @@ export const myProfile = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Check user role - useful for debugging admin access
+export const checkRole = async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.role === "Admin" || user.role === "admin",
+      },
+      message: `User role: ${user.role}`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -383,15 +456,29 @@ export const updateProfile = async (req, res) => {
 
 export const allUsers = async (req, res) => {
   try {
+    console.log("All Users endpoint called");
     const users = await User.find();
-    if (!users) {
-      res.status(404).json({ message: "NO User Found!" });
+    console.log("Found users:", users.length);
+
+    if (!users || users.length === 0) {
+      console.log("No users found in database");
+      return res.status(200).json({
+        success: true,
+        message: "No users found",
+        users: [],
+      });
     }
-    res.status(200).json(users);
+
+    console.log("Sending users data:", users);
+    res.status(200).json({
+      success: true,
+      users: users,
+    });
   } catch (error) {
+    console.error("Error in allUsers:", error);
     res
       .status(500)
-      .json({ message: "Internal server error.Please try again later" });
+      .json({ message: "Internal server error. Please try again later" });
   }
 };
 

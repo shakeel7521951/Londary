@@ -14,6 +14,7 @@ import storage from "redux-persist/lib/storage";
 // RTK Query APIs
 import { userApi } from "./features/usersApi";
 import { orderApi } from "./features/ordersApi";
+import { couponApi } from "./features/couponsApi";
 import authReducer from "./features/authSlice";
 import languageReducer from "../redux/features/languageSlice";
 
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   [userApi.reducerPath]: userApi.reducer,
   [orderApi.reducerPath]: orderApi.reducer,
+  [couponApi.reducerPath]: couponApi.reducer,
   language: languageReducer,
 });
 
@@ -41,7 +43,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(userApi.middleware, orderApi.middleware),
+    }).concat(userApi.middleware, orderApi.middleware, couponApi.middleware),
 });
 
 // Create persistor

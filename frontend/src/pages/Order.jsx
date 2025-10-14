@@ -4,13 +4,12 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useCreateOrderMutation } from "../redux/features/ordersApi";
+import { useValidateCouponMutation } from "../redux/features/couponsApi";
 import {
   selectCurrentUser,
   selectIsAuthenticated,
 } from "../redux/features/authSlice";
 import ThankYouDialog from "../components/common/ThankYouDialog";
-import { GiClothes, GiHanger } from "react-icons/gi";
-import { FaTshirt } from "react-icons/fa";
 
 const OrderPage = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -18,6 +17,8 @@ const OrderPage = () => {
   const navigate = useNavigate();
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreateOrderMutation();
+  const [validateCouponMutation, { isLoading: isValidatingCoupon }] =
+    useValidateCouponMutation();
   const language = useSelector((state) => state.language.language);
 
   const [showThankYouModal, setShowThankYouModal] = useState(false);
@@ -133,6 +134,7 @@ const OrderPage = () => {
   const [garments, setGarments] = useState([]);
   const [steamFinish, setSteamFinish] = useState(false);
   const [incenseFinish, setIncenseFinish] = useState(false);
+  const [incenseType, setIncenseType] = useState("");
   const [incenseDisclaimer, setIncenseDisclaimer] = useState(false);
   const [fragrance, setFragrance] = useState("");
   const [fragranceDisclaimer, setFragranceDisclaimer] = useState(false);
@@ -143,7 +145,6 @@ const OrderPage = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState("");
-  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
 
   const welcomeMessage = {
     ar: "هلا بكم يا يمه",
@@ -567,12 +568,13 @@ const OrderPage = () => {
   };
 
   const handleIncenseSelect = useCallback((optionId) => {
-    setIncenseFinish(optionId);
+    setIncenseType(optionId);
   }, []);
 
   const handleIncenseChoice = useCallback((wantsIncense) => {
     setIncenseFinish(wantsIncense);
     if (!wantsIncense) {
+      setIncenseType("");
       setIncenseDisclaimer(false);
     } else {
       setIncenseDisclaimer(false);
@@ -595,64 +597,29 @@ const OrderPage = () => {
 
   // Coupon validation and application functions
   const validateCoupon = async (code) => {
-    setIsValidatingCoupon(true);
     setCouponError("");
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/coupons/validate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ code: code }),
-        }
-      );
+      const result = await validateCouponMutation(code).unwrap();
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setCouponError(data.message || t.couponInvalid);
-        setAppliedCoupon(null);
-        return false;
-      }
-
-      // Check if coupon is active
-      if (!data.coupon.isActive) {
-        setCouponError(t.couponInvalid);
-        setAppliedCoupon(null);
-        return false;
-      }
-
-      // Check if coupon has expired
-      if (new Date(data.coupon.expiryDate) < new Date()) {
-        setCouponError(t.couponExpired);
-        setAppliedCoupon(null);
-        return false;
-      }
-
-      // Check usage limit
-      if (
-        data.coupon.usageLimit &&
-        data.coupon.usedCount >= data.coupon.usageLimit
-      ) {
-        setCouponError(t.couponLimitReached);
-        setAppliedCoupon(null);
-        return false;
-      }
-
-      // Successfully validated - set the coupon
-      setAppliedCoupon(data.coupon);
+      // Backend already validates everything (isActive, expiry, usage limits)
+      // If we get here, the coupon is valid
+      setAppliedCoupon(result.coupon);
       setCouponError("");
+      toast.success(t.couponApplied, {
+        duration: 2000,
+        style: {
+          background: "#FFF9E6",
+          color: "#D4AF37",
+          border: "1px solid #D4AF37",
+        },
+      });
       return true;
     } catch (error) {
-      setCouponError("Failed to validate coupon. Please try again.");
+      const errorMessage = error?.data?.message || t.couponInvalid;
+      setCouponError(errorMessage);
       setAppliedCoupon(null);
       return false;
-    } finally {
-      setIsValidatingCoupon(false);
     }
   };
 
@@ -762,6 +729,16 @@ const OrderPage = () => {
       return;
     }
 
+    // Check if user has required information
+    if (!currentUser?.phoneNumber) {
+      toast.error(
+        language === "ar"
+          ? "يرجى تحديث ملفك الشخصي بإضافة رقم الهاتف أولاً"
+          : "Please update your profile with a phone number first"
+      );
+      return;
+    }
+
     if (!cardDetails.from.trim()) {
       toast.error(t.cardFromRequired);
       setStep(6); // Go back to the card step
@@ -788,22 +765,46 @@ const OrderPage = () => {
       return;
     }
 
+    // Calculate totals
+    const originalTotal = calculateTotal();
+    const { finalTotal, discount: discountAmount } =
+      calculateTotalWithDiscount();
+
     const orderDetails = {
-      serviceType, // Changed from washType
-      garments,
+      serviceType,
+      garments: garments.map((garment) => ({
+        type: garment.type,
+        quantity: garment.quantity,
+        category: garment.category || "",
+      })),
       steamFinish,
-      incenseFinish, // New field
-      incenseDisclaimer, // New field
-      fragrance,
-      fragranceDisclaimer, // New field
+      incenseFinish,
+      incenseType: incenseType || "",
+      incenseDisclaimer,
+      fragrance: fragrance || "",
+      fragranceDisclaimer,
       packaging,
       cardFrom: cardDetails.from,
       cardTo: cardDetails.to,
-      total: calculateTotal(),
+      appliedCoupon: appliedCoupon
+        ? {
+            code: appliedCoupon.code,
+            discount: appliedCoupon.discount,
+            type: appliedCoupon.type,
+          }
+        : null,
+      originalTotal,
+      discountAmount,
+      total: finalTotal,
     };
 
     try {
-      // const result = await createOrder(orderDetails).unwrap();
+      console.log("Creating order with details:", orderDetails);
+      console.log("Current user:", currentUser);
+
+      const result = await createOrder(orderDetails).unwrap();
+
+      console.log("Order created successfully:", result);
 
       // Show order success message
       toast.success(t.orderSuccess, {
@@ -820,16 +821,63 @@ const OrderPage = () => {
       // Show thank you modal
       setShowThankYouModal(true);
 
+      // Reset form state
+      setStep(1);
+      setServiceType("");
+      setGarments([]);
+      setSteamFinish(false);
+      setIncenseFinish(false);
+      setIncenseType("");
+      setIncenseDisclaimer(false);
+      setFragrance("");
+      setFragranceDisclaimer(false);
+      setWantsPerfume(false);
+      setPackaging("");
+      setCardDetails({ from: "", to: "" });
+      setCouponCode("");
+      setAppliedCoupon(null);
+      setCouponError("");
+
       // Redirect to home page after modal closes
       setTimeout(() => {
         navigate("/");
-      }, 12000); // Wait for modal to auto-close plus some buffer time
+      }, 11000); // Wait for modal to auto-close (10s) plus buffer time
     } catch (error) {
-      toast.error(error?.data?.message || t.orderError);
       console.error("Order creation failed:", error);
+
+      let errorMessage = t.orderError;
+
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
+
+        // Handle specific validation errors
+        if (errorMessage.includes("phoneNumber")) {
+          errorMessage =
+            language === "ar"
+              ? "يرجى التأكد من أن رقم هاتفك مدخل بشكل صحيح في ملفك الشخصي"
+              : "Please ensure your phone number is correctly entered in your profile";
+        } else if (errorMessage.includes("appliedCoupon")) {
+          errorMessage =
+            language === "ar"
+              ? "حدث خطأ في معالجة الكوبون. يرجى المحاولة مرة أخرى"
+              : "Error processing coupon. Please try again";
+        }
+      } else if (error?.data?.errors) {
+        errorMessage = error.data.errors.join(", ");
+      }
+
+      toast.error(errorMessage, {
+        duration: 5000,
+        style: {
+          background: "#FFE6E6",
+          color: "#D32F2F",
+          border: "1px solid #D32F2F",
+        },
+      });
     }
   };
 
+  // WhatsApp message generator (available for future use)
   const generateWhatsAppMessage = (orderDetails, order) => {
     const userInfo = currentUser
       ? `${language === "ar" ? "👤 العميل" : "👤 Customer"}: ${
@@ -868,7 +916,11 @@ ${language === "ar" ? "🧺 تفاصيل الخدمة:" : "🧺 Service Details:
     }
 • ${language === "ar" ? "البخور" : "Incense"}: ${
       orderDetails.incenseFinish
-        ? language === "ar"
+        ? orderDetails.incenseType
+          ? incenseOptions.find(
+              (option) => option.id === orderDetails.incenseType
+            )?.name || (language === "ar" ? "نعم" : "Yes")
+          : language === "ar"
           ? "نعم"
           : "Yes"
         : language === "ar"
@@ -916,9 +968,24 @@ ${
     : ""
 }
 
-${language === "ar" ? "💰 المجموع" : "💰 Total"}: ${orderDetails.total} ${
-      language === "ar" ? "ريال" : "QAR"
-    }
+${
+  orderDetails.appliedCoupon
+    ? `${language === "ar" ? "💰 السعر الأصلي" : "💰 Original Price"}: ${
+        orderDetails.originalTotal
+      } ${language === "ar" ? "ريال" : "QAR"}
+• ${language === "ar" ? "🎫 الكوبون" : "🎫 Coupon"}: ${
+        orderDetails.appliedCoupon.code
+      }
+• ${language === "ar" ? "💸 الخصم" : "💸 Discount"}: ${
+        orderDetails.discountAmount
+      } ${language === "ar" ? "ريال" : "QAR"}
+• ${language === "ar" ? "💰 المجموع النهائي" : "💰 Final Total"}: ${
+        orderDetails.total
+      } ${language === "ar" ? "ريال" : "QAR"}`
+    : `${language === "ar" ? "💰 المجموع" : "💰 Total"}: ${
+        orderDetails.total
+      } ${language === "ar" ? "ريال" : "QAR"}`
+}
 
 ${
   language === "ar" ? "📅 تاريخ الطلب" : "📅 Order Date"
@@ -1160,7 +1227,7 @@ ${
                   <div
                     key={option.id}
                     className={`p-4 border rounded-xl cursor-pointer transition-all ${
-                      incenseFinish === option.id
+                      incenseType === option.id
                         ? "border-[#D4AF37] bg-[#FFF9E6] shadow-md"
                         : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
                     }`}

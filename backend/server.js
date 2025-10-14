@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import userRoute from "./routes/userRoutes.js";
 import orderRoute from "./routes/orderRoutes.js";
 import couponRoute from "./routes/couponRoutes.js";
+import employeeRoute from "./routes/employeeRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -37,6 +38,7 @@ mongoose
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use("/api/v1/coupons", couponRoute);
+app.use("/api/v1/employees", employeeRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is running at PORT no. ${PORT}`);

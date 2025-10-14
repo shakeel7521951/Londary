@@ -7,6 +7,18 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    phoneNumber: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (v) {
+          // Validate phone number format with country code (starts with + and contains 10-15 digits)
+          return /^\+[1-9]\d{1,14}$/.test(v);
+        },
+        message:
+          "Phone number must include country code and be in format: +1234567890",
+      },
+    },
     profilePic: { type: String },
     role: { type: String, default: "User" },
     status: { type: String, default: "unverified" },
@@ -64,6 +76,7 @@ userSchema.methods.generateToken = function () {
       id: this._id,
       name: this.name,
       email: this.email,
+      phoneNumber: this.phoneNumber,
       role: this.role,
       profilePic: this.profilePic,
     },

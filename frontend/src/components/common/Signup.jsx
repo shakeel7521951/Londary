@@ -11,11 +11,15 @@ const translations = {
     createPremiumAccount: "Create your premium account",
     fullName: "Full Name",
     email: "Email Address",
+    phoneNumber: "WhatsApp Phone Number",
     password: "Password",
     confirmPassword: "Confirm Password",
     placeholderName: "Enter your full name",
     placeholderEmail: "your@email.com",
+    placeholderPhone: "+1234567890",
     placeholderPassword: "••••••••",
+    whatsappInfo:
+      "Enter your full WhatsApp number with country code (e.g., +1234567890)",
     terms: "I agree to the",
     termsLink: "terms and conditions",
     createAccount: "Create Account",
@@ -27,11 +31,14 @@ const translations = {
     createPremiumAccount: "أنشئ حسابك المميز",
     fullName: "الاسم الكامل",
     email: "البريد الإلكتروني",
+    phoneNumber: "رقم الواتساب",
     password: "كلمة المرور",
     confirmPassword: "تأكيد كلمة المرور",
     placeholderName: "أدخل اسمك الكامل",
     placeholderEmail: "your@email.com",
+    placeholderPhone: "+1234567890",
     placeholderPassword: "••••••••",
+    whatsappInfo: "أدخل رقم الواتساب الكامل مع رمز البلد (مثال: +1234567890)",
     terms: "أوافق على",
     termsLink: "الشروط والأحكام",
     createAccount: "إنشاء حساب",
@@ -48,6 +55,7 @@ export default function Signup() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
   });
@@ -61,6 +69,7 @@ export default function Signup() {
   const validate = () => {
     const newErrors = {};
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const phonePattern = /^\+[1-9]\d{1,14}$/; // International phone number format with country code
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
@@ -70,6 +79,13 @@ export default function Signup() {
 
     if (!formData.email.trim() || !emailPattern.test(formData.email)) {
       newErrors.email = "Please enter a valid email";
+    }
+
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!phonePattern.test(formData.phoneNumber)) {
+      newErrors.phoneNumber =
+        "Please enter a valid phone number with country code (e.g., +1234567890)";
     }
 
     if (!formData.password) {
@@ -110,6 +126,7 @@ export default function Signup() {
       await registerUser({
         name: formData.name,
         email: formData.email,
+        phoneNumber: formData.phoneNumber,
         password: formData.password,
       }).unwrap();
 
@@ -123,7 +140,9 @@ export default function Signup() {
       setErrors({
         submit: err?.data?.message || "Registration failed. Please try again.",
       });
-      toast.error(err?.data?.message || "Registration failed. Please try again.");
+      toast.error(
+        err?.data?.message || "Registration failed. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -136,8 +155,18 @@ export default function Signup() {
       type: "text",
       placeholder: t.placeholderName,
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
         </svg>
       ),
     },
@@ -147,8 +176,18 @@ export default function Signup() {
       type: "email",
       placeholder: t.placeholderEmail,
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
         </svg>
       ),
     },
@@ -158,8 +197,18 @@ export default function Signup() {
       type: "password",
       placeholder: t.placeholderPassword,
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          />
         </svg>
       ),
     },
@@ -169,8 +218,18 @@ export default function Signup() {
       type: "password",
       placeholder: t.placeholderPassword,
       icon: (
-        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        <svg
+          className="w-5 h-5 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M5 13l4 4L19 7"
+          />
         </svg>
       ),
     },
@@ -206,7 +265,10 @@ export default function Signup() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {inputFields.map(({ id, label, type, placeholder, icon }) => (
               <div key={id}>
-                <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={id}>
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                  htmlFor={id}
+                >
                   {label}
                 </label>
                 <div className="relative">
@@ -230,13 +292,59 @@ export default function Signup() {
               </div>
             ))}
 
+            {/* Phone Number Field */}
+            <div>
+              <label
+                className="block text-sm font-medium text-gray-700 mb-1"
+                htmlFor="phoneNumber"
+              >
+                {t.phoneNumber}
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <svg
+                    className="w-5 h-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  id="phoneNumber"
+                  type="tel"
+                  placeholder={t.placeholderPhone}
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  className={`block w-full pl-10 pr-4 py-3 border ${
+                    errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition duration-200`}
+                />
+              </div>
+              {errors.phoneNumber && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.phoneNumber}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-gray-500">{t.whatsappInfo}</p>
+            </div>
+
             <div className="flex items-center mt-1">
               <input
                 id="terms"
                 type="checkbox"
                 className="h-4 w-4 text-[#D4AF37] focus:ring-[#D4AF37] border-gray-300 rounded"
               />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+              <label
+                htmlFor="terms"
+                className="ml-2 block text-sm text-gray-700"
+              >
                 {t.terms}{" "}
                 <a href="#" className="text-[#D4AF37] hover:underline">
                   {t.termsLink}

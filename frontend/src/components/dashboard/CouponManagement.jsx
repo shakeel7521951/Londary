@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -11,13 +11,30 @@ import {
   FiGift,
   FiLoader,
 } from "react-icons/fi";
+import {
+  useGetAllCouponsQuery,
+  useCreateCouponMutation,
+  useUpdateCouponMutation,
+  useDeleteCouponMutation,
+} from "../../redux/features/couponsApi";
 
 const CouponManagement = () => {
   const language = useSelector((state) => state.language.language);
   const { t } = useTranslation();
-  const [coupons, setCoupons] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
+
+  // RTK Query hooks
+  const {
+    data: coupons = [],
+    isLoading: loading,
+    error,
+  } = useGetAllCouponsQuery();
+  const [createCouponMutation, { isLoading: isCreating }] =
+    useCreateCouponMutation();
+  const [updateCouponMutation, { isLoading: isUpdating }] =
+    useUpdateCouponMutation();
+  const [deleteCouponMutation, { isLoading: isDeleting }] =
+    useDeleteCouponMutation();
+
   const [showModal, setShowModal] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState(null);
   const [formData, setFormData] = useState({
@@ -30,118 +47,49 @@ const CouponManagement = () => {
     isActive: true,
   });
 
-  // API Functions
-  const fetchCoupons = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/v1/coupons", {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCoupons(data.data);
-      } else {
-        console.error("Error fetching coupons:", data.message);
-        alert(t("errorLoading"));
-      }
-    } catch (error) {
-      console.error("Error fetching coupons:", error);
-      alert(t("errorLoading"));
-    } finally {
-      setLoading(false);
-    }
-  };
+  const submitting = isCreating || isUpdating;
 
+  // API Functions using RTK Query
   const createCoupon = async (couponData) => {
     try {
-      setSubmitting(true);
-      const response = await fetch("/api/v1/coupons", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(couponData),
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCoupons([data.data, ...coupons]);
-        alert(t("created"));
-        return true;
-      } else {
-        alert(data.message || t("errorCreating"));
-        return false;
-      }
+      await createCouponMutation(couponData).unwrap();
+      alert("Coupon created successfully!");
+      return true;
     } catch (error) {
-      console.error("Error creating coupon:", error);
-      alert(t("errorCreating"));
+      const errorMsg = error?.data?.message || "Failed to create coupon";
+      if (error?.data?.errors) {
+        console.error("Validation errors:", error.data.errors);
+        alert(`Validation errors: ${error.data.errors.join(", ")}`);
+      } else {
+        alert(errorMsg);
+      }
       return false;
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const updateCoupon = async (couponId, couponData) => {
     try {
-      setSubmitting(true);
-      const response = await fetch(`/api/v1/coupons/${couponId}`, {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(couponData),
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCoupons(coupons.map((c) => (c._id === couponId ? data.data : c)));
-        alert(t("updated"));
-        return true;
-      } else {
-        alert(data.message || t("errorUpdating"));
-        return false;
-      }
+      await updateCouponMutation({ id: couponId, ...couponData }).unwrap();
+      alert(t("updated"));
+      return true;
     } catch (error) {
-      console.error("Error updating coupon:", error);
-      alert(t("errorUpdating"));
+      alert(error?.data?.message || t("errorUpdating"));
       return false;
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const deleteCoupon = async (couponId) => {
     try {
-      const response = await fetch(`/api/v1/coupons/${couponId}`, {
-        method: "DELETE",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setCoupons(coupons.filter((c) => c._id !== couponId));
-        alert(t("deleted"));
-        return true;
-      } else {
-        alert(data.message || t("errorDeleting"));
-        return false;
-      }
+      await deleteCouponMutation(couponId).unwrap();
+      alert(t("deleted"));
+      return true;
     } catch (error) {
-      console.error("Error deleting coupon:", error);
-      alert(t("errorDeleting"));
+      alert(error?.data?.message || t("errorDeleting"));
       return false;
     }
   };
 
-  // Load coupons on component mount
-  useEffect(() => {
-    fetchCoupons();
-  }, []);
+  // RTK Query automatically handles data fetching
 
   const resetForm = () => {
     setFormData({
@@ -270,6 +218,22 @@ const CouponManagement = () => {
         <div className="flex items-center justify-center min-h-[300px]">
           <FiLoader className="w-8 h-8 text-[#D4AF37] animate-spin" />
           <span className="ml-3 text-white/70">{t("loadingCoupons")}</span>
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center min-h-[300px]">
+          <div className="text-center">
+            <div className="text-red-400 text-xl mb-2">⚠️</div>
+            <p className="text-white/70 mb-4">
+              {error?.data?.message ||
+                "Failed to load coupons. Please check if the backend server is running."}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-[#D4AF37] hover:bg-[#c9a227] text-[#1C1C1C] px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       ) : (
         <>

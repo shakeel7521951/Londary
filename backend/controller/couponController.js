@@ -1,13 +1,14 @@
 import Coupon from "../models/Coupon.js";
-import asyncHandler from "express-async-handler";
 
 // @desc    Get all coupons
 // @route   GET /api/coupons
 // @access  Private/Admin
-const getCoupons = asyncHandler(async (req, res) => {
+const getCoupons = async (req, res) => {
   try {
+    console.log("Getting coupons - User role:", req.user?.role);
+
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 100; // Increased limit for admin panel
     const skip = (page - 1) * limit;
 
     // Build filter
@@ -22,6 +23,8 @@ const getCoupons = asyncHandler(async (req, res) => {
       filter.code = { $regex: req.query.search, $options: "i" };
     }
 
+    console.log("Coupon filter:", filter);
+
     const coupons = await Coupon.find(filter)
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 })
@@ -29,6 +32,8 @@ const getCoupons = asyncHandler(async (req, res) => {
       .limit(limit);
 
     const total = await Coupon.countDocuments(filter);
+
+    console.log(`Found ${coupons.length} coupons out of ${total} total`);
 
     res.json({
       success: true,
@@ -41,18 +46,19 @@ const getCoupons = asyncHandler(async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Get coupons error:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching coupons",
       error: error.message,
     });
   }
-});
+};
 
 // @desc    Get single coupon
 // @route   GET /api/coupons/:id
 // @access  Private/Admin
-const getCoupon = asyncHandler(async (req, res) => {
+const getCoupon = async (req, res) => {
   try {
     const coupon = await Coupon.findById(req.params.id)
       .populate("createdBy", "name email")
@@ -70,18 +76,19 @@ const getCoupon = asyncHandler(async (req, res) => {
       data: coupon,
     });
   } catch (error) {
+    console.error("Get coupon error:", error);
     res.status(500).json({
       success: false,
       message: "Error fetching coupon",
       error: error.message,
     });
   }
-});
+};
 
 // @desc    Create new coupon
 // @route   POST /api/coupons
 // @access  Private/Admin
-const createCoupon = asyncHandler(async (req, res) => {
+const createCoupon = async (req, res) => {
   try {
     const {
       code,
@@ -93,12 +100,38 @@ const createCoupon = asyncHandler(async (req, res) => {
       isActive,
     } = req.body;
 
+    // Validate required fields
+    if (!code || !type || discount === undefined || !expiryDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Code, type, discount, and expiry date are required",
+      });
+    }
+
+    // Validate coupon code format
+    const codeRegex = /^[A-Z0-9]+$/;
+    if (!codeRegex.test(code.toUpperCase())) {
+      return res.status(400).json({
+        success: false,
+        message: "Coupon code must contain only letters and numbers",
+      });
+    }
+
     // Check if coupon code already exists
     const existingCoupon = await Coupon.findByCode(code);
     if (existingCoupon) {
       return res.status(400).json({
         success: false,
         message: "Coupon code already exists",
+      });
+    }
+
+    // Validate discount value
+    const discountValue = parseFloat(discount);
+    if (isNaN(discountValue) || discountValue <= 0 || discountValue > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Discount must be a number between 1 and 100",
       });
     }
 
@@ -110,15 +143,26 @@ const createCoupon = asyncHandler(async (req, res) => {
       });
     }
 
+    // Validate usage limit if provided
+    if (
+      usageLimit &&
+      (isNaN(parseInt(usageLimit)) || parseInt(usageLimit) < 1)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Usage limit must be a positive number",
+      });
+    }
+
     // Create coupon
     const coupon = await Coupon.create({
       code: code.toUpperCase(),
       type,
-      discount,
+      discount: discountValue,
       expiryDate,
-      usageLimit,
-      description,
-      isActive,
+      usageLimit: usageLimit ? parseInt(usageLimit) : null,
+      description: description || "",
+      isActive: isActive !== undefined ? isActive : true,
       createdBy: req.user._id,
     });
 
@@ -128,6 +172,8 @@ const createCoupon = asyncHandler(async (req, res) => {
       message: "Coupon created successfully",
     });
   } catch (error) {
+    console.error("Create coupon error:", error);
+
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -135,18 +181,29 @@ const createCoupon = asyncHandler(async (req, res) => {
       });
     }
 
-    res.status(400).json({
+    if (error.name === "ValidationError") {
+      const validationErrors = Object.values(error.errors).map(
+        (err) => err.message
+      );
+      return res.status(400).json({
+        success: false,
+        message: "Validation error",
+        errors: validationErrors,
+      });
+    }
+
+    res.status(500).json({
       success: false,
-      message: "Error creating coupon",
+      message: "Internal server error while creating coupon",
       error: error.message,
     });
   }
-});
+};
 
 // @desc    Update coupon
 // @route   PUT /api/coupons/:id
 // @access  Private/Admin
-const updateCoupon = asyncHandler(async (req, res) => {
+const updateCoupon = async (req, res) => {
   try {
     const {
       code,
@@ -212,12 +269,12 @@ const updateCoupon = asyncHandler(async (req, res) => {
       error: error.message,
     });
   }
-});
+};
 
 // @desc    Delete coupon
 // @route   DELETE /api/coupons/:id
 // @access  Private/Admin
-const deleteCoupon = asyncHandler(async (req, res) => {
+const deleteCoupon = async (req, res) => {
   try {
     const coupon = await Coupon.findById(req.params.id);
 
@@ -249,14 +306,20 @@ const deleteCoupon = asyncHandler(async (req, res) => {
       error: error.message,
     });
   }
-});
+};
 
 // @desc    Validate coupon code
 // @route   POST /api/coupons/validate
 // @access  Public
-const validateCoupon = asyncHandler(async (req, res) => {
+const validateCoupon = async (req, res) => {
   try {
     const { code, orderValue } = req.body;
+    console.log(
+      "Validating coupon code:",
+      code,
+      "for order value:",
+      orderValue
+    );
 
     if (!code) {
       return res.status(400).json({
@@ -266,6 +329,7 @@ const validateCoupon = asyncHandler(async (req, res) => {
     }
 
     const validation = await Coupon.validateCouponCode(code, req.user?._id);
+    console.log("Coupon validation result:", validation);
 
     if (!validation.valid) {
       return res.status(400).json({
@@ -297,6 +361,10 @@ const validateCoupon = asyncHandler(async (req, res) => {
           type: coupon.type,
           discount: coupon.discount,
           description: coupon.description,
+          isActive: coupon.isActive,
+          expiryDate: coupon.expiryDate,
+          usageLimit: coupon.usageLimit,
+          usedCount: coupon.usedCount,
         },
         originalAmount: orderValue || 0,
         discountAmount,
@@ -312,12 +380,12 @@ const validateCoupon = asyncHandler(async (req, res) => {
       error: error.message,
     });
   }
-});
+};
 
 // @desc    Apply coupon to order
 // @route   POST /api/coupons/apply
 // @access  Private
-const applyCoupon = asyncHandler(async (req, res) => {
+const applyCoupon = async (req, res) => {
   try {
     const { code, orderValue, orderId } = req.body;
 
@@ -377,12 +445,12 @@ const applyCoupon = asyncHandler(async (req, res) => {
       error: error.message,
     });
   }
-});
+};
 
 // @desc    Get coupon usage statistics
 // @route   GET /api/coupons/stats
 // @access  Private/Admin
-const getCouponStats = asyncHandler(async (req, res) => {
+const getCouponStats = async (req, res) => {
   try {
     const totalCoupons = await Coupon.countDocuments();
     const activeCoupons = await Coupon.countDocuments({ isActive: true });
@@ -424,7 +492,7 @@ const getCouponStats = asyncHandler(async (req, res) => {
       error: error.message,
     });
   }
-});
+};
 
 export {
   getCoupons,

@@ -3,12 +3,39 @@ import mongoose from "mongoose";
 const OrderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
+    ref: "User",
+    required: false, // Made optional for admin-created orders
   },
-  washType: {
+  // Customer information stored directly in order
+  customerInfo: {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (v) {
+          // Validate phone number format with country code
+          return /^\+[1-9]\d{1,14}$/.test(v);
+        },
+        message:
+          "Phone number must include country code and be in format: +1234567890",
+      },
+    },
+    address: {
+      type: String,
+      default: "",
+    },
+  },
+  serviceType: {
     type: String,
-    enum: ['standard', 'express'],
+    enum: ["iron", "wash_iron", "dry_clean"],
     required: true,
   },
   garments: [
@@ -22,15 +49,35 @@ const OrderSchema = new mongoose.Schema({
         required: true,
         min: 1,
       },
+      category: {
+        type: String,
+        required: false,
+      },
     },
   ],
   steamFinish: {
     type: Boolean,
     default: false,
   },
+  incenseFinish: {
+    type: Boolean,
+    default: false,
+  },
+  incenseType: {
+    type: String,
+    default: "",
+  },
+  incenseDisclaimer: {
+    type: Boolean,
+    default: false,
+  },
   fragrance: {
     type: String,
-    required: true,
+    default: "",
+  },
+  fragranceDisclaimer: {
+    type: Boolean,
+    default: false,
   },
   packaging: {
     type: String,
@@ -38,11 +85,35 @@ const OrderSchema = new mongoose.Schema({
   },
   cardFrom: {
     type: String,
-    default: '',
+    default: "",
   },
   cardTo: {
     type: String,
-    default: '',
+    default: "",
+  },
+  // Coupon related fields
+  appliedCoupon: {
+    code: {
+      type: String,
+      default: null,
+    },
+    discount: {
+      type: Number,
+      default: null,
+    },
+    type: {
+      type: String,
+      default: null,
+    },
+  },
+  originalTotal: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  discountAmount: {
+    type: Number,
+    default: 0,
   },
   total: {
     type: Number,
@@ -51,14 +122,18 @@ const OrderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'processing', 'completed', 'cancelled'],
-    default: 'pending',
+    enum: ["pending", "processing", "completed", "cancelled"],
+    default: "pending",
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const Order = mongoose.model('Order', OrderSchema);
+const Order = mongoose.model("Order", OrderSchema);
 export default Order;
