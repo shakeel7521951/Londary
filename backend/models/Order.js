@@ -35,7 +35,7 @@ const OrderSchema = new mongoose.Schema({
   },
   serviceType: {
     type: String,
-    enum: ["iron", "wash_iron", "dry_clean"],
+    enum: ["wash_iron", "wash_iron_perfume", "dry_clean"],
     required: true,
   },
   garments: [

@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 
 const BotpressChat = () => {
-
   useEffect(() => {
     const injectScript = document.createElement("script");
     injectScript.src = "https://cdn.botpress.cloud/webchat/v3.1/inject.js";
@@ -26,9 +25,6 @@ const BotpressChat = () => {
               closeOnEscape: true,
               layout: "embedded",
             });
-            setIsBotReady(true);
-          } else {
-            console.error("❌ Botpress WebChat failed to load.");
           }
         }, 1000);
       };
@@ -43,7 +39,7 @@ const BotpressChat = () => {
     document.body.appendChild(injectScript);
   }, []);
 
-  return
+  return;
 };
 
 export default BotpressChat;

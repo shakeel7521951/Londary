@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,6 +13,7 @@ import UserProfileDropdown from "./UserProfileDropdown";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const currentUser = useSelector(selectCurrentUser);
@@ -20,6 +21,10 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const { i18n } = useTranslation();
   const language = useSelector((state) => state.language.language);
+
+  // Check if current page needs dark navbar
+  const isDarkNavbarPage =
+    location.pathname === "/terms" || location.pathname === "/vision-mission";
 
   // Function to handle language toggle with proper sync
   const handleLanguageToggle = () => {
@@ -38,14 +43,20 @@ const Navbar = () => {
 
   const translations = {
     en: {
-      navLinks: ["Home", "Services", "About", "Contact"],
+      navLinks: ["Home", "Services", "About", "Vision & Mission", "Contact"],
       login: "Client Login",
       bookNow: "Book Now",
       dashboard: "Dashboard",
       languageToggle: "العربية",
     },
     ar: {
-      navLinks: ["الرئيسية", "الخدمات", "من نحن", "اتصل بنا"],
+      navLinks: [
+        "الرئيسية",
+        "الخدمات",
+        "من نحن",
+        "الرؤية والرسالة",
+        "اتصل بنا",
+      ],
       login: "تسجيل الدخول",
       bookNow: "احجز الآن",
       dashboard: "لوحة التحكم",
@@ -58,6 +69,7 @@ const Navbar = () => {
     الرئيسية: "/home",
     الخدمات: "/services",
     "من نحن": "/about",
+    "الرؤية والرسالة": "/vision-mission",
     "اتصل بنا": "/contact",
   };
 
@@ -65,7 +77,22 @@ const Navbar = () => {
     if (language === "ar") {
       return arNavLinkRoutes[label] || "/";
     }
-    return `/${label.toLowerCase()}`;
+
+    // Handle special cases for English labels
+    switch (label) {
+      case "Vision & Mission":
+        return "/vision-mission";
+      case "Home":
+        return "/home";
+      case "Services":
+        return "/services";
+      case "About":
+        return "/about";
+      case "Contact":
+        return "/contact";
+      default:
+        return "/";
+    }
   };
 
   const t = translations[language];
@@ -81,7 +108,9 @@ const Navbar = () => {
   return (
     <motion.nav
       className={`fixed w-full z-50 transition-all duration-500 ease-in-out max-w-[1440px] ${
-        scrolled
+        isDarkNavbarPage
+          ? "bg-gray-900/95 backdrop-blur-md border-b border-gray-700 shadow-xl"
+          : scrolled
           ? "bg-black/30 backdrop-blur-md border-b border-white/10 shadow-xl shadow-black/20"
           : "bg-transparent"
       }`}
@@ -112,7 +141,9 @@ const Navbar = () => {
                 <Link
                   to={getNavLinkPath(label)}
                   className={`text-sm font-medium uppercase tracking-wider transition-all duration-300 ${
-                    scrolled
+                    isDarkNavbarPage
+                      ? "text-white/90 hover:text-white"
+                      : scrolled
                       ? "text-white/90 hover:text-white"
                       : "text-white/80 hover:text-white"
                   }`}
@@ -132,7 +163,9 @@ const Navbar = () => {
             <button
               onClick={handleLanguageToggle}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
-                scrolled
+                isDarkNavbarPage
+                  ? "text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
+                  : scrolled
                   ? "text-white border border-white/30 hover:bg-white/10 hover:border-white/50"
                   : "text-white border border-[#D4AF37] hover:bg-[#D4AF37]/10"
               }`}
@@ -217,7 +250,9 @@ const Navbar = () => {
             >
               <div
                 className={`mt-4 mx-2 rounded-2xl border backdrop-blur-xl shadow-2xl ${
-                  scrolled
+                  isDarkNavbarPage
+                    ? "bg-gray-800/90 border-gray-600/30 shadow-black/50"
+                    : scrolled
                     ? "bg-black/40 border-white/10 shadow-black/50"
                     : "bg-black/60 border-[#D4AF37]/20 shadow-black/60"
                 }`}
@@ -235,7 +270,9 @@ const Navbar = () => {
                         to={getNavLinkPath(label)}
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center px-4 py-3.5 text-white rounded-xl transition-all duration-300 group relative overflow-hidden ${
-                          scrolled
+                          isDarkNavbarPage
+                            ? "hover:bg-white/10 hover:shadow-lg active:bg-white/20"
+                            : scrolled
                             ? "hover:bg-white/10 hover:shadow-lg active:bg-white/20"
                             : "hover:bg-[#D4AF37]/10 hover:shadow-lg active:bg-[#D4AF37]/20"
                         }`}

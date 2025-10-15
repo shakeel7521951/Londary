@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
 import Services from "./pages/Services";
 import Contactus from "./pages/Contactus";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import VisionMission from "./pages/VisionMission";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Login from "./components/common/Login";
@@ -47,6 +49,8 @@ const router = createBrowserRouter([
       { path: "/contact", element: <Contactus /> },
       { path: "/services", element: <Services /> },
       { path: "/book-now", element: <OrderPage /> },
+      { path: "/terms", element: <TermsAndConditions /> },
+      { path: "/vision-mission", element: <VisionMission /> },
     ],
   },
   { path: "/login", element: <Login /> },

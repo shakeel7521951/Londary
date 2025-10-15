@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ silent: true });
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";

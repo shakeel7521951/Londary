@@ -159,20 +159,25 @@ const OrderPage = () => {
   // Available service options
   const serviceOptions = [
     {
-      id: "iron",
-      name: language === "ar" ? "كي فقط" : "Iron Only",
-      description:
-        language === "ar" ? "كي الملابس بدون غسيل" : "Ironing without washing",
-      icon: "🧺", // laundry basket emoji
-    },
-    {
       id: "wash_iron",
-      name: language === "ar" ? "غسيل وكي" : "Washing & Iron",
+      name: language === "ar" ? "غسيل وكي" : "Washing & Ironing",
       description:
         language === "ar"
           ? "غسيل كامل مع الكي"
           : "Complete washing with ironing",
       icon: "👕", // t-shirt emoji
+    },
+    {
+      id: "wash_iron_perfume",
+      name:
+        language === "ar"
+          ? "غسيل وكي وخدمات العطر"
+          : "Washing, Ironing, and Perfume Services",
+      description:
+        language === "ar"
+          ? "غسيل كامل مع الكي وخدمات العطر"
+          : "Complete washing with ironing and perfume services",
+      icon: "✨", // sparkles emoji
     },
     {
       id: "dry_clean",
@@ -184,207 +189,321 @@ const OrderPage = () => {
   ];
 
   const garmentPrices = {
-    Thobe: { iron: 4, wash_iron: 6, dry_clean: 10, steam: 4, perfume: 5 },
-    Bisht: { iron: 25, wash_iron: 40, dry_clean: 40, steam: 4, perfume: 5 },
-    Abaya: { iron: 10, wash_iron: 12, dry_clean: 15, steam: 4, perfume: 5 },
-    Taqiyah: { iron: 0, wash_iron: 3, dry_clean: 3, steam: 0, perfume: 0 },
+    Thobe: {
+      wash_iron: 6,
+      wash_iron_perfume: 11,
+      dry_clean: 10,
+      steam: 4,
+      perfume: 5,
+    },
+    Bisht: {
+      wash_iron: 40,
+      wash_iron_perfume: 45,
+      dry_clean: 40,
+      steam: 4,
+      perfume: 5,
+    },
+    Abaya: {
+      wash_iron: 12,
+      wash_iron_perfume: 17,
+      dry_clean: 15,
+      steam: 4,
+      perfume: 5,
+    },
+    Taqiyah: {
+      wash_iron: 3,
+      wash_iron_perfume: 3,
+      dry_clean: 3,
+      steam: 0,
+      perfume: 0,
+    },
     "Long Dress": {
-      iron: 15,
       wash_iron: 20,
+      wash_iron_perfume: 25,
       dry_clean: 20,
       steam: 4,
       perfume: 5,
     },
     "Short Dress": {
-      iron: 10,
       wash_iron: 15,
+      wash_iron_perfume: 15,
       dry_clean: 20,
       steam: 0,
       perfume: 0,
     },
     "Men's Suit": {
-      iron: 12,
       wash_iron: 18,
+      wash_iron_perfume: 23,
       dry_clean: 20,
       steam: 4,
       perfume: 5,
     },
-    Ghutra: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
-    Shela: { iron: 5, wash_iron: 6, dry_clean: 7, steam: 0, perfume: 0 },
-    Jalabiya: { iron: 6, wash_iron: 10, dry_clean: 0, steam: 4, perfume: 5 },
-    "Lab Coat": { iron: 4, wash_iron: 8, dry_clean: 10, steam: 4, perfume: 5 },
+    Ghutra: {
+      wash_iron: 4,
+      wash_iron_perfume: 4,
+      dry_clean: 5,
+      steam: 0,
+      perfume: 0,
+    },
+    Shela: {
+      wash_iron: 6,
+      wash_iron_perfume: 6,
+      dry_clean: 7,
+      steam: 0,
+      perfume: 0,
+    },
+    Jalabiya: {
+      wash_iron: 10,
+      wash_iron_perfume: 15,
+      dry_clean: 0,
+      steam: 4,
+      perfume: 5,
+    },
+    "Lab Coat": {
+      wash_iron: 8,
+      wash_iron_perfume: 13,
+      dry_clean: 10,
+      steam: 4,
+      perfume: 5,
+    },
     "Military Uniform": {
-      iron: 9,
       wash_iron: 14,
+      wash_iron_perfume: 19,
       dry_clean: 16,
       steam: 4,
       perfume: 5,
     },
-    Coat: { iron: 11, wash_iron: 13, dry_clean: 23, steam: 4, perfume: 5 },
-    Overalls: { iron: 6, wash_iron: 8, dry_clean: 10, steam: 4, perfume: 5 },
+    Coat: {
+      wash_iron: 13,
+      wash_iron_perfume: 18,
+      dry_clean: 23,
+      steam: 4,
+      perfume: 5,
+    },
+    Overalls: {
+      wash_iron: 8,
+      wash_iron_perfume: 13,
+      dry_clean: 10,
+      steam: 4,
+      perfume: 5,
+    },
 
     // General clothing
-    Pajamas: { iron: 4, wash_iron: 7, dry_clean: 10, steam: 4, perfume: 5 },
-    Scarf: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-    Shirt: { iron: 3, wash_iron: 5, dry_clean: 6, steam: 3, perfume: 4 },
+    Pajamas: {
+      wash_iron: 7,
+      wash_iron_perfume: 12,
+      dry_clean: 10,
+      steam: 4,
+      perfume: 5,
+    },
+    Scarf: {
+      wash_iron: 4,
+      wash_iron_perfume: 8,
+      dry_clean: 5,
+      steam: 3,
+      perfume: 4,
+    },
+    Shirt: {
+      wash_iron: 5,
+      wash_iron_perfume: 9,
+      dry_clean: 6,
+      steam: 3,
+      perfume: 4,
+    },
     "Silk Blouse": {
-      iron: 4,
       wash_iron: 0,
+      wash_iron_perfume: 4,
       dry_clean: 7,
       steam: 3,
       perfume: 4,
     },
-    "T-shirt": { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-    Tie: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 0, perfume: 0 },
-    Undershirt: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-    Pants: { iron: 3, wash_iron: 4, dry_clean: 5, steam: 3, perfume: 4 },
-    Vest: { iron: 4, wash_iron: 5, dry_clean: 6, steam: 3, perfume: 4 },
+    "T-shirt": {
+      wash_iron: 4,
+      wash_iron_perfume: 8,
+      dry_clean: 5,
+      steam: 3,
+      perfume: 4,
+    },
+    Tie: {
+      wash_iron: 4,
+      wash_iron_perfume: 4,
+      dry_clean: 5,
+      steam: 0,
+      perfume: 0,
+    },
+    Undershirt: {
+      wash_iron: 4,
+      wash_iron_perfume: 8,
+      dry_clean: 5,
+      steam: 3,
+      perfume: 4,
+    },
+    Pants: {
+      wash_iron: 4,
+      wash_iron_perfume: 8,
+      dry_clean: 5,
+      steam: 3,
+      perfume: 4,
+    },
+    Vest: {
+      wash_iron: 5,
+      wash_iron_perfume: 9,
+      dry_clean: 6,
+      steam: 3,
+      perfume: 4,
+    },
 
     // Kids clothing
     "Children's Abaya": {
-      iron: 3,
       wash_iron: 5,
+      wash_iron_perfume: 5,
       dry_clean: 7,
       steam: 0,
       perfume: 0,
     },
     "Children's Thobe": {
-      iron: 3,
       wash_iron: 4,
+      wash_iron_perfume: 4,
       dry_clean: 5,
       steam: 0,
       perfume: 0,
     },
     "Children's Dress": {
-      iron: 6,
       wash_iron: 10,
+      wash_iron_perfume: 10,
       dry_clean: 13,
       steam: 0,
       perfume: 0,
     },
     "Children's Jacket": {
-      iron: 4,
       wash_iron: 6,
+      wash_iron_perfume: 6,
       dry_clean: 7,
       steam: 0,
       perfume: 0,
     },
     "Children's Shirt": {
-      iron: 3,
       wash_iron: 4,
+      wash_iron_perfume: 4,
       dry_clean: 4,
       steam: 0,
       perfume: 0,
     },
     "Children's Suit": {
-      iron: 4,
       wash_iron: 6,
+      wash_iron_perfume: 6,
       dry_clean: 8,
       steam: 0,
       perfume: 0,
     },
     "Children's 3-Piece Suit": {
-      iron: 6,
       wash_iron: 8,
+      wash_iron_perfume: 8,
       dry_clean: 10,
       steam: 0,
       perfume: 0,
     },
     "Children's Pants": {
-      iron: 6,
       wash_iron: 8,
+      wash_iron_perfume: 8,
       dry_clean: 10,
       steam: 0,
       perfume: 0,
     },
     "Children's Sweater": {
-      iron: 3,
       wash_iron: 4,
+      wash_iron_perfume: 4,
       dry_clean: 5,
       steam: 0,
       perfume: 0,
     },
     "School Uniform": {
-      iron: 0,
       wash_iron: 8,
+      wash_iron_perfume: 8,
       dry_clean: 0,
       steam: 0,
       perfume: 0,
     },
     "Small Towel": {
-      iron: 3,
       wash_iron: 5,
+      wash_iron_perfume: 10,
       dry_clean: 6,
       steam: 4,
       perfume: 5,
     },
     "Large Towel": {
-      iron: 4,
       wash_iron: 6,
+      wash_iron_perfume: 13,
       dry_clean: 7,
       steam: 5,
       perfume: 7,
     },
     "Double Bed Cover": {
-      iron: 8,
       wash_iron: 12,
+      wash_iron_perfume: 18,
       dry_clean: 15,
       steam: 6,
       perfume: 6,
     },
     "Single Bed Cover": {
-      iron: 6,
       wash_iron: 10,
+      wash_iron_perfume: 15,
       dry_clean: 12,
       steam: 5,
       perfume: 5,
     },
     "Double Bed Sheet": {
-      iron: 4,
       wash_iron: 6,
+      wash_iron_perfume: 14,
       dry_clean: 8,
       steam: 6,
       perfume: 8,
     },
     "Single Bed Sheet": {
-      iron: 3,
       wash_iron: 5,
+      wash_iron_perfume: 13,
       dry_clean: 6,
       steam: 5,
       perfume: 8,
     },
     "Single Blanket": {
-      iron: 0,
       wash_iron: 10,
+      wash_iron_perfume: 20,
       dry_clean: 15,
       steam: 8,
       perfume: 10,
     },
     "Double Blanket": {
-      iron: 0,
       wash_iron: 15,
+      wash_iron_perfume: 25,
       dry_clean: 18,
       steam: 9,
       perfume: 10,
     },
-    Pillowcase: { iron: 3, wash_iron: 4, dry_clean: 4, steam: 0, perfume: 0 },
+    Pillowcase: {
+      wash_iron: 4,
+      wash_iron_perfume: 4,
+      dry_clean: 4,
+      steam: 0,
+      perfume: 0,
+    },
     "Large Feather Pillow": {
-      iron: 0,
       wash_iron: 15,
+      wash_iron_perfume: 15,
       dry_clean: 20,
       steam: 0,
       perfume: 0,
     },
     "Men's Summer Suit": {
-      iron: 8,
       wash_iron: 11,
+      wash_iron_perfume: 16,
       dry_clean: 13,
       steam: 4,
       perfume: 5,
     },
     "Women's Summer Suit": {
-      iron: 8,
       wash_iron: 11,
+      wash_iron_perfume: 16,
       dry_clean: 13,
       steam: 4,
       perfume: 5,
@@ -497,15 +616,6 @@ const OrderPage = () => {
           language === "ar"
             ? "عود كمبودي أصيل برائحة غنية وعميقة"
             : "Authentic Cambodian oud with rich, deep aroma",
-      },
-      {
-        id: "royal_oud",
-        name: language === "ar" ? "عود ملكي مميز" : "Royal Premium Oud",
-        image: "/home/fragrance.jpg",
-        description:
-          language === "ar"
-            ? "عود ملكي فاخر للمناسبات الخاصة"
-            : "Royal premium oud for special occasions",
       },
     ],
     [language]
@@ -886,8 +996,11 @@ const OrderPage = () => {
       : "";
 
     const serviceTypeDisplay = {
-      iron: language === "ar" ? "كي فقط" : "Iron Only",
-      wash_iron: language === "ar" ? "غسيل وكي" : "Washing & Iron",
+      wash_iron: language === "ar" ? "غسيل وكي" : "Washing & Ironing",
+      wash_iron_perfume:
+        language === "ar"
+          ? "غسيل وكي وخدمات العطر"
+          : "Washing, Ironing, and Perfume Services",
       dry_clean: language === "ar" ? "تنظيف جاف" : "Dry Clean",
     };
 
@@ -1684,14 +1797,14 @@ ${
               <span className="text-sm font-medium">{t.serviceType}</span>
               <div className="flex items-center gap-2">
                 <span className="text-sm">
-                  {serviceType === "iron"
-                    ? language === "ar"
-                      ? "🧺 كي فقط"
-                      : "🧺 Iron Only"
-                    : serviceType === "wash_iron"
+                  {serviceType === "wash_iron"
                     ? language === "ar"
                       ? "👕 غسيل وكي"
-                      : "👕 Washing & Iron"
+                      : "👕 Washing & Ironing"
+                    : serviceType === "wash_iron_perfume"
+                    ? language === "ar"
+                      ? "✨ غسيل وكي وخدمات العطر"
+                      : "✨ Washing, Ironing, and Perfume Services"
                     : serviceType === "dry_clean"
                     ? language === "ar"
                       ? "👔 تنظيف جاف"
