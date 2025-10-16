@@ -6,6 +6,7 @@ import Users from "../components/dashboard/Users";
 import Order from "../components/dashboard/Order";
 import Employees from "../components/dashboard/Employees";
 import CouponManagement from "../components/dashboard/CouponManagement";
+import Campaigns from "../components/dashboard/Campaigns";
 
 const Dashboard = () => {
   const [activeComponent, setActiveComponent] = useState("Main Panel");
@@ -29,6 +30,8 @@ const Dashboard = () => {
         return <Employees />;
       case "Coupon Management":
         return <CouponManagement />;
+      case "Campaigns":
+        return <Campaigns />;
       default:
         return <AdminPanel setActiveComponent={setActiveComponent} />;
     }

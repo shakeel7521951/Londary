@@ -4,12 +4,14 @@ import {
   appLogin,
   appVerifyUser,
   checkRole,
+  deleteUser,
   forgotPasswordOTP,
   login,
   logout,
   myProfile,
   register,
   resetPassword,
+  sendCampaign,
   updatePassword,
   updateProfile,
   updateUserRole,
@@ -31,9 +33,11 @@ router.get("/check-role", auth, checkRole); // Debug endpoint for checking user 
 router.put("/update-password", auth, updatePassword);
 router.get("/all-users", allUsers); // Temporarily removed auth for testing
 router.put("/update-user-role", auth, updateUserRole);
+router.delete("/:id", auth, deleteUser); // Delete user by ID
 router.post("/forgot-password-otp", forgotPasswordOTP);
 router.post("/verify-otp", verifyOTP);
 router.put("/reset-password", resetPassword);
 router.put("/update-profile", upload.single("profilePic"), auth, updateProfile);
+router.post("/send-campaign", auth, sendCampaign); // Send WhatsApp campaign to all users
 
 export default router;

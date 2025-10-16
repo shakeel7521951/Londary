@@ -80,6 +80,14 @@ export const userApi = createApi({
       query: () => "/users/all-users",
       providesTags: ["Users"],
     }),
+    updateUserRole: builder.mutation({
+      query: ({ userId, role }) => ({
+        url: "/users/update-user-role",
+        method: "PUT",
+        body: { userId, role },
+      }),
+      invalidatesTags: ["Users"],
+    }),
     deleteUser: builder.mutation({
       query: (id) => ({
         url: `/users/${id}`,
@@ -101,5 +109,6 @@ export const {
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
   useGetAllUsersQuery,
+  useUpdateUserRoleMutation,
   useDeleteUserMutation,
 } = userApi;

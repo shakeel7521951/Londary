@@ -1,17 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { useGetAllUsersQuery } from "../../redux/features/usersApi";
-import { FiSearch, FiUser, FiAlertCircle } from "react-icons/fi";
+import {
+  useGetAllUsersQuery,
+  useUpdateUserRoleMutation,
+  useDeleteUserMutation,
+} from "../../redux/features/usersApi";
+import {
+  FiSearch,
+  FiUser,
+  FiAlertCircle,
+  FiEdit2,
+  FiTrash2,
+  FiSave,
+  FiX,
+} from "react-icons/fi";
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [selectedRole, setSelectedRole] = useState("");
   const { t } = useTranslation();
 
   // API hooks
   const { data: usersData, isLoading, error, refetch } = useGetAllUsersQuery();
+  const [updateUserRole, { isLoading: isUpdatingRole }] =
+    useUpdateUserRoleMutation();
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
   // Load users from API
   useEffect(() => {
@@ -84,6 +101,56 @@ const Users = () => {
         return "text-white/80 bg-white/10 border border-white/20";
       default:
         return "text-white/60 bg-white/5 border border-white/10";
+    }
+  };
+
+  // Handle role edit
+  const handleEditRole = (userId, currentRole) => {
+    setEditingUserId(userId);
+    setSelectedRole(currentRole);
+  };
+
+  // Handle cancel edit
+  const handleCancelEdit = () => {
+    setEditingUserId(null);
+    setSelectedRole("");
+  };
+
+  // Handle save role
+  const handleSaveRole = async (userId) => {
+    try {
+      await updateUserRole({ userId, role: selectedRole }).unwrap();
+      alert(t("updated") || "User role updated successfully!");
+      setEditingUserId(null);
+      setSelectedRole("");
+      refetch(); // Refresh the users list
+    } catch (error) {
+      alert(
+        error?.data?.message ||
+          t("errorUpdating") ||
+          "Failed to update user role"
+      );
+    }
+  };
+
+  // Handle delete user
+  const handleDeleteUser = async (userId, userName) => {
+    if (
+      window.confirm(
+        `${
+          t("deleteConfirm") || "Are you sure you want to delete"
+        } ${userName}?`
+      )
+    ) {
+      try {
+        await deleteUser(userId).unwrap();
+        alert(t("deleted") || "User deleted successfully!");
+        refetch(); // Refresh the users list
+      } catch (error) {
+        alert(
+          error?.data?.message || t("errorDeleting") || "Failed to delete user"
+        );
+      }
     }
   };
 
@@ -172,6 +239,9 @@ const Users = () => {
                   <th className="text-left py-3 px-4 font-light text-white tracking-wide">
                     Join {t("date")}
                   </th>
+                  <th className="text-left py-3 px-4 font-light text-white tracking-wide">
+                    {t("actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -197,9 +267,20 @@ const Users = () => {
                       <span className="text-white/70">{user.email}</span>
                     </td>
                     <td className="py-4 px-4">
-                      <span className="text-white font-medium capitalize">
-                        {user.role}
-                      </span>
+                      {editingUserId === user.id ? (
+                        <select
+                          value={selectedRole}
+                          onChange={(e) => setSelectedRole(e.target.value)}
+                          className="bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded px-2 py-1 focus:border-[#D4AF37] focus:outline-none"
+                        >
+                          <option value="User">User</option>
+                          <option value="Admin">Admin</option>
+                        </select>
+                      ) : (
+                        <span className="text-white font-medium capitalize">
+                          {user.role}
+                        </span>
+                      )}
                     </td>
                     <td className="py-4 px-4">
                       <span
@@ -212,6 +293,50 @@ const Users = () => {
                     </td>
                     <td className="py-4 px-4">
                       <span className="text-white/70">{user.joinDate}</span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        {editingUserId === user.id ? (
+                          <>
+                            <button
+                              onClick={() => handleSaveRole(user.id)}
+                              disabled={isUpdatingRole}
+                              className="p-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-colors disabled:opacity-50"
+                              title={t("save")}
+                            >
+                              <FiSave className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              disabled={isUpdatingRole}
+                              className="p-2 bg-gray-500/20 hover:bg-gray-500/30 text-gray-400 rounded-lg transition-colors disabled:opacity-50"
+                              title={t("cancel")}
+                            >
+                              <FiX className="w-4 h-4" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleEditRole(user.id, user.role)}
+                              className="p-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors"
+                              title={t("edit")}
+                            >
+                              <FiEdit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDeleteUser(user.id, user.name)
+                              }
+                              disabled={isDeleting}
+                              className="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors disabled:opacity-50"
+                              title={t("delete")}
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </motion.tr>
                 ))}

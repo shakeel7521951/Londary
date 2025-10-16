@@ -12,6 +12,7 @@ import {
   FiMenu,
   FiX,
   FiGift,
+  FiSend,
 } from "react-icons/fi";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 
@@ -29,6 +30,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
       label: "Coupon Management",
       translationKey: "couponManagement",
     },
+    { icon: FiSend, label: "Campaigns", translationKey: "campaigns" },
     // { icon: FiBarChart2, label: "Analytics", translationKey: "analytics" },
     // { icon: FiDollarSign, label: "Payments", translationKey: "payments" },
     // { icon: FiSettings, label: "Settings", translationKey: "settings" },

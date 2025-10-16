@@ -647,7 +647,7 @@ const OrderPage = () => {
         language === "ar"
           ? "تغليف في صندوق هدايا أنيق"
           : "Elegant gift box packaging",
-      image: "/home/middle.jpg",
+      image: "/home/BOX.jpeg",
     },
   ];
 
@@ -1351,7 +1351,7 @@ ${
                         <img
                           src={option.image}
                           alt={option.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                           loading="lazy"
                         />
                       </div>

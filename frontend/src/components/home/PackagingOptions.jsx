@@ -106,7 +106,7 @@ const PackagingOptions = () => {
     image: [
       "./home/professionalCollection.jpg",
       "./home/package.jpg",
-      "./home/middle.jpg",
+      "./home/BOX.jpeg",
     ][i],
   }));
 
@@ -168,7 +168,7 @@ const PackagingOptions = () => {
                   <motion.img
                     src={option.image}
                     alt={option.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     initial={{ scale: 1 }}
                     animate={{
                       scale: hoveredOption === option.id ? 1.1 : 1,

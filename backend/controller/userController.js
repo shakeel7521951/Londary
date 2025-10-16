@@ -1,7 +1,10 @@
 // import User from "../models/User.js";
 import User from "../models/User.js";
 import sendMail from "../middleware/SendMail.js";
-import { sendWelcomeMessage } from "../services/whatsappService.js";
+import {
+  sendWelcomeMessage,
+  sendWhatsAppMessage,
+} from "../services/whatsappService.js";
 
 export const register = async (req, res) => {
   try {
@@ -513,5 +516,95 @@ export const updateUserRole = async (req, res) => {
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+export const sendCampaign = async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message || !message.trim()) {
+      return res.status(400).json({ message: "Campaign message is required" });
+    }
+
+    // Get all users with WhatsApp numbers
+    const users = await User.find({
+      phoneNumber: { $exists: true, $ne: "" },
+    });
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({
+        message: "No users with WhatsApp numbers found",
+        sentCount: 0,
+        failedCount: 0,
+      });
+    }
+
+    let sentCount = 0;
+    let failedCount = 0;
+    const failedUsers = [];
+
+    // Send WhatsApp message to each user
+    for (const user of users) {
+      try {
+        await sendWhatsAppMessage(user.phoneNumber, message);
+        sentCount++;
+      } catch (error) {
+        console.error(
+          `Failed to send campaign to ${user.phoneNumber}:`,
+          error.message
+        );
+        failedCount++;
+        failedUsers.push({
+          userId: user._id,
+          name: user.name,
+          phoneNumber: user.phoneNumber,
+          error: error.message,
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Campaign sent successfully to ${sentCount} users`,
+      sentCount,
+      failedCount,
+      totalUsers: users.length,
+      failedUsers: failedCount > 0 ? failedUsers : undefined,
+    });
+  } catch (error) {
+    console.error("Error sending campaign:", error);
+    res.status(500).json({
+      message: "Failed to send campaign",
+      error: error.message,
+    });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await User.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      message: "Failed to delete user",
+      error: error.message,
+    });
   }
 };
