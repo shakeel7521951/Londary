@@ -1651,7 +1651,7 @@ ${
                 <img
                   src={option.image}
                   alt={option.name}
-                  className="w-full h-full object-cover transition-transform hover:scale-105"
+                  className="w-full h-full object-contain transition-transform hover:scale-105"
                   loading="lazy"
                 />
               </div>
