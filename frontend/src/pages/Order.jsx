@@ -10,6 +10,7 @@ import {
   selectIsAuthenticated,
 } from "../redux/features/authSlice";
 import ThankYouDialog from "../components/common/ThankYouDialog";
+import GuestInfoModal from "../components/common/GuestInfoModal";
 
 const OrderPage = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -22,6 +23,8 @@ const OrderPage = () => {
   const language = useSelector((state) => state.language.language);
 
   const [showThankYouModal, setShowThankYouModal] = useState(false);
+  const [showGuestInfoModal, setShowGuestInfoModal] = useState(false);
+  const [guestInfo, setGuestInfo] = useState(null);
 
   const translations = {
     en: {
@@ -562,17 +565,15 @@ const OrderPage = () => {
         image: "/home/lulwa.jpg",
         description:
           language === "ar"
-            ? "هو عطر الأنوثة المتألقة، يجمع بين الانتعاش العصري والرقي الخالد. توليفة مبهرة من البرغموت والزنجبيل والباتشولي مع لمسة مسكية ناعمة تمنحك بريقًا لا يُنسى."
-            : "The fragrance of radiant femininity, combining modern freshness with timeless elegance. A stunning blend of bergamot, ginger, and patchouli with a soft musky touch, leaving a memorable sparkle.",
+            ? "حين يلتقي البريق بالعطر"
+            : "Where Sparkle Meets Scent",
       },
       {
         id: "sadf",
         name: language === "ar" ? "صدف" : "Sadf",
         image: "/home/sadf.jpg",
         description:
-          language === "ar"
-            ? "هو العطر المنعش الذي يناسب الرجال والنساء، بتركيبته الحمضية المشرقة ولمسة الزنجبيل والعنبر التي تمنحه أناقة عصرية وثباتًا راقيًا."
-            : "A refreshing fragrance for both men and women, featuring bright citrus notes, warm ginger, and ambergris for an elegant and long-lasting touch.",
+          language === "ar" ? "حضورك المختلف" : "Your Unique Presence",
       },
     ],
     [t.mens]: [
@@ -581,9 +582,7 @@ const OrderPage = () => {
         name: language === "ar" ? "مكنون" : "Maknoun",
         image: "/home/maknoun.jpg",
         description:
-          language === "ar"
-            ? "هو عطر الفخامة الذي يجسد حضور الرجل الواثق. مزيج أنيق من الفواكه المنعشة والزهور الراقية مع قاعدة دافئة من المسك والعنبر، ليمنحك توقيعًا عطريًا لا يُنسى."
-            : "A luxurious fragrance that embodies the charm of a confident man. A refined blend of fresh fruits, elegant florals, and a warm base of musk and amber, leaving an unforgettable signature.",
+          language === "ar" ? "سر جاذبيتك" : "The Secret of Your Allure",
       },
       {
         id: "mad",
@@ -591,17 +590,15 @@ const OrderPage = () => {
         image: "/home/mad.jpg",
         description:
           language === "ar"
-            ? "هو العطر الرجولي القوي الذي يعكس الهيبة والفخامة. تركيبته المميزة تمزج بين الزعفران والياسمين والبخور مع قاعدة جلدية وعنبرية تمنحك حضورًا أسطوريًا يدوم."
-            : "A powerful masculine fragrance that radiates prestige and luxury. Its unique composition blends saffron, jasmine, and incense, with a leathery amber base for a timeless presence.",
+            ? "موجة حضور لا تنحسر"
+            : "A Wave of Presence That Never Fades",
       },
       {
         id: "sadf",
         name: language === "ar" ? "صدف" : "Sadf",
         image: "/home/sadf.jpg",
         description:
-          language === "ar"
-            ? "هو العطر المنعش الذي يناسب الرجال والنساء، بتركيبته الحمضية المشرقة ولمسة الزنجبيل والعنبر التي تمنحه أناقة عصرية وثباتًا راقيًا."
-            : "A refreshing fragrance for both men and women, featuring bright citrus notes, warm ginger, and ambergris for an elegant and long-lasting touch.",
+          language === "ar" ? "حضورك المختلف" : "Your Unique Presence",
       },
     ],
   };
@@ -833,28 +830,14 @@ const OrderPage = () => {
   };
 
   const handleSubmit = async () => {
-    if (!isAuthenticated) {
-      toast.error(t.loginError);
-      navigate("/login");
-      return;
-    }
-
-    // Check if user has required information
-    if (!currentUser?.phoneNumber) {
-      toast.error(
-        language === "ar"
-          ? "يرجى تحديث ملفك الشخصي بإضافة رقم الهاتف أولاً"
-          : "Please update your profile with a phone number first"
-      );
-      return;
-    }
-
+    // Check if personalized card "from" field is filled
     if (!cardDetails.from.trim()) {
       toast.error(t.cardFromRequired);
       setStep(6); // Go back to the card step
       return;
     }
 
+    // Check incense disclaimer if incense is selected
     if (incenseFinish && !incenseDisclaimer) {
       toast.error(
         language === "ar"
@@ -865,6 +848,7 @@ const OrderPage = () => {
       return;
     }
 
+    // Check fragrance disclaimer if fragrance is selected
     if (fragrance && !fragranceDisclaimer) {
       toast.error(
         language === "ar"
@@ -875,6 +859,34 @@ const OrderPage = () => {
       return;
     }
 
+    // If not authenticated and no guest info collected yet, show guest info modal
+    if (!isAuthenticated && !guestInfo) {
+      setShowGuestInfoModal(true);
+      return;
+    }
+
+    // If authenticated but no phone number, ask to update profile
+    if (isAuthenticated && !currentUser?.phoneNumber) {
+      toast.error(
+        language === "ar"
+          ? "يرجى تحديث ملفك الشخصي بإضافة رقم الهاتف أولاً"
+          : "Please update your profile with a phone number first"
+      );
+      return;
+    }
+
+    // Proceed with order creation
+    await createOrderWithDetails();
+  };
+
+  const handleGuestInfoSubmit = async (info) => {
+    setGuestInfo(info);
+    setShowGuestInfoModal(false);
+    // Create order with guest info
+    await createOrderWithDetails(info);
+  };
+
+  const createOrderWithDetails = async (customerInfo = null) => {
     // Calculate totals
     const originalTotal = calculateTotal();
     const { finalTotal, discount: discountAmount } =
@@ -908,9 +920,15 @@ const OrderPage = () => {
       total: finalTotal,
     };
 
+    // Add customer info for guest users
+    if (!isAuthenticated && customerInfo) {
+      orderDetails.customerInfo = customerInfo;
+    }
+
     try {
       console.log("Creating order with details:", orderDetails);
       console.log("Current user:", currentUser);
+      console.log("Guest info:", customerInfo);
 
       const result = await createOrder(orderDetails).unwrap();
 
@@ -947,6 +965,7 @@ const OrderPage = () => {
       setCouponCode("");
       setAppliedCoupon(null);
       setCouponError("");
+      setGuestInfo(null); // Reset guest info
 
       // Redirect to home page after modal closes
       setTimeout(() => {
@@ -964,8 +983,8 @@ const OrderPage = () => {
         if (errorMessage.includes("phoneNumber")) {
           errorMessage =
             language === "ar"
-              ? "يرجى التأكد من أن رقم هاتفك مدخل بشكل صحيح في ملفك الشخصي"
-              : "Please ensure your phone number is correctly entered in your profile";
+              ? "يرجى التأكد من أن رقم هاتفك مدخل بشكل صحيح"
+              : "Please ensure your phone number is correctly entered";
         } else if (errorMessage.includes("appliedCoupon")) {
           errorMessage =
             language === "ar"
@@ -2278,6 +2297,13 @@ ${
       <ThankYouDialog
         isVisible={showThankYouModal}
         onClose={() => setShowThankYouModal(false)}
+      />
+
+      <GuestInfoModal
+        isOpen={showGuestInfoModal}
+        onClose={() => setShowGuestInfoModal(false)}
+        onSubmit={handleGuestInfoSubmit}
+        isSubmitting={isCreatingOrder}
       />
     </div>
   );

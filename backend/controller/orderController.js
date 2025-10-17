@@ -71,9 +71,9 @@ export const createOrder = async (req, res) => {
       updatedAt: new Date(),
     };
 
-    // Check if this is a user-created order or admin-created order
+    // Check if this is an authenticated user or guest order
     if (req.user && !customerInfo) {
-      // User-created order: get customer info from authenticated user
+      // Authenticated user order: get customer info from user profile
       const User = (await import("../models/User.js")).default;
       const user = await User.findById(req.user.id);
 
@@ -89,14 +89,14 @@ export const createOrder = async (req, res) => {
         address: user.address || "",
       };
     } else if (customerInfo) {
-      // Admin-created order: use provided customer info
+      // Guest order or admin-created order: use provided customer info
       const { name, email, phoneNumber, address = "" } = customerInfo;
 
       // Validate required customer info
       if (!name || !email || !phoneNumber) {
         return res.status(400).json({
           message:
-            "Customer name, email, and phoneNumber are required for admin-created orders",
+            "Customer name, email, and phoneNumber are required for guest orders",
         });
       }
 
@@ -115,10 +115,14 @@ export const createOrder = async (req, res) => {
         phoneNumber,
         address,
       };
+
+      // If authenticated user is creating order with custom info, link to user
+      if (req.user) {
+        orderData.userId = req.user.id;
+      }
     } else {
       return res.status(400).json({
-        message:
-          "Either authenticate as user or provide customerInfo for admin orders",
+        message: "Please provide customer information to place an order",
       });
     }
 
