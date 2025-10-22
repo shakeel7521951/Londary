@@ -1,4 +1,3 @@
-import twilio from "twilio";
 import { v2 as cloudinary } from "cloudinary";
 import PDFDocument from "pdfkit";
 import fs from "fs";
@@ -8,10 +7,10 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Twilio configuration from environment variables
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_MESSAGING_SERVICE_SID = process.env.TWILIO_MESSAGING_SERVICE_SID; // Messaging Service SID
+// SMS API configuration from environment variables
+const SMS_API_KEY = process.env.SMS_API_KEY;
+const SMS_SENDER = process.env.SMS_SENDER;
+const SMS_API_URL = "https://custom1.waghl.com/send-message";
 
 // Cloudinary configuration
 cloudinary.config({
@@ -21,18 +20,9 @@ cloudinary.config({
 });
 
 // Validate environment variables
-if (!accountSid || !authToken) {
-  console.error("❌ Missing Twilio credentials in environment variables");
-  console.error(
-    "Please set TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN in your .env file"
-  );
-}
-
-if (!TWILIO_MESSAGING_SERVICE_SID) {
-  console.error(
-    "❌ Missing Twilio Messaging Service SID in environment variables"
-  );
-  console.error("Please set TWILIO_MESSAGING_SERVICE_SID in your .env file");
+if (!SMS_API_KEY || !SMS_SENDER) {
+  console.error("❌ Missing SMS API credentials in environment variables");
+  console.error("Please set SMS_API_KEY and SMS_SENDER in your .env file");
 }
 
 if (
@@ -45,8 +35,6 @@ if (
     "Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your .env file"
   );
 }
-
-const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
 
 // Generate receipt PDF and upload to Cloudinary
 export const generateAndUploadReceipt = async (orderDetails) => {
@@ -132,41 +120,30 @@ export const generateAndUploadReceipt = async (orderDetails) => {
   }
 };
 
-// Test function to verify Twilio credentials
+// Test function to verify SMS API credentials
 export const testTwilioConnection = async () => {
   try {
-    if (!client) {
+    if (!SMS_API_KEY || !SMS_SENDER) {
       return {
         success: false,
         error:
-          "Twilio credentials not configured. Please check your environment variables.",
+          "SMS API credentials not configured. Please check your environment variables.",
       };
     }
 
-    const account = await client.api.accounts(accountSid).fetch();
-    return { success: true, account: account.friendlyName };
+    return { success: true, message: "SMS API configured successfully" };
   } catch (error) {
-    console.error("❌ Twilio connection failed:", error.message);
+    console.error("❌ SMS API connection failed:", error.message);
     return { success: false, error: error.message };
   }
 };
 
-// Send SMS message using Twilio
+// Send SMS message using the new SMS API
 export const sendSMS = async (to, message) => {
   try {
-    if (!client) {
+    if (!SMS_API_KEY || !SMS_SENDER) {
       const error =
-        "Twilio credentials not configured in environment variables";
-      console.error("❌", error);
-      return {
-        success: false,
-        error: error,
-      };
-    }
-
-    if (!TWILIO_MESSAGING_SERVICE_SID) {
-      const error =
-        "Twilio Messaging Service SID not configured in environment variables";
+        "SMS API credentials not configured in environment variables";
       console.error("❌", error);
       return {
         success: false,
@@ -184,44 +161,54 @@ export const sendSMS = async (to, message) => {
       };
     }
 
-    // Ensure the phone number format is correct (E.164 format)
-    const formattedTo = to.startsWith("+") ? to : `+${to}`;
+    // Remove any non-digit characters (including spaces, +, -, etc.) for the API
+    const formattedNumber = to.replace(/\D/g, "");
 
-    // Validate E.164 format
-    const e164Regex = /^\+[1-9]\d{1,14}$/;
-    if (!e164Regex.test(formattedTo)) {
-      const error = `Phone number must be in E.164 format (e.g., +1234567890). Received: ${formattedTo}`;
-      console.error("❌", error);
+    console.log(`📤 Attempting to send SMS to ${formattedNumber}...`);
+
+    const response = await fetch(SMS_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        api_key: SMS_API_KEY,
+        sender: SMS_SENDER,
+        number: formattedNumber,
+        message: message,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("❌ Error sending SMS message:", {
+        status: response.status,
+        data: data,
+        to: to,
+        formattedNumber: formattedNumber,
+      });
       return {
         success: false,
-        error: error,
+        error:
+          data.message || `Failed to send SMS (Status: ${response.status})`,
       };
     }
 
-    console.log(`📤 Attempting to send SMS to ${formattedTo}...`);
-
-    const response = await client.messages.create({
-      messagingServiceSid: TWILIO_MESSAGING_SERVICE_SID,
-      to: formattedTo,
-      body: message,
-    });
-
     console.log(
-      `✅ SMS sent successfully to ${formattedTo}. SID: ${response.sid}, Status: ${response.status}`
+      `✅ SMS sent successfully to ${formattedNumber}. Response:`,
+      data
     );
-    return { success: true, messageId: response.sid, status: response.status };
+    return { success: true, messageId: data.id || "sent", status: "sent" };
   } catch (error) {
     const errorDetails = {
       message: error.message,
-      code: error.code,
-      status: error.status,
       to: to,
-      moreInfo: error.moreInfo || "No additional info",
     };
     console.error("❌ Error sending SMS:", errorDetails);
     return {
       success: false,
-      error: `${error.message} (Code: ${error.code || "unknown"})`,
+      error: error.message,
       details: errorDetails,
     };
   }
