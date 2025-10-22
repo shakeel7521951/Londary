@@ -15,6 +15,8 @@ export const createOrder = async (req, res) => {
       incenseDisclaimer = false,
       fragrance = "",
       fragranceDisclaimer = false,
+      perfume = "",
+      oud = "",
       cardFrom = "",
       cardTo = "",
       appliedCoupon = null,
@@ -61,6 +63,8 @@ export const createOrder = async (req, res) => {
       incenseDisclaimer,
       fragrance,
       fragranceDisclaimer,
+      perfume,
+      oud,
       packaging,
       cardFrom,
       cardTo,
@@ -134,11 +138,11 @@ export const createOrder = async (req, res) => {
       await newOrder.populate("userId", "name email phoneNumber");
     }
 
-    // Send order confirmation WhatsApp message
+    // Send order confirmation SMS
     if (newOrder.customerInfo?.phoneNumber) {
       try {
-        const { sendOrderStatusUpdateMessage } = await import(
-          "../services/whatsappService.js"
+        const { sendOrderStatusUpdateSMS } = await import(
+          "../services/smsService.js"
         );
 
         const orderDetails = {
@@ -148,17 +152,14 @@ export const createOrder = async (req, res) => {
           total: newOrder.total,
         };
 
-        await sendOrderStatusUpdateMessage(
+        await sendOrderStatusUpdateSMS(
           newOrder.customerInfo.phoneNumber,
           newOrder.customerInfo.name,
           orderDetails
         );
-      } catch (whatsappError) {
-        console.error(
-          "Failed to send order confirmation WhatsApp:",
-          whatsappError
-        );
-        // Don't fail the order creation if WhatsApp fails
+      } catch (smsError) {
+        console.error("Failed to send order confirmation SMS:", smsError);
+        // Don't fail the order creation if SMS fails
       }
     }
 
@@ -282,11 +283,11 @@ export const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Send WhatsApp notification to customer about status update
+    // Send SMS notification to customer about status update
     if (updatedOrder.customerInfo?.phoneNumber) {
       try {
-        const { sendOrderStatusUpdateMessage } = await import(
-          "../services/whatsappService.js"
+        const { sendOrderStatusUpdateSMS } = await import(
+          "../services/smsService.js"
         );
 
         const orderDetails = {
@@ -296,14 +297,14 @@ export const updateOrderStatus = async (req, res) => {
           total: updatedOrder.total,
         };
 
-        await sendOrderStatusUpdateMessage(
+        await sendOrderStatusUpdateSMS(
           updatedOrder.customerInfo.phoneNumber,
           updatedOrder.customerInfo.name,
           orderDetails
         );
-      } catch (whatsappError) {
-        console.error("Failed to send WhatsApp status update:", whatsappError);
-        // Don't fail the status update if WhatsApp fails
+      } catch (smsError) {
+        console.error("Failed to send SMS status update:", smsError);
+        // Don't fail the status update if SMS fails
       }
     }
 
@@ -347,6 +348,8 @@ export const createOrderByAdmin = async (req, res) => {
       incenseDisclaimer = false,
       fragrance = "",
       fragranceDisclaimer = false,
+      perfume = "",
+      oud = "",
       cardFrom = "",
       cardTo = "",
       appliedCoupon = null,
@@ -415,6 +418,8 @@ export const createOrderByAdmin = async (req, res) => {
       incenseDisclaimer,
       fragrance,
       fragranceDisclaimer,
+      perfume,
+      oud,
       packaging,
       cardFrom,
       cardTo,
@@ -428,10 +433,10 @@ export const createOrderByAdmin = async (req, res) => {
     const newOrder = new Order(orderData);
     await newOrder.save();
 
-    // Send order confirmation WhatsApp message
+    // Send order confirmation SMS
     try {
-      const { sendOrderStatusUpdateMessage } = await import(
-        "../services/whatsappService.js"
+      const { sendOrderStatusUpdateSMS } = await import(
+        "../services/smsService.js"
       );
 
       const orderDetails = {
@@ -441,17 +446,14 @@ export const createOrderByAdmin = async (req, res) => {
         total: newOrder.total,
       };
 
-      await sendOrderStatusUpdateMessage(
+      await sendOrderStatusUpdateSMS(
         newOrder.customerInfo.phoneNumber,
         newOrder.customerInfo.name,
         orderDetails
       );
-    } catch (whatsappError) {
-      console.error(
-        "Failed to send order confirmation WhatsApp:",
-        whatsappError
-      );
-      // Don't fail the order creation if WhatsApp fails
+    } catch (smsError) {
+      console.error("Failed to send order confirmation SMS:", smsError);
+      // Don't fail the order creation if SMS fails
     }
 
     res.status(201).json({
@@ -485,10 +487,9 @@ export const assignOrderToEmployee = async (req, res) => {
     const { employeeId } = req.body;
 
     const Employee = (await import("../models/Employee.js")).default;
-    const {
-      sendOrderAssignmentMessage,
-      sendEmployeeAssignmentNotificationToCustomer,
-    } = await import("../services/whatsappService.js");
+    const { sendOrderAssignmentSMS, sendEmployeeAssignmentSMS } = await import(
+      "../services/smsService.js"
+    );
 
     // Find employee and order
     const employee = await Employee.findById(employeeId);
@@ -524,7 +525,7 @@ export const assignOrderToEmployee = async (req, res) => {
 
     await order.save();
 
-    // Send WhatsApp notification to employee
+    // Prepare order details for SMS
     const orderDetails = {
       id: order._id,
       customerName:
@@ -540,32 +541,80 @@ export const assignOrderToEmployee = async (req, res) => {
         "Contact not provided",
     };
 
-    const whatsappResult = await sendOrderAssignmentMessage(
-      employee.whatsappNumber,
-      employee.name,
-      orderDetails
+    // Validate phone numbers before sending
+    console.log("📞 Employee phone:", employee.whatsappNumber);
+    console.log(
+      "📞 Customer phone:",
+      order.customerInfo?.phoneNumber || order.userId?.phoneNumber
     );
 
-    // Also notify the customer about the employee assignment
-    const customerWhatsApp =
-      order.customerInfo?.phoneNumber || order.userId?.phoneNumber;
-    let customerNotificationResult = { success: false };
-
-    if (customerWhatsApp) {
+    // Send SMS notification to employee
+    let employeeSmsResult = { success: false, error: "Not sent" };
+    if (employee.whatsappNumber) {
       try {
-        customerNotificationResult =
-          await sendEmployeeAssignmentNotificationToCustomer(
-            customerWhatsApp,
-            order.customerInfo?.name || order.userId?.name || "Valued Customer",
-            orderDetails,
-            employee.name
-          );
-      } catch (customerNotifyError) {
-        console.error(
-          "Failed to notify customer about employee assignment:",
-          customerNotifyError
+        employeeSmsResult = await sendOrderAssignmentSMS(
+          employee.whatsappNumber, // Phone number field (legacy name)
+          employee.name,
+          orderDetails
         );
+        console.log("✅ Employee SMS result:", employeeSmsResult);
+      } catch (employeeError) {
+        console.error("❌ Error sending SMS to employee:", employeeError);
+        employeeSmsResult = {
+          success: false,
+          error: employeeError.message || "Failed to send SMS to employee",
+        };
       }
+    } else {
+      console.error("❌ Employee phone number is missing!");
+      employeeSmsResult = {
+        success: false,
+        error: "Employee phone number not found",
+      };
+    }
+
+    // Send SMS notification to customer about employee assignment
+    const customerPhone =
+      order.customerInfo?.phoneNumber || order.userId?.phoneNumber;
+    let customerSmsResult = { success: false, error: "Not sent" };
+
+    if (customerPhone) {
+      try {
+        customerSmsResult = await sendEmployeeAssignmentSMS(
+          customerPhone,
+          order.customerInfo?.name || order.userId?.name || "Valued Customer",
+          orderDetails,
+          employee.name,
+          employee.whatsappNumber // Employee contact number (legacy field name)
+        );
+        console.log("✅ Customer SMS result:", customerSmsResult);
+      } catch (customerNotifyError) {
+        console.error("❌ Error sending SMS to customer:", customerNotifyError);
+        customerSmsResult = {
+          success: false,
+          error:
+            customerNotifyError.message || "Failed to send SMS to customer",
+        };
+      }
+    } else {
+      console.error("❌ Customer phone number is missing!");
+      customerSmsResult = {
+        success: false,
+        error: "Customer phone number not found",
+      };
+    }
+
+    // Prepare detailed notification message
+    let notificationMessage = "";
+    if (employeeSmsResult.success && customerSmsResult.success) {
+      notificationMessage =
+        "SMS sent to both employee and customer successfully";
+    } else if (employeeSmsResult.success) {
+      notificationMessage = `SMS sent to employee. Customer notification failed: ${customerSmsResult.error}`;
+    } else if (customerSmsResult.success) {
+      notificationMessage = `SMS sent to customer. Employee notification failed: ${employeeSmsResult.error}`;
+    } else {
+      notificationMessage = `Failed to send SMS. Employee: ${employeeSmsResult.error}, Customer: ${customerSmsResult.error}`;
     }
 
     res.status(200).json({
@@ -573,13 +622,17 @@ export const assignOrderToEmployee = async (req, res) => {
       message: "Order assigned successfully",
       employee: employee,
       order: order,
-      whatsappSent: whatsappResult.success,
-      customerNotified: customerNotificationResult.success,
-      whatsappMessage: whatsappResult.success
-        ? `WhatsApp notification sent to employee${
-            customerNotificationResult.success ? " and customer" : ""
-          }`
-        : whatsappResult.error,
+      smsSent: employeeSmsResult.success,
+      customerNotified: customerSmsResult.success,
+      notification: notificationMessage,
+      debug: {
+        employeePhone: employee.whatsappNumber || "missing",
+        customerPhone: customerPhone || "missing",
+        employeeSmsSuccess: employeeSmsResult.success,
+        customerSmsSuccess: customerSmsResult.success,
+        employeeError: employeeSmsResult.error,
+        customerError: customerSmsResult.error,
+      },
     });
   } catch (error) {
     console.error("Error assigning order to employee:", error);
@@ -587,17 +640,15 @@ export const assignOrderToEmployee = async (req, res) => {
   }
 };
 
-// Test Twilio WhatsApp connection
-export const testWhatsApp = async (req, res) => {
+// Test Twilio SMS connection
+export const testSMS = async (req, res) => {
   try {
-    const { testTwilioConnection } = await import(
-      "../services/whatsappService.js"
-    );
+    const { testTwilioConnection } = await import("../services/smsService.js");
     const result = await testTwilioConnection();
 
     if (result.success) {
       res.status(200).json({
-        message: "Twilio connection successful",
+        message: "Twilio SMS connection successful",
         account: result.account,
       });
     } else {
@@ -607,7 +658,85 @@ export const testWhatsApp = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error testing WhatsApp:", error);
+    console.error("Error testing SMS:", error);
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Confirm delivery and update order status with rating
+export const confirmDelivery = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, feedback, satisfactionLevel } = req.body;
+
+    // Validate order ID format
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid order ID format" });
+    }
+
+    // Validate rating
+    if (!rating || rating < 1 || rating > 5) {
+      return res.status(400).json({
+        message: "Rating is required and must be between 1 and 5",
+      });
+    }
+
+    // Validate satisfaction level
+    const validSatisfactionLevels = [
+      "very_satisfied",
+      "satisfied",
+      "neutral",
+      "dissatisfied",
+      "very_dissatisfied",
+    ];
+    if (
+      satisfactionLevel &&
+      !validSatisfactionLevels.includes(satisfactionLevel)
+    ) {
+      return res.status(400).json({
+        message: "Invalid satisfaction level",
+      });
+    }
+
+    const order = await Order.findById(id)
+      .populate("userId", "name email phoneNumber")
+      .populate("assignedEmployee", "name department role phoneNumber");
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Check if already confirmed
+    if (
+      order.status === "completed" &&
+      order.deliveryConfirmation?.confirmedAt
+    ) {
+      return res.status(400).json({
+        message: "Order has already been confirmed",
+      });
+    }
+
+    // Update order with delivery confirmation and set status to completed
+    order.deliveryConfirmation = {
+      confirmedAt: new Date(),
+      rating: rating,
+      feedback: feedback || "",
+      satisfactionLevel: satisfactionLevel || "",
+    };
+    order.status = "completed";
+    order.updatedAt = new Date();
+
+    await order.save();
+
+    res.status(200).json({
+      message: "Delivery confirmed successfully. Thank you for your feedback!",
+      order: order,
+    });
+  } catch (error) {
+    console.error("Confirm delivery error:", error);
+    res.status(500).json({
+      message: "Failed to confirm delivery",
+      error: error.message,
+    });
   }
 };

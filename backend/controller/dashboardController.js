@@ -179,13 +179,27 @@ export const getOrderTrends = async (req, res) => {
       if (!ordersByDate[date]) {
         ordersByDate[date] = {
           count: 0,
-          revenue: 0,
-          statuses: { pending: 0, processing: 0, completed: 0, cancelled: 0 },
+          revenue: 0, // Only completed orders revenue
+          totalOrders: 0,
+          statuses: {
+            pending: 0,
+            processing: 0,
+            completed: 0,
+            cancelled: 0,
+            delivery: 0,
+          },
         };
       }
-      ordersByDate[date].count++;
-      ordersByDate[date].revenue += order.total || 0;
-      ordersByDate[date].statuses[order.status]++;
+      ordersByDate[date].totalOrders++;
+
+      // Only count revenue from completed orders
+      if (order.status === "completed") {
+        ordersByDate[date].revenue += order.total || 0;
+        ordersByDate[date].count++; // Count of completed orders
+      }
+
+      ordersByDate[date].statuses[order.status] =
+        (ordersByDate[date].statuses[order.status] || 0) + 1;
     });
 
     res.status(200).json({

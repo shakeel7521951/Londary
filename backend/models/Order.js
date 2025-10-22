@@ -79,6 +79,14 @@ const OrderSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  perfume: {
+    type: String,
+    default: "",
+  },
+  oud: {
+    type: String,
+    default: "",
+  },
   packaging: {
     type: String,
     required: true,
@@ -129,6 +137,35 @@ const OrderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",
     default: null,
+  },
+  // Delivery confirmation and rating
+  deliveryConfirmation: {
+    confirmedAt: {
+      type: Date,
+      default: null,
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      default: null,
+    },
+    feedback: {
+      type: String,
+      default: "",
+    },
+    satisfactionLevel: {
+      type: String,
+      enum: [
+        "very_satisfied",
+        "satisfied",
+        "neutral",
+        "dissatisfied",
+        "very_dissatisfied",
+        "",
+      ],
+      default: "",
+    },
   },
   createdAt: {
     type: Date,

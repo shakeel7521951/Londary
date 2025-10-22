@@ -42,6 +42,35 @@ const Order = () => {
   const [showModal, setShowModal] = useState(false);
   const [showAddOrderModal, setShowAddOrderModal] = useState(false);
 
+  // Service type options
+  const serviceTypeOptions = [
+    { value: "wash_iron", labelKey: "washIron" },
+    { value: "wash_iron_perfume", labelKey: "washIronPerfume" },
+    { value: "dry_clean", labelKey: "dryClean" },
+  ];
+
+  // Perfume options
+  const perfumeOptions = [
+    { value: "", labelKey: "selectPerfume" },
+    { value: "lulwa", labelKey: "lulwa" },
+    { value: "sadf", labelKey: "sadf" },
+    { value: "maknoun", labelKey: "maknoun" },
+    { value: "mad", labelKey: "mad" },
+  ];
+
+  // Oud/Incense options
+  const oudOptions = [
+    { value: "", labelKey: "selectOud" },
+    { value: "cambodian_oud", labelKey: "cambodianOud" },
+  ];
+
+  // Packaging options
+  const packagingOptions = [
+    { value: "plastic", labelKey: "plasticPackaging" },
+    { value: "fabric", labelKey: "fabricPackaging" },
+    { value: "box", labelKey: "boxPackaging" },
+  ];
+
   // Add Order Form State
   const [orderForm, setOrderForm] = useState({
     customerInfo: {
@@ -52,11 +81,12 @@ const Order = () => {
     },
     serviceType: "wash_iron",
     garments: [{ type: "", quantity: 1 }],
-    packaging: "standard",
+    packaging: "plastic",
     steamFinish: false,
     incenseFinish: false,
     incenseType: "",
-    fragrance: "",
+    perfume: "",
+    oud: "",
     cardFrom: "",
     cardTo: "",
     originalTotal: 0,
@@ -297,21 +327,24 @@ const Order = () => {
 
       // Show success message
       if (employee) {
-        const whatsappStatus =
-          result.whatsappSent && result.customerNotified
-            ? "WhatsApp notifications sent to both employee and customer!"
-            : result.whatsappSent
-            ? "WhatsApp notification sent to employee. Customer notification failed."
-            : "Note: WhatsApp notifications failed to send.";
+        const notificationStatus =
+          result.smsSent && result.customerNotified
+            ? "SMS notifications sent to both employee and customer!"
+            : result.smsSent
+            ? "SMS sent to employee. Customer notification failed."
+            : "Note: SMS notifications failed to send.";
 
-        toast.success(`Order assigned to ${employee.name}. ${whatsappStatus}`, {
-          duration: 5000,
-          style: {
-            background: "#FFF9E6",
-            color: "#D4AF37",
-            border: "1px solid #D4AF37",
-          },
-        });
+        toast.success(
+          `Order assigned to ${employee.name}. ${notificationStatus}`,
+          {
+            duration: 5000,
+            style: {
+              background: "#FFF9E6",
+              color: "#D4AF37",
+              border: "1px solid #D4AF37",
+            },
+          }
+        );
       }
     } catch (error) {
       console.error("Failed to assign employee:", error);
@@ -436,7 +469,8 @@ const Order = () => {
         steamFinish: orderForm.steamFinish,
         incenseFinish: orderForm.incenseFinish,
         incenseType: orderForm.incenseType,
-        fragrance: orderForm.fragrance,
+        perfume: orderForm.perfume,
+        oud: orderForm.oud,
         cardFrom: orderForm.cardFrom,
         cardTo: orderForm.cardTo,
         originalTotal: orderForm.originalTotal,
@@ -454,11 +488,12 @@ const Order = () => {
         },
         serviceType: "wash_iron",
         garments: [{ type: "", quantity: 1 }],
-        packaging: "standard",
+        packaging: "plastic",
         steamFinish: false,
         incenseFinish: false,
         incenseType: "",
-        fragrance: "",
+        perfume: "",
+        oud: "",
         cardFrom: "",
         cardTo: "",
         originalTotal: 0,
@@ -1264,9 +1299,11 @@ const Order = () => {
                         }
                         className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none"
                       >
-                        <option value="iron">{t("ironOnly")}</option>
-                        <option value="wash_iron">{t("washIron")}</option>
-                        <option value="dry_clean">{t("dryClean")}</option>
+                        {serviceTypeOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {t(option.labelKey)}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -1281,11 +1318,11 @@ const Order = () => {
                         }
                         className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none"
                       >
-                        <option value="standard">
-                          {t("standardPackaging")}
-                        </option>
-                        <option value="premium">{t("premiumPackaging")}</option>
-                        <option value="eco">{t("ecoPackaging")}</option>
+                        {packagingOptions.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {t(option.labelKey)}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
@@ -1431,18 +1468,41 @@ const Order = () => {
                       )}
 
                       <div>
-                        <input
-                          type="text"
-                          value={orderForm.fragrance}
+                        <label className="block text-sm font-medium text-white/70 mb-2">
+                          {t("perfume") || "Perfume"}
+                        </label>
+                        <select
+                          value={orderForm.perfume}
                           onChange={(e) =>
-                            handleAddOrderFormChange(
-                              "fragrance",
-                              e.target.value
-                            )
+                            handleAddOrderFormChange("perfume", e.target.value)
                           }
-                          className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
-                          placeholder={t("fragrancePlaceholder")}
-                        />
+                          className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none"
+                        >
+                          {perfumeOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {t(option.labelKey)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">
+                          {t("oud") || "Oud"}
+                        </label>
+                        <select
+                          value={orderForm.oud}
+                          onChange={(e) =>
+                            handleAddOrderFormChange("oud", e.target.value)
+                          }
+                          className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none appearance-none"
+                        >
+                          {oudOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {t(option.labelKey)}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>

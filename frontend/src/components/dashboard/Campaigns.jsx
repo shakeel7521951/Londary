@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -10,25 +10,44 @@ import {
   FiCheckCircle,
   FiAlertCircle,
 } from "react-icons/fi";
-import { useGetAllUsersQuery } from "../../redux/features/usersApi";
+import { useGetAllOrdersQuery } from "../../redux/features/ordersApi";
 
 const Campaigns = () => {
   const language = useSelector((state) => state.language.language);
   const { t } = useTranslation();
 
-  // Get all users from API
-  const { data: usersData, isLoading: usersLoading } = useGetAllUsersQuery();
+  // Get all orders from API
+  const { data: ordersData, isLoading: ordersLoading } = useGetAllOrdersQuery();
 
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [sendResult, setSendResult] = useState(null);
 
-  // Extract users array from API response
-  const users = usersData?.users || [];
+  // Extract unique customers from orders (based on customerInfo)
+  const customers = useMemo(() => {
+    if (!ordersData?.orders) return [];
 
-  // Filter users with WhatsApp numbers (phoneNumber field)
-  const usersWithWhatsApp = users.filter(
-    (user) => user.phoneNumber && user.phoneNumber.trim() !== ""
+    const uniqueCustomers = new Map();
+    ordersData.orders.forEach((order) => {
+      if (order.customerInfo?.phoneNumber && order.customerInfo?.email) {
+        // Use email as unique identifier
+        const email = order.customerInfo.email;
+        if (!uniqueCustomers.has(email)) {
+          uniqueCustomers.set(email, {
+            name: order.customerInfo.name,
+            email: email,
+            phoneNumber: order.customerInfo.phoneNumber,
+          });
+        }
+      }
+    });
+
+    return Array.from(uniqueCustomers.values());
+  }, [ordersData]);
+
+  // Filter customers with phone numbers
+  const customersWithPhone = customers.filter(
+    (customer) => customer.phoneNumber && customer.phoneNumber.trim() !== ""
   );
 
   const handleSendCampaign = async () => {
@@ -37,8 +56,10 @@ const Campaigns = () => {
       return;
     }
 
-    if (usersWithWhatsApp.length === 0) {
-      alert(t("noUsersWithWhatsApp") || "No users with WhatsApp numbers found");
+    if (customersWithPhone.length === 0) {
+      alert(
+        t("noCustomersWithPhone") || "No customers with phone numbers found"
+      );
       return;
     }
 
@@ -47,7 +68,7 @@ const Campaigns = () => {
         `${
           t("confirmSendCampaign") ||
           "Are you sure you want to send this message to"
-        } ${usersWithWhatsApp.length} ${t("users") || "users"}?`
+        } ${customersWithPhone.length} ${t("customers") || "customers"}?`
       )
     ) {
       return;
@@ -76,8 +97,8 @@ const Campaigns = () => {
             data.message ||
             `${
               t("campaignSentSuccessfully") || "Campaign sent successfully to"
-            } ${data.sentCount || usersWithWhatsApp.length} ${
-              t("users") || "users"
+            } ${data.sentCount || customersWithPhone.length} ${
+              t("customers") || "customers"
             }`,
           details: data,
         });
@@ -117,15 +138,15 @@ const Campaigns = () => {
           {t("campaignManagement") || "Campaign Management"}
         </h1>
         <p className="text-white/70">
-          {t("sendWhatsAppCampaigns") ||
-            "Send WhatsApp messages to all customers"}
+          {t("sendSMSCampaigns") ||
+            "Send SMS messages to all customers who placed orders"}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left side - Stats */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Total Users Card */}
+          {/* Total Customers Card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -137,22 +158,22 @@ const Campaigns = () => {
               </div>
               <div>
                 <p className="text-white/70 text-sm">
-                  {t("totalUsers") || "Total Users"}
+                  {t("totalCustomers") || "Total Customers"}
                 </p>
-                {usersLoading ? (
+                {ordersLoading ? (
                   <div className="flex items-center">
                     <FiLoader className="w-4 h-4 animate-spin text-[#D4AF37]" />
                   </div>
                 ) : (
                   <p className="text-2xl font-light text-white">
-                    {users.length}
+                    {customers.length}
                   </p>
                 )}
               </div>
             </div>
           </motion.div>
 
-          {/* Users with WhatsApp Card */}
+          {/* Customers with Phone Card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -165,15 +186,15 @@ const Campaigns = () => {
               </div>
               <div>
                 <p className="text-white/70 text-sm">
-                  {t("usersWithWhatsApp") || "Users with WhatsApp"}
+                  {t("customersWithPhone") || "Customers with Phone"}
                 </p>
-                {usersLoading ? (
+                {ordersLoading ? (
                   <div className="flex items-center">
                     <FiLoader className="w-4 h-4 animate-spin text-green-400" />
                   </div>
                 ) : (
                   <p className="text-2xl font-light text-white">
-                    {usersWithWhatsApp.length}
+                    {customersWithPhone.length}
                   </p>
                 )}
               </div>
@@ -256,9 +277,9 @@ const Campaigns = () => {
                 <p className="text-white/50 text-xs">
                   {t("willBeSentTo") || "Will be sent to"}{" "}
                   <span className="text-[#D4AF37] font-medium">
-                    {usersWithWhatsApp.length}
+                    {customersWithPhone.length}
                   </span>{" "}
-                  {t("users") || "users"}
+                  {t("customers") || "customers"}
                 </p>
               </div>
             </div>
@@ -310,8 +331,8 @@ const Campaigns = () => {
               disabled={
                 isSending ||
                 !message.trim() ||
-                usersWithWhatsApp.length === 0 ||
-                usersLoading
+                customersWithPhone.length === 0 ||
+                ordersLoading
               }
               className="w-full bg-[#D4AF37] hover:bg-[#c9a227] text-[#1C1C1C] px-6 py-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -329,13 +350,13 @@ const Campaigns = () => {
             </button>
 
             {/* Warning */}
-            {usersWithWhatsApp.length === 0 && !usersLoading && (
+            {customersWithPhone.length === 0 && !ordersLoading && (
               <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
                 <div className="flex items-start gap-3">
                   <FiAlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
                   <p className="text-white/70 text-sm">
-                    {t("noUsersWarning") ||
-                      "No users with WhatsApp numbers found. Please ensure users have provided their WhatsApp numbers."}
+                    {t("noCustomersWarning") ||
+                      "No customers with phone numbers found. Customers will be added when they place orders."}
                   </p>
                 </div>
               </div>

@@ -38,6 +38,6 @@ router.post("/forgot-password-otp", forgotPasswordOTP);
 router.post("/verify-otp", verifyOTP);
 router.put("/reset-password", resetPassword);
 router.put("/update-profile", upload.single("profilePic"), auth, updateProfile);
-router.post("/send-campaign", auth, sendCampaign); // Send WhatsApp campaign to all users
+router.post("/send-campaign", auth, sendCampaign); // Send SMS campaign to all users
 
 export default router;

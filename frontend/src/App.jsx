@@ -22,6 +22,7 @@ import OrderPage from "./pages/Order";
 import RouteMiddleware from "./components/common/RouteMiddleware";
 import Dashboard from "./pages/Dashboard";
 import BotpressChat from "./components/common/BotpressChat";
+import DeliveryConfirmation from "./pages/DeliveryConfirmation";
 
 const MainFunction = () => {
   return (
@@ -59,6 +60,14 @@ const router = createBrowserRouter([
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/reset-password-verify", element: <ResetPasswordVerify /> },
   { path: "/reset-password-new", element: <ResetPasswordNew /> },
+  {
+    path: "/delivery-confirmation/:orderId",
+    element: (
+      <LanguageInitializer>
+        <DeliveryConfirmation />
+      </LanguageInitializer>
+    ),
+  },
   {
     path: "/dashboard",
     element: (

@@ -7,7 +7,8 @@ import {
   updateOrderStatus,
   deleteOrder,
   assignOrderToEmployee,
-  testWhatsApp,
+  testSMS,
+  confirmDelivery,
 } from "../controller/orderController.js";
 import auth from "../middleware/AuthMiddleWare.js";
 
@@ -15,6 +16,10 @@ const router = express.Router();
 
 // Create order - NO AUTH REQUIRED (supports both authenticated and guest users)
 router.post("/", createOrder);
+
+// Delivery confirmation - NO AUTH REQUIRED (customers can confirm via link)
+router.put("/confirm-delivery/:id", confirmDelivery);
+router.get("/public/:id", getOrderById); // Public endpoint for delivery confirmation page
 
 // Admin routes - require authentication
 router.post("/admin", auth, createOrderByAdmin);
@@ -25,6 +30,6 @@ router.put("/assign/:id", auth, assignOrderToEmployee);
 router.delete("/:id", auth, deleteOrder);
 
 // Test route - no auth for testing
-router.get("/test/whatsapp", testWhatsApp);
+router.get("/test/sms", testSMS);
 
 export default router;

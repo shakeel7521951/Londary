@@ -1,6 +1,6 @@
 import Employee from "../models/Employee.js";
 import Order from "../models/Order.js";
-import { sendOrderAssignmentMessage } from "../services/whatsappService.js";
+import { sendOrderAssignmentSMS } from "../services/smsService.js";
 
 // Create new employee (Admin only)
 export const createEmployee = async (req, res) => {
@@ -188,7 +188,7 @@ export const assignOrderToEmployee = async (req, res) => {
       await order.save();
     }
 
-    // Send WhatsApp notification to employee
+    // Send SMS notification to employee
     const orderDetails = {
       id: order._id,
       customerName: order.userId?.name || "Unknown Customer",
@@ -199,7 +199,7 @@ export const assignOrderToEmployee = async (req, res) => {
       customerPhone: order.userId?.email || "Contact not provided", // Using email as phone for now
     };
 
-    const whatsappResult = await sendOrderAssignmentMessage(
+    const smsResult = await sendOrderAssignmentSMS(
       employee.whatsappNumber,
       employee.name,
       orderDetails
@@ -210,10 +210,8 @@ export const assignOrderToEmployee = async (req, res) => {
       message: "Order assigned successfully",
       employee: employee,
       order: order,
-      whatsappSent: whatsappResult.success,
-      whatsappMessage: whatsappResult.success
-        ? "WhatsApp notification sent"
-        : whatsappResult.error,
+      smsSent: smsResult.success,
+      smsMessage: smsResult.success ? "SMS notification sent" : smsResult.error,
     });
   } catch (error) {
     console.error("Error assigning order to employee:", error);

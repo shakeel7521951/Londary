@@ -1,10 +1,7 @@
 // import User from "../models/User.js";
 import User from "../models/User.js";
 import sendMail from "../middleware/SendMail.js";
-import {
-  sendWelcomeMessage,
-  sendWhatsAppMessage,
-} from "../services/whatsappService.js";
+import { sendWelcomeSMS, sendSMS } from "../services/smsService.js";
 
 export const register = async (req, res) => {
   try {
@@ -84,12 +81,12 @@ export const verifyUser = async (req, res) => {
     user.status = "verified";
     await user.save();
 
-    // Send welcome WhatsApp message
+    // Send welcome SMS
     try {
-      await sendWelcomeMessage(user.phoneNumber, user.name);
-    } catch (whatsappError) {
-      console.error("Failed to send welcome WhatsApp message:", whatsappError);
-      // Don't fail the verification if WhatsApp fails
+      await sendWelcomeSMS(user.phoneNumber, user.name);
+    } catch (smsError) {
+      console.error("Failed to send welcome SMS:", smsError);
+      // Don't fail the verification if SMS fails
     }
 
     const token = user.generateToken();
@@ -126,12 +123,12 @@ export const appVerifyUser = async (req, res) => {
     user.status = "verified";
     await user.save();
 
-    // Send welcome WhatsApp message
+    // Send welcome SMS
     try {
-      await sendWelcomeMessage(user.phoneNumber, user.name);
-    } catch (whatsappError) {
-      console.error("Failed to send welcome WhatsApp message:", whatsappError);
-      // Don't fail the verification if WhatsApp fails
+      await sendWelcomeSMS(user.phoneNumber, user.name);
+    } catch (smsError) {
+      console.error("Failed to send welcome SMS:", smsError);
+      // Don't fail the verification if SMS fails
     }
 
     const token = user.generateToken();
@@ -527,14 +524,14 @@ export const sendCampaign = async (req, res) => {
       return res.status(400).json({ message: "Campaign message is required" });
     }
 
-    // Get all users with WhatsApp numbers
+    // Get all users with phone numbers
     const users = await User.find({
       phoneNumber: { $exists: true, $ne: "" },
     });
 
     if (!users || users.length === 0) {
       return res.status(404).json({
-        message: "No users with WhatsApp numbers found",
+        message: "No users with phone numbers found",
         sentCount: 0,
         failedCount: 0,
       });
@@ -544,10 +541,10 @@ export const sendCampaign = async (req, res) => {
     let failedCount = 0;
     const failedUsers = [];
 
-    // Send WhatsApp message to each user
+    // Send SMS to each user
     for (const user of users) {
       try {
-        await sendWhatsAppMessage(user.phoneNumber, message);
+        await sendSMS(user.phoneNumber, message);
         sentCount++;
       } catch (error) {
         console.error(

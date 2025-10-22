@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
@@ -11,9 +11,29 @@ import {
   FiTrendingUp,
   FiGift,
   FiLoader,
+  FiUserCheck,
 } from "react-icons/fi";
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import { useGetAllUsersQuery } from "../../redux/features/usersApi";
-import { useGetComprehensiveDashboardQuery } from "../../redux/features/dashboardApi";
+import {
+  useGetComprehensiveDashboardQuery,
+  useGetOrderTrendsQuery,
+} from "../../redux/features/dashboardApi";
+import { useGetAllEmployeesQuery } from "../../redux/features/employeesApi";
+import { useGetAllOrdersQuery } from "../../redux/features/ordersApi";
 
 const AdminPanel = ({ setActiveComponent }) => {
   const { t } = useTranslation();
@@ -22,12 +42,101 @@ const AdminPanel = ({ setActiveComponent }) => {
   const { data: usersData, isLoading: usersLoading } = useGetAllUsersQuery();
   const { data: dashboardData, isLoading: dashboardLoading } =
     useGetComprehensiveDashboardQuery();
+  const { data: employeesData, isLoading: employeesLoading } =
+    useGetAllEmployeesQuery();
+  const { data: ordersData, isLoading: ordersLoading } = useGetAllOrdersQuery();
+  const { data: trendsData, isLoading: trendsLoading } =
+    useGetOrderTrendsQuery("7d");
 
-  const isLoading = usersLoading || dashboardLoading;
+  const isLoading =
+    usersLoading ||
+    dashboardLoading ||
+    employeesLoading ||
+    ordersLoading ||
+    trendsLoading;
 
   // Extract data from dashboard response
   const orderStats = dashboardData?.stats || {};
   const recentOrders = dashboardData?.recentOrders || [];
+
+  // Get total employees
+  const totalEmployees = employeesData?.employees?.length || 0;
+
+  // Get unique customers from orders (based on customerInfo)
+  const uniqueCustomers = useMemo(() => {
+    if (!ordersData?.orders) return 0;
+    const uniqueEmails = new Set();
+    ordersData.orders.forEach((order) => {
+      if (order.customerInfo?.email) {
+        uniqueEmails.add(order.customerInfo.email);
+      }
+    });
+    return uniqueEmails.size;
+  }, [ordersData]);
+
+  // Chart data for revenue trend - real-time data from backend (completed orders only)
+  const revenueData = useMemo(() => {
+    if (!trendsData?.data?.trends) return [];
+
+    const trends = trendsData.data.trends;
+    const dates = Object.keys(trends).sort();
+
+    // Get day names for last 7 days
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    return dates.map((date) => {
+      const dateObj = new Date(date);
+      const dayName = dayNames[dateObj.getDay()];
+      return {
+        name: dayName,
+        date: date,
+        revenue: Math.round(trends[date].revenue * 100) / 100,
+        completedOrders: trends[date].count,
+      };
+    });
+  }, [trendsData]);
+
+  // Chart data for order status distribution by day
+  const orderStatusTrends = useMemo(() => {
+    if (!trendsData?.data?.trends) return [];
+
+    const trends = trendsData.data.trends;
+    const dates = Object.keys(trends).sort();
+
+    // Get day names for last 7 days
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    return dates.map((date) => {
+      const dateObj = new Date(date);
+      const dayName = dayNames[dateObj.getDay()];
+      const statuses = trends[date].statuses || {};
+      return {
+        name: dayName,
+        date: date,
+        pending: statuses.pending || 0,
+        processing: statuses.processing || 0,
+        completed: statuses.completed || 0,
+        cancelled: statuses.cancelled || 0,
+        delivery: statuses.delivery || 0,
+      };
+    });
+  }, [trendsData]);
+
+  // Chart data for order status distribution
+  const statusData = useMemo(() => {
+    if (!ordersData?.orders) return [];
+    const statusCount = {};
+    ordersData.orders.forEach((order) => {
+      const status = order.status || "pending";
+      statusCount[status] = (statusCount[status] || 0) + 1;
+    });
+    return Object.entries(statusCount).map(([name, value]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      value,
+    }));
+  }, [ordersData]);
+
+  const COLORS = ["#D4AF37", "#BFA134", "#8B7355", "#F5E1DA"];
 
   const stats = [
     {
@@ -38,9 +147,16 @@ const AdminPanel = ({ setActiveComponent }) => {
       color: "from-[#D4AF37] to-[#BFA134]",
     },
     {
-      title: t("totalUsers"),
-      value: isLoading ? "..." : (usersData?.length || 0).toString(),
-      change: orderStats?.usersChange || "+8%", // Use from dashboard stats
+      title: t("totalEmployees"),
+      value: isLoading ? "..." : totalEmployees.toString(),
+      change: "+12%",
+      icon: FiUserCheck,
+      color: "from-[#D4AF37] to-[#BFA134]",
+    },
+    {
+      title: t("totalCustomers"),
+      value: isLoading ? "..." : uniqueCustomers.toString(),
+      change: orderStats?.usersChange || "+8%",
       icon: FiUsers,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
@@ -49,13 +165,6 @@ const AdminPanel = ({ setActiveComponent }) => {
       value: isLoading ? "..." : `$${orderStats?.totalRevenue || 0}`,
       change: orderStats?.revenueChange || "+0%",
       icon: FiDollarSign,
-      color: "from-[#D4AF37] to-[#BFA134]",
-    },
-    {
-      title: t("pendingDeliveries"),
-      value: isLoading ? "..." : (orderStats?.pendingOrders || 0).toString(),
-      change: "+5%", // Static for pending orders change
-      icon: FiTruck,
       color: "from-[#D4AF37] to-[#BFA134]",
     },
   ];
@@ -126,6 +235,275 @@ const AdminPanel = ({ setActiveComponent }) => {
         ))}
       </div>
 
+      {/* Charts Section - Revenue and Status Trends */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* Revenue Trend Chart */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6"
+        >
+          <h2 className="text-lg font-light text-white mb-4 tracking-wide">
+            {t("revenueTrend") || "Revenue Trend"}
+          </h2>
+          {revenueData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={revenueData}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#D4AF37" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#D4AF37"
+                  opacity={0.1}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke="#D4AF37"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis
+                  stroke="#D4AF37"
+                  style={{ fontSize: "12px" }}
+                  tickFormatter={(value) => `$${value}`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1C1C1C",
+                    border: "1px solid #D4AF37",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                  formatter={(value, name, props) => {
+                    if (name === "revenue") {
+                      return [
+                        `$${value}`,
+                        `Revenue (${props.payload.completedOrders} completed orders)`,
+                      ];
+                    }
+                    return [value, name];
+                  }}
+                  labelFormatter={(label, payload) => {
+                    if (payload && payload.length > 0) {
+                      return `${label} - ${payload[0].payload.date}`;
+                    }
+                    return label;
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#D4AF37"
+                  fillOpacity={1}
+                  fill="url(#colorRevenue)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-[280px]">
+              {trendsLoading ? (
+                <div className="flex items-center">
+                  <FiLoader className="w-6 h-6 text-[#D4AF37] animate-spin mr-2" />
+                  <span className="text-white/70">
+                    {t("loadingRevenueData")}
+                  </span>
+                </div>
+              ) : (
+                <p className="text-white/50">{t("noRevenueData")}</p>
+              )}
+            </div>
+          )}
+        </motion.div>
+
+        {/* Order Status Trends (Stacked Bar Chart) */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.35 }}
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6"
+        >
+          <h2 className="text-lg font-light text-white mb-4 tracking-wide">
+            {t("orderStatusTrends") || "Order Status Trends"}
+          </h2>
+          {orderStatusTrends.length > 0 ? (
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={orderStatusTrends}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#D4AF37"
+                  opacity={0.1}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke="#D4AF37"
+                  style={{ fontSize: "12px" }}
+                />
+                <YAxis stroke="#D4AF37" style={{ fontSize: "12px" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1C1C1C",
+                    border: "1px solid #D4AF37",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                  cursor={{ fill: "rgba(212, 175, 55, 0.1)" }}
+                />
+                <Bar
+                  dataKey="completed"
+                  stackId="a"
+                  fill="#D4AF37"
+                  name={t("completed") || "Completed"}
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  dataKey="processing"
+                  stackId="a"
+                  fill="#BFA134"
+                  name={t("processing") || "Processing"}
+                />
+                <Bar
+                  dataKey="delivery"
+                  stackId="a"
+                  fill="#8B7355"
+                  name={t("delivery") || "Delivery"}
+                />
+                <Bar
+                  dataKey="pending"
+                  stackId="a"
+                  fill="#F5E1DA"
+                  name={t("pending") || "Pending"}
+                />
+                <Bar
+                  dataKey="cancelled"
+                  stackId="a"
+                  fill="#9CA3AF"
+                  name={t("cancelled") || "Cancelled"}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-[250px]">
+              {trendsLoading ? (
+                <div className="flex items-center">
+                  <FiLoader className="w-6 h-6 text-[#D4AF37] animate-spin mr-2" />
+                  <span className="text-white/70">
+                    Loading order status data...
+                  </span>
+                </div>
+              ) : (
+                <p className="text-white/50">No order status data available</p>
+              )}
+            </div>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Overall Order Status Distribution with Legend */}
+      <div className="grid grid-cols-1 gap-6 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-xl shadow-lg border border-[#D4AF37]/20 p-6"
+        >
+          <h2 className="text-lg font-light text-white mb-6 tracking-wide">
+            {t("orderStatusDistribution") || "Overall Status Distribution"}
+          </h2>
+          {statusData.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Pie Chart */}
+              <div className="lg:col-span-1">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {statusData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1C1C1C",
+                        border: "1px solid #D4AF37",
+                        borderRadius: "8px",
+                        color: "#fff",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Status Legend and Details */}
+              <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+                {statusData.map((status, index) => {
+                  const total = statusData.reduce((sum, s) => sum + s.value, 0);
+                  const percentage = ((status.value / total) * 100).toFixed(1);
+                  return (
+                    <motion.div
+                      key={status.name}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.5 + index * 0.1 }}
+                      className="bg-[#1C1C1C]/50 rounded-lg p-4 border border-[#D4AF37]/10 hover:border-[#D4AF37]/30 transition-all"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <div
+                          className="w-4 h-4 rounded-full"
+                          style={{
+                            backgroundColor: COLORS[index % COLORS.length],
+                          }}
+                        ></div>
+                        <span className="text-white/90 font-medium">
+                          {t(status.name.toLowerCase()) || status.name}
+                        </span>
+                      </div>
+                      <div className="ml-7">
+                        <p className="text-2xl font-light text-white mb-1">
+                          {status.value}
+                        </p>
+                        <p className="text-sm text-white/60">
+                          {percentage}% {t("ofTotal") || "of total"}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-[250px]">
+              {isLoading ? (
+                <div className="flex items-center">
+                  <FiLoader className="w-6 h-6 text-[#D4AF37] animate-spin mr-2" />
+                  <span className="text-white/70">
+                    {t("loadingData") || "Loading data..."}
+                  </span>
+                </div>
+              ) : (
+                <p className="text-white/50">
+                  {t("noDataAvailable") || "No data available"}
+                </p>
+              )}
+            </div>
+          )}
+        </motion.div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -141,7 +519,7 @@ const AdminPanel = ({ setActiveComponent }) => {
               <div className="flex items-center justify-center p-8">
                 <FiLoader className="w-6 h-6 text-[#D4AF37] animate-spin" />
                 <span className="ml-2 text-white/70">
-                  Loading recent orders...
+                  {t("loadingRecentOrders") || "Loading recent orders..."}
                 </span>
               </div>
             ) : recentOrders && recentOrders.length > 0 ? (
@@ -176,9 +554,12 @@ const AdminPanel = ({ setActiveComponent }) => {
             ) : (
               <div className="text-center p-8">
                 <FiPackage className="w-12 h-12 text-white/30 mx-auto mb-4" />
-                <p className="text-white/70 mb-2">No recent orders</p>
+                <p className="text-white/70 mb-2">
+                  {t("noRecentOrders") || "No recent orders"}
+                </p>
                 <p className="text-white/50 text-sm">
-                  Orders will appear here once customers place them
+                  {t("ordersWillAppear") ||
+                    "Orders will appear here once customers place them"}
                 </p>
               </div>
             )}

@@ -182,6 +182,9 @@ export const sendOrderAssignmentMessage = async (
   employeeName,
   orderDetails
 ) => {
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  const confirmationLink = `${frontendUrl}/delivery-confirmation/${orderDetails.id}`;
+
   const message = `
 *New Order Assignment*
 
@@ -204,6 +207,9 @@ ${orderDetails.customerPhone || "Phone not provided"}
 
 Please check your dashboard for complete details and update the order status accordingly.
 
+*After completing delivery, share this link with the customer:*
+${confirmationLink}
+
 Best regards,
 AKOYA Premium Laundry Team
   `;
@@ -221,19 +227,22 @@ export const sendEmployeeAssignmentNotificationToCustomer = async (
   // Generate receipt first
   const receiptResult = await generateAndUploadReceipt(orderDetails);
 
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+  const confirmationLink = `${frontendUrl}/delivery-confirmation/${orderDetails.id}`;
+
   let message = `
 *Employee Assignment Confirmation*
 
 Dear ${customerName},
 
-Your order has been assigned to our staff member.
+Your order has been assigned to our staff member for pickup and delivery.
 
 *Order Details:*
 Order ID: ${orderDetails.id}
 Service: ${orderDetails.serviceType}
 Amount: $${orderDetails.total}
 
-*Assigned Staff:*
+*Assigned Staff Member:*
 Name: ${employeeName}
 Contact: ${employeeContact || "Contact will be provided separately"}
 
@@ -248,6 +257,11 @@ ${receiptResult.receiptUrl}`;
   }
 
   message += `
+
+*IMPORTANT: After you receive your order delivery, please confirm and rate our service using this link:*
+${confirmationLink}
+
+This helps us ensure quality and track successful deliveries.
 
 We will keep you updated on the progress.
 

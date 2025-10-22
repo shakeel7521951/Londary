@@ -77,6 +77,23 @@ export const orderApi = createApi({
       }),
       invalidatesTags: (result, error, id) => [{ type: "Order", id }, "Orders"],
     }),
+
+    // Public endpoint for delivery confirmation
+    getOrderByIdPublic: builder.query({
+      query: (id) => `/public/${id}`,
+    }),
+
+    confirmDelivery: builder.mutation({
+      query: ({ orderId, rating, feedback, satisfactionLevel }) => ({
+        url: `/confirm-delivery/${orderId}`,
+        method: "PUT",
+        body: { rating, feedback, satisfactionLevel },
+      }),
+      invalidatesTags: (result, error, { orderId }) => [
+        { type: "Order", id: orderId },
+        "Orders",
+      ],
+    }),
   }),
 });
 
@@ -86,6 +103,8 @@ export const {
   useAssignOrderToEmployeeMutation,
   useGetAllOrdersQuery,
   useGetOrderByIdQuery,
+  useGetOrderByIdPublicQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
+  useConfirmDeliveryMutation,
 } = orderApi;

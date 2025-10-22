@@ -22,10 +22,10 @@ const employeeSchema = new mongoose.Schema(
       required: true,
       validate: {
         validator: function (v) {
-          // WhatsApp number format validation (E.164 format)
+          // Phone number format validation (E.164 format)
           return /^\+[1-9]\d{1,14}$/.test(v);
         },
-        message: "WhatsApp number must be in E.164 format (e.g., +1234567890)",
+        message: "Phone number must be in E.164 format (e.g., +1234567890)",
       },
     },
     role: {
