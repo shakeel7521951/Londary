@@ -79,6 +79,14 @@ const AdminPanel = ({ setActiveComponent }) => {
     return uniqueEmails.size;
   }, [ordersData]);
 
+  // Calculate revenue from completed orders only
+  const completedRevenue = useMemo(() => {
+    if (!ordersData?.orders) return 0;
+    return ordersData.orders
+      .filter((order) => order.status === "completed")
+      .reduce((sum, order) => sum + (order.total || 0), 0);
+  }, [ordersData]);
+
   // Chart data for revenue trend - real-time data from backend (completed orders only)
   const revenueData = useMemo(() => {
     if (!trendsData?.data?.trends) return [];
@@ -169,7 +177,7 @@ const AdminPanel = ({ setActiveComponent }) => {
       title: t("revenue"),
       value: isLoading
         ? "..."
-        : formatCurrency(orderStats?.totalRevenue || 0, currentLanguage),
+        : formatCurrency(completedRevenue, currentLanguage),
       change: orderStats?.revenueChange || "+0%",
       icon: FiDollarSign,
       color: "from-[#D4AF37] to-[#BFA134]",
@@ -558,12 +566,6 @@ const AdminPanel = ({ setActiveComponent }) => {
                     >
                       {order.status}
                     </span>
-                    <p className="text-sm font-semibold text-[#D4AF37] mt-1">
-                      {formatCurrency(
-                        parseFloat(order.amount) || 0,
-                        currentLanguage
-                      )}
-                    </p>
                   </div>
                 </div>
               ))
