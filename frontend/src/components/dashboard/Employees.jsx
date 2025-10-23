@@ -31,9 +31,15 @@ import {
   useGetEmployeeOrdersQuery,
 } from "../../redux/features/employeesApi";
 import toast from "react-hot-toast";
+import {
+  formatPhoneNumber,
+  validatePhoneNumber,
+  formatCurrency,
+} from "../../utils/formatters";
 
 const Employees = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [departmentFilter, setDepartmentFilter] = useState("all");
@@ -159,14 +165,18 @@ const Employees = () => {
       return;
     }
 
-    // WhatsApp number validation
-    if (!newEmployee.whatsappNumber.match(/^\+[1-9]\d{1,14}$/)) {
+    // Normalize and validate WhatsApp number
+    const normalizedPhone = formatPhoneNumber(newEmployee.whatsappNumber);
+    if (!validatePhoneNumber(normalizedPhone)) {
       toast.error(t("whatsappInvalid"));
       return;
     }
 
     try {
-      await createEmployee(newEmployee).unwrap();
+      await createEmployee({
+        ...newEmployee,
+        whatsappNumber: normalizedPhone,
+      }).unwrap();
       toast.success(t("employeeCreated"));
       setShowCreateModal(false);
       setNewEmployee({
@@ -195,7 +205,9 @@ const Employees = () => {
       return;
     }
 
-    if (!editEmployee.whatsappNumber.match(/^\+[1-9]\d{1,14}$/)) {
+    // Normalize and validate WhatsApp number
+    const normalizedPhone = formatPhoneNumber(editEmployee.whatsappNumber);
+    if (!validatePhoneNumber(normalizedPhone)) {
       toast.error(t("whatsappInvalid"));
       return;
     }
@@ -204,6 +216,7 @@ const Employees = () => {
       await updateEmployee({
         id: editingEmployee._id,
         ...editEmployee,
+        whatsappNumber: normalizedPhone,
       }).unwrap();
       toast.success(t("employeeUpdated"));
       setShowEditModal(false);
@@ -699,6 +712,7 @@ const Employees = () => {
                   </label>
                   <input
                     type="text"
+                    dir="ltr"
                     value={newEmployee.whatsappNumber}
                     onChange={(e) =>
                       setNewEmployee({
@@ -840,6 +854,7 @@ const Employees = () => {
                   </label>
                   <input
                     type="text"
+                    dir="ltr"
                     value={editEmployee.whatsappNumber}
                     onChange={(e) =>
                       setEditEmployee({
@@ -936,6 +951,7 @@ const Employees = () => {
             employee={selectedEmployee}
             onClose={closeModal}
             t={t}
+            currentLanguage={currentLanguage}
           />
         )}
       </AnimatePresence>
@@ -944,7 +960,7 @@ const Employees = () => {
 };
 
 // Employee Details Modal Component
-const EmployeeDetailsModal = ({ employee, onClose, t }) => {
+const EmployeeDetailsModal = ({ employee, onClose, t, currentLanguage }) => {
   const { data: ordersData, isLoading: ordersLoading } =
     useGetEmployeeOrdersQuery(employee._id);
   const orders = ordersData?.orders || [];
@@ -1111,7 +1127,7 @@ const EmployeeDetailsModal = ({ employee, onClose, t }) => {
                         </div>
                         <div className="text-right">
                           <p className="text-[#D4AF37] font-medium">
-                            ${order.total}
+                            {formatCurrency(order.total, currentLanguage)}
                           </p>
                           <p className="text-xs text-white/70">
                             {new Date(order.createdAt).toLocaleDateString()}

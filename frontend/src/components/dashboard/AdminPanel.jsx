@@ -34,9 +34,11 @@ import {
 } from "../../redux/features/dashboardApi";
 import { useGetAllEmployeesQuery } from "../../redux/features/employeesApi";
 import { useGetAllOrdersQuery } from "../../redux/features/ordersApi";
+import { formatCurrency } from "../../utils/formatters";
 
 const AdminPanel = ({ setActiveComponent }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
 
   // Fetch real data from backend
   const { data: usersData, isLoading: usersLoading } = useGetAllUsersQuery();
@@ -162,7 +164,9 @@ const AdminPanel = ({ setActiveComponent }) => {
     },
     {
       title: t("revenue"),
-      value: isLoading ? "..." : `$${orderStats?.totalRevenue || 0}`,
+      value: isLoading
+        ? "..."
+        : formatCurrency(orderStats?.totalRevenue || 0, currentLanguage),
       change: orderStats?.revenueChange || "+0%",
       icon: FiDollarSign,
       color: "from-[#D4AF37] to-[#BFA134]",

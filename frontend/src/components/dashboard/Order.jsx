@@ -31,9 +31,15 @@ import {
   FiSave,
   FiMinus,
 } from "react-icons/fi";
+import {
+  formatPhoneNumber,
+  validatePhoneNumber,
+  formatCurrency,
+} from "../../utils/formatters";
 
 const Order = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language;
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -426,9 +432,13 @@ const Order = () => {
       errors["customerInfo.email"] = "Please enter a valid email";
     }
 
+    // Normalize and validate phone number
+    const normalizedPhone = formatPhoneNumber(
+      orderForm.customerInfo.phoneNumber
+    );
     if (!orderForm.customerInfo.phoneNumber.trim()) {
       errors["customerInfo.phoneNumber"] = "Phone number is required";
-    } else if (!/^\+[1-9]\d{1,14}$/.test(orderForm.customerInfo.phoneNumber)) {
+    } else if (!validatePhoneNumber(normalizedPhone)) {
       errors["customerInfo.phoneNumber"] =
         "Phone number must include country code (+1234567890)";
     }
@@ -461,8 +471,16 @@ const Order = () => {
     }
 
     try {
+      // Normalize phone number before submission
+      const normalizedPhone = formatPhoneNumber(
+        orderForm.customerInfo.phoneNumber
+      );
+
       await createOrderByAdmin({
-        customerInfo: orderForm.customerInfo,
+        customerInfo: {
+          ...orderForm.customerInfo,
+          phoneNumber: normalizedPhone,
+        },
         serviceType: orderForm.serviceType,
         garments: orderForm.garments,
         packaging: orderForm.packaging,
@@ -796,7 +814,7 @@ const Order = () => {
                     </td>
                     <td className="py-4 px-6">
                       <span className="font-semibold text-[#D4AF37]">
-                        ${order.total}
+                        {formatCurrency(order.total, currentLanguage)}
                       </span>
                     </td>
                     <td className="py-4 px-6">
@@ -976,7 +994,7 @@ const Order = () => {
                           {t("totalAmount")}:
                         </span>
                         <span className="font-bold text-[#D4AF37] text-lg">
-                          ${selectedOrder.total}
+                          {formatCurrency(selectedOrder.total, currentLanguage)}
                         </span>
                       </div>
                     </div>
@@ -1074,7 +1092,7 @@ const Order = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span className="font-semibold text-[#D4AF37]">
-                                  ${item.price}
+                                  {formatCurrency(item.price, currentLanguage)}
                                 </span>
                               </td>
                             </motion.tr>
@@ -1088,7 +1106,7 @@ const Order = () => {
                           {t("totalAmount")}:
                         </span>
                         <span className="text-2xl font-bold text-[#D4AF37]">
-                          ${selectedOrder.total}
+                          {formatCurrency(selectedOrder.total, currentLanguage)}
                         </span>
                       </div>
                     </div>
@@ -1237,6 +1255,7 @@ const Order = () => {
                       </label>
                       <input
                         type="tel"
+                        dir="ltr"
                         value={orderForm.customerInfo.phoneNumber}
                         onChange={(e) =>
                           handleAddOrderFormChange(
