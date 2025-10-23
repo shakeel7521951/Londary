@@ -61,12 +61,12 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
             transition={{ delay: isCollapsed ? 0 : 0.2 }}
           >
             {!isCollapsed && (
-              <>
-                <img src="/logo.png" alt="LONDARY Logo" className="w-14" />
-                <h1 className="text-xl font-light tracking-wider text-white">
-                  AKOYA
-                </h1>
-              </>
+              <img
+                src="./companylogo.png"
+                alt="AKOYA Premium Laundry"
+                loading="lazy"
+                className="w-24 h-10 block m-0 p-0"
+              />
             )}
           </motion.div>
           <button

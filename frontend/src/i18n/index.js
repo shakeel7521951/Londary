@@ -237,6 +237,10 @@ const resources = {
       editEmployeeInfo: "Edit Employee Info",
       deleteEmployeeConfirm: "Are you sure you want to delete this employee?",
 
+      // Form Labels
+      name: "Name",
+      email: "Email",
+
       // Form Placeholders
       namePlaceholder: "Enter full name",
       emailPlaceholder: "Enter email address",
@@ -288,6 +292,8 @@ const resources = {
       saveChanges: "Save Changes",
       createNew: "Create New",
       discardChanges: "Discard Changes",
+      create: "Create",
+      update: "Update",
 
       // Order Page Specific
       addOrderButton: "Add Order",
@@ -319,8 +325,12 @@ const resources = {
       serviceTypeRequired: "Service Type *",
       ironOnly: "Iron Only",
       washIron: "Wash & Iron",
+      washIronPerfume: "Wash & Iron with Perfume",
       dryClean: "Dry Clean",
       packagingType: "Packaging",
+      plasticPackaging: "Plastic Packaging",
+      fabricPackaging: "Fabric Packaging",
+      boxPackaging: "Box Packaging",
       standardPackaging: "Standard",
       premiumPackaging: "Premium",
       ecoPackaging: "Eco-Friendly",
@@ -405,6 +415,19 @@ const resources = {
       loadingOrderStatusData: "Loading order status data...",
       noRevenueData: "No revenue data available",
       noOrderStatusData: "No order status data available",
+      loading: "Loading...",
+      loadingUsers: "Loading users...",
+      noRecentOrders: "No recent orders",
+      ordersWillAppear: "Orders will appear here",
+
+      // Day names for charts
+      sun: "Sun",
+      mon: "Mon",
+      tue: "Tue",
+      wed: "Wed",
+      thu: "Thu",
+      fri: "Fri",
+      sat: "Sat",
 
       // Perfume and Oud
       perfume: "Perfume",
@@ -685,6 +708,10 @@ const resources = {
       editEmployeeInfo: "تعديل معلومات الموظف",
       deleteEmployeeConfirm: "هل أنت متأكد من حذف هذا الموظف؟",
 
+      // Form Labels
+      name: "الاسم",
+      email: "البريد الإلكتروني",
+
       // Form Placeholders
       namePlaceholder: "أدخل الاسم الكامل",
       emailPlaceholder: "أدخل عنوان البريد الإلكتروني",
@@ -736,6 +763,8 @@ const resources = {
       saveChanges: "حفظ التغييرات",
       createNew: "إنشاء جديد",
       discardChanges: "تجاهل التغييرات",
+      create: "إنشاء",
+      update: "تحديث",
 
       // Order Page Specific
       addOrderButton: "إضافة طلب",
@@ -767,8 +796,12 @@ const resources = {
       serviceTypeRequired: "نوع الخدمة *",
       ironOnly: "كي فقط",
       washIron: "غسيل وكي",
+      washIronPerfume: "غسيل وكي مع عطر",
       dryClean: "تنظيف جاف",
       packagingType: "نوع التغليف",
+      plasticPackaging: "تغليف بلاستيك",
+      fabricPackaging: "تغليف قماش",
+      boxPackaging: "تغليف صندوق",
       standardPackaging: "عادي",
       premiumPackaging: "مميز",
       ecoPackaging: "صديق للبيئة",
@@ -853,6 +886,19 @@ const resources = {
       loadingOrderStatusData: "جاري تحميل بيانات حالة الطلبات...",
       noRevenueData: "لا توجد بيانات إيرادات متاحة",
       noOrderStatusData: "لا توجد بيانات حالة الطلبات متاحة",
+      loading: "جاري التحميل...",
+      loadingUsers: "جاري تحميل المستخدمين...",
+      noRecentOrders: "لا توجد طلبات حديثة",
+      ordersWillAppear: "سوف تظهر الطلبات هنا",
+
+      // Day names for charts
+      sun: "الأحد",
+      mon: "الإثنين",
+      tue: "الثلاثاء",
+      wed: "الأربعاء",
+      thu: "الخميس",
+      fri: "الجمعة",
+      sat: "السبت",
 
       // Perfume and Oud
       perfume: "العطر",

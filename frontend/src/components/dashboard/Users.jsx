@@ -189,7 +189,7 @@ const Users = () => {
           <div className="p-8 text-center">
             <div className="flex items-center justify-center space-x-3">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#D4AF37]"></div>
-              <span className="text-white/70">Loading users...</span>
+              <span className="text-white/70">{t("loadingUsers")}</span>
             </div>
           </div>
         )}

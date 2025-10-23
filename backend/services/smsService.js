@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 const SMS_API_KEY = process.env.SMS_API_KEY;
 const SMS_SENDER = process.env.SMS_SENDER;
 const SMS_API_URL = "https://custom1.waghl.com/send-message";
+const SMS_MEDIA_API_URL = "https://custom1.waghl.com/send-media";
 
 // Cloudinary configuration
 cloudinary.config({
@@ -120,6 +121,105 @@ export const generateAndUploadReceipt = async (orderDetails) => {
   }
 };
 
+// Generate receipt as IMAGE and upload to Cloudinary
+export const generateAndUploadReceiptImage = async (orderDetails) => {
+  try {
+    const receiptPath = path.join(
+      __dirname,
+      `../temp/receipt-${orderDetails.id}.png`
+    );
+
+    // Ensure temp directory exists
+    const tempDir = path.dirname(receiptPath);
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+
+    // Create PDF document and convert to image
+    const doc = new PDFDocument({
+      margin: 50,
+      size: [400, 600], // Width x Height in points
+    });
+    const pdfPath = path.join(
+      __dirname,
+      `../temp/receipt-${orderDetails.id}-temp.pdf`
+    );
+    const pdfStream = fs.createWriteStream(pdfPath);
+    doc.pipe(pdfStream);
+
+    // Header with golden theme
+    doc
+      .fontSize(22)
+      .font("Helvetica-Bold")
+      .fillColor("#D4AF37")
+      .text("AKOYA PREMIUM LAUNDRY", { align: "center" });
+
+    doc
+      .fontSize(14)
+      .fillColor("#000000")
+      .font("Helvetica")
+      .text("Receipt", { align: "center" });
+    doc.moveDown();
+
+    // Order details
+    doc.fontSize(12).font("Helvetica-Bold").text("Order Information");
+    doc.fontSize(10).font("Helvetica");
+    doc.text(`Order ID: ${orderDetails.id}`);
+    doc.text(`Customer: ${orderDetails.customerName}`);
+    doc.text(`Service Type: ${orderDetails.serviceType}`);
+    doc.text(
+      `Order Date: ${new Date(orderDetails.orderDate).toLocaleDateString()}`
+    );
+    doc.text(`Status: ${orderDetails.status}`);
+    doc.moveDown();
+
+    // Amount details
+    doc.fontSize(12).font("Helvetica-Bold").text("Payment Details");
+    doc.fontSize(10).font("Helvetica");
+    doc.text(`Total Amount: $${orderDetails.total}`);
+    doc.moveDown(2);
+
+    // Footer
+    doc
+      .fontSize(8)
+      .fillColor("#666666")
+      .text("Thank you for choosing AKOYA Premium Laundry Services", {
+        align: "center",
+      });
+
+    doc.end();
+
+    // Wait for PDF to be written
+    await new Promise((resolve, reject) => {
+      pdfStream.on("finish", resolve);
+      pdfStream.on("error", reject);
+    });
+
+    // Upload PDF to Cloudinary and get image URL (Cloudinary auto-converts PDF to image)
+    const uploadResult = await cloudinary.uploader.upload(pdfPath, {
+      folder: "receipts",
+      resource_type: "image",
+      format: "png",
+      public_id: `receipt-image-${orderDetails.id}`,
+    });
+
+    // Clean up temporary files
+    try {
+      fs.unlinkSync(pdfPath);
+    } catch (cleanupError) {
+      console.warn(
+        "Warning: Could not delete temporary PDF file:",
+        cleanupError.message
+      );
+    }
+
+    return { success: true, receiptUrl: uploadResult.secure_url };
+  } catch (error) {
+    console.error("❌ Error generating receipt image:", error.message);
+    return { success: false, error: error.message };
+  }
+};
+
 // Test function to verify SMS API credentials
 export const testTwilioConnection = async () => {
   try {
@@ -214,6 +314,95 @@ export const sendSMS = async (to, message) => {
   }
 };
 
+// Send media (image) via SMS
+export const sendMediaSMS = async (to, caption, imageUrl) => {
+  try {
+    if (!SMS_API_KEY || !SMS_SENDER) {
+      const error =
+        "SMS API credentials not configured in environment variables";
+      console.error("❌", error);
+      return {
+        success: false,
+        error: error,
+      };
+    }
+
+    // Validate phone number
+    if (!to || typeof to !== "string") {
+      const error = "Invalid phone number provided";
+      console.error("❌", error, "Received:", to);
+      return {
+        success: false,
+        error: error,
+      };
+    }
+
+    // Validate image URL
+    if (!imageUrl || typeof imageUrl !== "string") {
+      const error = "Invalid image URL provided";
+      console.error("❌", error, "Received:", imageUrl);
+      return {
+        success: false,
+        error: error,
+      };
+    }
+
+    // Remove any non-digit characters (including spaces, +, -, etc.) for the API
+    const formattedNumber = to.replace(/\D/g, "");
+
+    console.log(`📤 Attempting to send media SMS to ${formattedNumber}...`);
+
+    const response = await fetch(SMS_MEDIA_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        api_key: SMS_API_KEY,
+        sender: SMS_SENDER,
+        number: formattedNumber,
+        caption: caption,
+        media_type: "image",
+        url: imageUrl,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("❌ Error sending media SMS:", {
+        status: response.status,
+        data: data,
+        to: to,
+        formattedNumber: formattedNumber,
+      });
+      return {
+        success: false,
+        error:
+          data.message ||
+          `Failed to send media SMS (Status: ${response.status})`,
+      };
+    }
+
+    console.log(
+      `✅ Media SMS sent successfully to ${formattedNumber}. Response:`,
+      data
+    );
+    return { success: true, messageId: data.id || "sent", status: "sent" };
+  } catch (error) {
+    const errorDetails = {
+      message: error.message,
+      to: to,
+    };
+    console.error("❌ Error sending media SMS:", errorDetails);
+    return {
+      success: false,
+      error: error.message,
+      details: errorDetails,
+    };
+  }
+};
+
 // Send order assignment SMS to employee
 export const sendOrderAssignmentSMS = async (
   employeePhone,
@@ -274,18 +463,19 @@ export const sendEmployeeAssignmentSMS = async (
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const confirmationLink = `${frontendUrl}/delivery-confirmation/${orderDetails.id}`;
 
-    // Generate receipt
-    console.log(`📄 Generating receipt for order ${orderDetails.id}...`);
-    const receiptResult = await generateAndUploadReceipt(orderDetails);
+    // Generate receipt image
+    console.log(`📄 Generating receipt image for order ${orderDetails.id}...`);
+    const receiptResult = await generateAndUploadReceiptImage(orderDetails);
 
     if (receiptResult.success) {
       console.log(
-        `✅ Receipt generated successfully: ${receiptResult.receiptUrl}`
+        `✅ Receipt image generated successfully: ${receiptResult.receiptUrl}`
       );
     } else {
       console.warn(`⚠️ Receipt generation failed: ${receiptResult.error}`);
     }
 
+    // First send the text message
     let message = `AKOYA Premium Laundry
 
 Dear ${customerName},
@@ -297,25 +487,36 @@ Service: ${orderDetails.serviceType}
 Amount: $${orderDetails.total}
 
 Assigned Staff: ${employeeName}
-Contact: ${employeeContact || "Available on request"}`;
-
-    // Add receipt link if available
-    if (receiptResult.success) {
-      message += `
-
-Receipt: ${receiptResult.receiptUrl}`;
-    }
-
-    message += `
+Contact: ${employeeContact || "Available on request"}
 
 IMPORTANT: After receiving your order, please confirm and rate our service:
 ${confirmationLink}
 
 - AKOYA Team`;
 
-    const result = await sendSMS(customerPhone, message);
-    console.log(`📧 Customer SMS result:`, result);
-    return result;
+    const textResult = await sendSMS(customerPhone, message);
+    console.log(`📧 Customer SMS result:`, textResult);
+
+    // If receipt was generated successfully, send it as an image
+    if (receiptResult.success) {
+      console.log(`📤 Sending receipt image to customer...`);
+      const receiptCaption = `Your receipt for Order #${orderDetails.id} - AKOYA Premium Laundry`;
+      const mediaResult = await sendMediaSMS(
+        customerPhone,
+        receiptCaption,
+        receiptResult.receiptUrl
+      );
+      console.log(`📧 Receipt image SMS result:`, mediaResult);
+
+      // Return combined result
+      return {
+        success: textResult.success && mediaResult.success,
+        textMessage: textResult,
+        receiptImage: mediaResult,
+      };
+    }
+
+    return textResult;
   } catch (error) {
     console.error("❌ Error in sendEmployeeAssignmentSMS:", error);
     return { success: false, error: error.message };

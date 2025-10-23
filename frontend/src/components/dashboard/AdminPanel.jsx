@@ -212,7 +212,7 @@ const AdminPanel = ({ setActiveComponent }) => {
                   {isLoading ? (
                     <div className="flex items-center">
                       <FiLoader className="w-4 h-4 animate-spin mr-2 text-[#D4AF37]" />
-                      <span className="text-white/50">Loading...</span>
+                      <span className="text-white/50">{t("loading")}</span>
                     </div>
                   ) : (
                     stat.value
@@ -391,11 +391,11 @@ const AdminPanel = ({ setActiveComponent }) => {
                 <div className="flex items-center">
                   <FiLoader className="w-6 h-6 text-[#D4AF37] animate-spin mr-2" />
                   <span className="text-white/70">
-                    Loading order status data...
+                    {t("loadingOrderStatusData")}
                   </span>
                 </div>
               ) : (
-                <p className="text-white/50">No order status data available</p>
+                <p className="text-white/50">{t("noOrderStatusData")}</p>
               )}
             </div>
           )}
