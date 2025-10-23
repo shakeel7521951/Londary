@@ -859,19 +859,9 @@ const OrderPage = () => {
       return;
     }
 
-    // If not authenticated and no guest info collected yet, show guest info modal
-    if (!isAuthenticated && !guestInfo) {
+    // Always show guest info modal to collect user details (whether logged in or not)
+    if (!guestInfo) {
       setShowGuestInfoModal(true);
-      return;
-    }
-
-    // If authenticated but no phone number, ask to update profile
-    if (isAuthenticated && !currentUser?.phoneNumber) {
-      toast.error(
-        language === "ar"
-          ? "يرجى تحديث ملفك الشخصي بإضافة رقم الهاتف أولاً"
-          : "Please update your profile with a phone number first"
-      );
       return;
     }
 
@@ -920,9 +910,11 @@ const OrderPage = () => {
       total: finalTotal,
     };
 
-    // Add customer info for guest users
-    if (!isAuthenticated && customerInfo) {
+    // Always add customer info (whether from modal or from guest info state)
+    if (customerInfo) {
       orderDetails.customerInfo = customerInfo;
+    } else if (guestInfo) {
+      orderDetails.customerInfo = guestInfo;
     }
 
     try {

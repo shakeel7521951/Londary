@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
   FiHome,
   FiUsers,
@@ -13,12 +14,14 @@ import {
   FiX,
   FiGift,
   FiSend,
+  FiExternalLink,
 } from "react-icons/fi";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 
 const Sidebar = ({ activeComponent, setActiveComponent }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const menuItems = [
     { icon: FiHome, label: "Main Panel", translationKey: "mainPanel" },
@@ -80,6 +83,31 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
 
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
+          {/* Home Page Navigation Button */}
+          <motion.li whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/");
+              }}
+              className="flex items-center space-x-3 px-3 py-3 rounded-lg transition-all duration-200 group text-white/80 hover:bg-[#D4AF37]/20 hover:text-white border-b border-[#D4AF37]/20 mb-2"
+            >
+              <FiExternalLink
+                size={20}
+                className="text-[#D4AF37] group-hover:text-white"
+              />
+              <motion.span
+                className="font-medium"
+                variants={itemVariants}
+                animate={isCollapsed ? "collapsed" : "expanded"}
+                transition={{ duration: 0.2 }}
+              >
+                {!isCollapsed && (t("goToHomePage") || "Go to Home")}
+              </motion.span>
+            </a>
+          </motion.li>
+
           {menuItems.map((item, index) => (
             <motion.li
               key={index}

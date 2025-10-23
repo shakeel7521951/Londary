@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
   FiPackage,
   FiUsers,
@@ -12,6 +13,7 @@ import {
   FiGift,
   FiLoader,
   FiUserCheck,
+  FiHome,
 } from "react-icons/fi";
 import {
   AreaChart,
@@ -39,6 +41,7 @@ import { formatCurrency } from "../../utils/formatters";
 const AdminPanel = ({ setActiveComponent }) => {
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language;
+  const navigate = useNavigate();
 
   // Fetch real data from backend
   const { data: usersData, isLoading: usersLoading } = useGetAllUsersQuery();
@@ -273,7 +276,7 @@ const AdminPanel = ({ setActiveComponent }) => {
                 <YAxis
                   stroke="#D4AF37"
                   style={{ fontSize: "12px" }}
-                  tickFormatter={(value) => `$${value}`}
+                  tickFormatter={(value) => `${value} QAR`}
                 />
                 <Tooltip
                   contentStyle={{
@@ -285,7 +288,7 @@ const AdminPanel = ({ setActiveComponent }) => {
                   formatter={(value, name, props) => {
                     if (name === "revenue") {
                       return [
-                        `$${value}`,
+                        `${value} QAR`,
                         `Revenue (${props.payload.completedOrders} completed orders)`,
                       ];
                     }
@@ -518,7 +521,13 @@ const AdminPanel = ({ setActiveComponent }) => {
           <h2 className="text-lg font-light text-white mb-4 tracking-wide">
             {t("recentOrders")}
           </h2>
-          <div className="space-y-3">
+          <div
+            className="space-y-3 max-h-[400px] overflow-y-auto pr-2"
+            style={{
+              scrollbarWidth: "thin",
+              scrollbarColor: "#D4AF37 #1C1C1C",
+            }}
+          >
             {isLoading ? (
               <div className="flex items-center justify-center p-8">
                 <FiLoader className="w-6 h-6 text-[#D4AF37] animate-spin" />
@@ -550,7 +559,10 @@ const AdminPanel = ({ setActiveComponent }) => {
                       {order.status}
                     </span>
                     <p className="text-sm font-semibold text-[#D4AF37] mt-1">
-                      {order.amount}
+                      {formatCurrency(
+                        parseFloat(order.amount) || 0,
+                        currentLanguage
+                      )}
                     </p>
                   </div>
                 </div>
@@ -580,6 +592,25 @@ const AdminPanel = ({ setActiveComponent }) => {
             {t("quickActions")}
           </h2>
           <div className="space-y-3">
+            <button
+              onClick={() => navigate("/")}
+              className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-[#D4AF37] rounded-lg flex items-center justify-center shadow-lg">
+                  <FiHome className="w-5 h-5 text-[#1C1C1C]" />
+                </div>
+                <div>
+                  <p className="font-medium text-white">
+                    {t("goToHomePage") || "Go to Home Page"}
+                  </p>
+                  <p className="text-sm text-white/70">
+                    {t("visitMainWebsite") || "Visit the main website"}
+                  </p>
+                </div>
+              </div>
+            </button>
+
             <button
               onClick={() => setActiveComponent("Orders")}
               className="w-full p-4 bg-[#D4AF37]/10 hover:bg-[#D4AF37]/20 border border-[#D4AF37]/30 rounded-lg text-left transition-all duration-300 group"

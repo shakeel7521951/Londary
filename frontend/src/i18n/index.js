@@ -19,6 +19,8 @@ const resources = {
       analytics: "Analytics",
       payments: "Payments",
       settings: "Settings",
+      goToHomePage: "Go to Home Page",
+      visitMainWebsite: "Visit the main website",
 
       // Language Switcher
       language: "Language",
@@ -489,6 +491,8 @@ const resources = {
       analytics: "التحليلات",
       payments: "المدفوعات",
       settings: "الإعدادات",
+      goToHomePage: "الذهاب إلى الصفحة الرئيسية",
+      visitMainWebsite: "زيارة الموقع الرئيسي",
 
       // Language Switcher
       language: "اللغة",

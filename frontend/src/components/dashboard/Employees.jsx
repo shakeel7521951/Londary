@@ -561,9 +561,9 @@ const Employees = () => {
                       </p>
                     </div>
                   </td>
-                  <td className="py-4 px-6">
+                  <td className="py-4 px-6 whitespace-nowrap">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getDepartmentColor(
+                      className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getDepartmentColor(
                         employee.department
                       )}`}
                     >

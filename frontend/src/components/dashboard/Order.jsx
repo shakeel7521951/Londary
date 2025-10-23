@@ -544,7 +544,22 @@ const Order = () => {
         {`
           .overflow-x-auto::-webkit-scrollbar,
           .overflow-y-auto::-webkit-scrollbar {
-            display: none;
+            width: 6px;
+            height: 6px;
+          }
+          .overflow-x-auto::-webkit-scrollbar-track,
+          .overflow-y-auto::-webkit-scrollbar-track {
+            background: #1C1C1C;
+            border-radius: 3px;
+          }
+          .overflow-x-auto::-webkit-scrollbar-thumb,
+          .overflow-y-auto::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 3px;
+          }
+          .overflow-x-auto::-webkit-scrollbar-thumb:hover,
+          .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+            background: #BFA134;
           }
         `}
       </style>
@@ -652,10 +667,12 @@ const Order = () => {
                 {t("total")} {t("revenue")}
               </p>
               <p className="text-2xl font-light text-white">
-                $
-                {orders
-                  .filter((order) => order.status === "completed")
-                  .reduce((sum, order) => sum + order.total, 0)}
+                {formatCurrency(
+                  orders
+                    .filter((order) => order.status === "completed")
+                    .reduce((sum, order) => sum + order.total, 0),
+                  currentLanguage
+                )}
               </p>
             </div>
           </div>
@@ -1155,7 +1172,7 @@ const Order = () => {
           onClick={() => setShowAddOrderModal(false)}
         >
           <motion.div
-            className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-[#D4AF37]/20"
+            className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] rounded-2xl max-w-4xl w-full max-h-[90vh] shadow-2xl border border-[#D4AF37]/20 flex flex-col"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
@@ -1163,10 +1180,10 @@ const Order = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              className="overflow-y-auto max-h-[90vh]"
+              className="overflow-y-auto flex-1"
               style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
+                scrollbarWidth: "thin",
+                scrollbarColor: "#D4AF37 #1C1C1C",
               }}
             >
               {/* Modal Header */}
