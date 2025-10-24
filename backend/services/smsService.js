@@ -135,10 +135,10 @@ export const generateAndUploadReceiptImage = async (orderDetails) => {
       fs.mkdirSync(tempDir, { recursive: true });
     }
 
-    // Create PDF document with professional styling - Perfect dimensions
+    // Create a compact, professional, bilingual receipt using PDFKit
     const doc = new PDFDocument({
       margin: 0,
-      size: [450, 700], // Perfect size for mobile viewing
+      size: [400, 620], // Compact mobile-friendly size
     });
     const pdfPath = path.join(
       __dirname,
@@ -147,275 +147,232 @@ export const generateAndUploadReceiptImage = async (orderDetails) => {
     const pdfStream = fs.createWriteStream(pdfPath);
     doc.pipe(pdfStream);
 
-    // === HEADER SECTION WITH DARK BACKGROUND ===
-    doc.rect(0, 0, 450, 110).fill("#1C1C1C");
+    // === HEADER - BRAND SECTION ===
+    doc.rect(0, 0, 400, 85).fill("#1C1C1C");
 
-    // AKOYA Logo in Golden
     doc
-      .fontSize(32)
+      .fontSize(28)
       .font("Helvetica-Bold")
       .fillColor("#D4AF37")
-      .text("AKOYA", 0, 25, { align: "center", width: 450 });
+      .text("AKOYA", 0, 20, { align: "center", width: 400 });
 
-    // Subtitle
     doc
-      .fontSize(13)
+      .fontSize(11)
       .font("Helvetica")
       .fillColor("#FFFFFF")
-      .text("Premium Laundry Services", 0, 65, { align: "center", width: 450 });
-
-    // Tagline
-    doc
-      .fontSize(10)
-      .font("Helvetica-Oblique")
-      .fillColor("#D4AF37")
-      .text("✨ Excellence in Every Detail ✨", 0, 85, {
+      .text("خدمات الغسيل الفاخرة | Premium Laundry", 0, 55, {
         align: "center",
-        width: 450,
+        width: 400,
       });
 
-    // === RECEIPT TITLE SECTION ===
-    let currentY = 130;
-
-    // Top decorative line
+    // === RECEIPT TITLE ===
     doc
-      .strokeColor("#D4AF37")
-      .lineWidth(1)
-      .moveTo(100, currentY)
-      .lineTo(350, currentY)
-      .stroke();
-
-    currentY += 15;
-
-    // "RECEIPT" Title
-    doc
-      .fontSize(20)
+      .fontSize(16)
       .font("Helvetica-Bold")
       .fillColor("#1C1C1C")
-      .text("RECEIPT", 0, currentY, { align: "center", width: 450 });
-
-    currentY += 25;
-
-    // Bottom decorative line
-    doc
-      .strokeColor("#D4AF37")
-      .lineWidth(1)
-      .moveTo(100, currentY)
-      .lineTo(350, currentY)
-      .stroke();
-
-    currentY += 25;
+      .text("فاتورة | RECEIPT", 0, 100, { align: "center", width: 400 });
 
     // === ORDER ID BADGE ===
-    const badgeWidth = 200;
-    const badgeHeight = 35;
-    const badgeX = (450 - badgeWidth) / 2;
-
+    const badgeY = 130;
     doc
-      .roundedRect(badgeX, currentY, badgeWidth, badgeHeight, 6)
+      .roundedRect(100, badgeY, 200, 30, 5)
       .fillAndStroke("#FFF9E6", "#D4AF37");
 
     doc
-      .fontSize(13)
+      .fontSize(11)
       .font("Helvetica-Bold")
       .fillColor("#1C1C1C")
       .text(
-        `Order #${orderDetails.id.toString().slice(-8).toUpperCase()}`,
-        badgeX,
-        currentY + 10,
-        {
-          width: badgeWidth,
-          align: "center",
-        }
+        `#${orderDetails.id.toString().slice(-8).toUpperCase()}`,
+        100,
+        badgeY + 9,
+        { width: 200, align: "center" }
       );
 
-    currentY += badgeHeight + 30;
+    // === CONTENT BOX ===
+    const boxX = 25;
+    const boxY = 175;
+    const boxWidth = 350;
 
-    // === CUSTOMER INFORMATION BOX ===
-    const boxMargin = 35;
-    const boxWidth = 450 - 2 * boxMargin;
-    const infoBoxHeight = 105;
-
-    // Draw customer info box
     doc
-      .roundedRect(boxMargin, currentY, boxWidth, infoBoxHeight, 10)
-      .fillAndStroke("#FFFFFF", "#D4AF37");
+      .roundedRect(boxX, boxY, boxWidth, 280, 8)
+      .fillAndStroke("#FFFFFF", "#E0E0E0");
 
-    // Box title
-    doc
-      .fontSize(12)
-      .font("Helvetica-Bold")
-      .fillColor("#D4AF37")
-      .text("👤 CUSTOMER INFORMATION", boxMargin + 15, currentY + 15, {
-        width: boxWidth - 30,
-      });
-
-    let infoY = currentY + 42;
+    let contentY = boxY + 20;
 
     // Customer Name
     doc
-      .fontSize(10)
+      .fontSize(9)
       .font("Helvetica")
       .fillColor("#666666")
-      .text("Name:", boxMargin + 15, infoY, { width: 80, continued: false });
+      .text("العميل | Customer", boxX + 20, contentY, { width: 310 });
 
+    contentY += 15;
     doc
+      .fontSize(11)
       .font("Helvetica-Bold")
       .fillColor("#1C1C1C")
-      .text(orderDetails.customerName, boxMargin + 90, infoY, {
-        width: boxWidth - 105,
-      });
+      .text(orderDetails.customerName, boxX + 20, contentY, { width: 310 });
 
-    infoY += 20;
+    contentY += 25;
+
+    // Divider line
+    doc
+      .strokeColor("#E0E0E0")
+      .lineWidth(1)
+      .moveTo(boxX + 20, contentY)
+      .lineTo(boxX + boxWidth - 20, contentY)
+      .stroke();
+
+    contentY += 15;
 
     // Service Type
     doc
+      .fontSize(9)
       .font("Helvetica")
       .fillColor("#666666")
-      .text("Service:", boxMargin + 15, infoY, { width: 80, continued: false });
+      .text("الخدمة | Service", boxX + 20, contentY, { width: 310 });
 
+    contentY += 15;
     doc
+      .fontSize(10)
       .font("Helvetica-Bold")
       .fillColor("#1C1C1C")
       .text(
         orderDetails.serviceType.replace(/_/g, " ").toUpperCase(),
-        boxMargin + 90,
-        infoY,
-        { width: boxWidth - 105 }
+        boxX + 20,
+        contentY,
+        { width: 310 }
       );
 
-    infoY += 20;
+    contentY += 25;
 
-    // Order Date
+    // Divider line
     doc
+      .strokeColor("#E0E0E0")
+      .lineWidth(1)
+      .moveTo(boxX + 20, contentY)
+      .lineTo(boxX + boxWidth - 20, contentY)
+      .stroke();
+
+    contentY += 15;
+
+    // Date
+    doc
+      .fontSize(9)
       .font("Helvetica")
       .fillColor("#666666")
-      .text("Date:", boxMargin + 15, infoY, { width: 80, continued: false });
+      .text("التاريخ | Date", boxX + 20, contentY, { width: 310 });
 
+    contentY += 15;
     doc
-      .font("Helvetica-Bold")
+      .fontSize(10)
+      .font("Helvetica")
       .fillColor("#1C1C1C")
       .text(
         new Date(orderDetails.orderDate).toLocaleDateString("en-US", {
           year: "numeric",
-          month: "long",
+          month: "short",
           day: "numeric",
         }),
-        boxMargin + 90,
-        infoY,
-        { width: boxWidth - 105 }
+        boxX + 20,
+        contentY,
+        { width: 310 }
       );
 
-    currentY += infoBoxHeight + 25;
+    contentY += 30;
 
-    // === PAYMENT DETAILS BOX ===
-    const paymentBoxHeight = 85;
+    // === PAYMENT SECTION - HIGHLIGHTED ===
+    const payBoxY = contentY;
+    doc.roundedRect(boxX + 15, payBoxY, boxWidth - 30, 75, 6).fill("#FFF9E6");
 
-    // Draw payment box with light golden background
+    // Payment status
     doc
-      .roundedRect(boxMargin, currentY, boxWidth, paymentBoxHeight, 10)
-      .fillAndStroke("#FFF9E6", "#D4AF37");
-
-    // Box title
-    doc
-      .fontSize(12)
-      .font("Helvetica-Bold")
-      .fillColor("#D4AF37")
-      .text("💰 PAYMENT DETAILS", boxMargin + 15, currentY + 15, {
-        width: boxWidth - 30,
-      });
-
-    let paymentY = currentY + 42;
-
-    // Payment Status
-    doc
-      .fontSize(10)
+      .fontSize(9)
       .font("Helvetica")
       .fillColor("#666666")
-      .text("Status:", boxMargin + 15, paymentY, {
-        width: 100,
-        continued: false,
-      });
+      .text("الحالة | Status", boxX + 30, payBoxY + 15, { width: 140 });
 
-    doc
-      .font("Helvetica-Bold")
-      .fillColor("#28A745")
-      .text("PAID ✓", boxMargin + 105, paymentY, { width: boxWidth - 120 });
-
-    paymentY += 25;
-
-    // Total Amount - Large and prominent
     doc
       .fontSize(11)
       .font("Helvetica-Bold")
-      .fillColor("#666666")
-      .text("Total Amount:", boxMargin + 15, paymentY, {
-        width: 120,
-        continued: false,
-      });
+      .fillColor("#28A745")
+      .text("مدفوع ✓ PAID", boxX + 180, payBoxY + 13, { width: 140 });
 
-    doc
-      .fontSize(18)
-      .font("Helvetica-Bold")
-      .fillColor("#D4AF37")
-      .text(`${orderDetails.total} ر.ق`, boxMargin + 125, paymentY - 2, {
-        width: boxWidth - 140,
-      });
-
-    currentY += paymentBoxHeight + 30;
-
-    // === DECORATIVE SEPARATOR ===
-    doc
-      .strokeColor("#D4AF37")
-      .lineWidth(0.5)
-      .moveTo(100, currentY)
-      .lineTo(350, currentY)
-      .stroke();
-
-    currentY += 25;
-
-    // === FOOTER SECTION ===
-    // Thank you message
+    // Total amount - Large and centered
     doc
       .fontSize(10)
       .font("Helvetica")
       .fillColor("#666666")
-      .text("Thank you for choosing AKOYA Premium Laundry", 0, currentY, {
+      .text("المبلغ الإجمالي | Total Amount", boxX + 30, payBoxY + 38, {
+        width: 290,
         align: "center",
-        width: 450,
       });
 
-    currentY += 18;
+    doc
+      .fontSize(20)
+      .font("Helvetica-Bold")
+      .fillColor("#D4AF37")
+      .text(`${orderDetails.total} ر.ق`, boxX + 30, payBoxY + 52, {
+        width: 290,
+        align: "center",
+      });
+
+    // === FOOTER ===
+    let footerY = 480;
+
+    // Thank you message - bilingual
+    doc
+      .fontSize(9)
+      .font("Helvetica")
+      .fillColor("#666666")
+      .text("شكراً لاختيارك أكويا", 0, footerY, {
+        align: "center",
+        width: 400,
+      });
+
+    footerY += 12;
+    doc
+      .fontSize(9)
+      .fillColor("#666666")
+      .text("Thank you for choosing AKOYA", 0, footerY, {
+        align: "center",
+        width: 400,
+      });
+
+    footerY += 25;
 
     // Contact info
     doc
-      .fontSize(8)
+      .fontSize(7)
       .fillColor("#999999")
-      .text(
-        "For inquiries: info@akoya-laundry.qa | +974 XXXX XXXX",
-        0,
-        currentY,
-        {
-          align: "center",
-          width: 450,
-        }
-      );
+      .text("للاستفسارات | For inquiries:", 0, footerY, {
+        align: "center",
+        width: 400,
+      });
 
-    currentY += 18;
+    footerY += 10;
+    doc
+      .fontSize(7)
+      .fillColor("#999999")
+      .text("info@akoya-laundry.qa | +974 XXXX XXXX", 0, footerY, {
+        align: "center",
+        width: 400,
+      });
+
+    footerY += 20;
 
     // Receipt ID
     doc
       .fontSize(7)
       .fillColor("#CCCCCC")
-      .text(`Receipt ID: ${orderDetails.id}`, 0, currentY, {
+      .text(`Receipt ID: ${orderDetails.id}`, 0, footerY, {
         align: "center",
-        width: 450,
+        width: 400,
       });
 
-    currentY += 20;
-
-    // === BOTTOM GOLDEN BORDER ===
-    doc.rect(0, currentY, 450, 4).fill("#D4AF37");
+    // === BOTTOM BORDER ===
+    doc.rect(0, 615, 400, 5).fill("#D4AF37");
 
     doc.end();
 
