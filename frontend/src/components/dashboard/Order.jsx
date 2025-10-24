@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import {
   useGetAllOrdersQuery,
@@ -13,7 +14,6 @@ import {
   FiFilter,
   FiEye,
   FiEdit,
-  FiPrinter,
   FiX,
   FiUser,
   FiPhone,
@@ -40,6 +40,7 @@ import {
 const Order = () => {
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language;
+  const token = useSelector((state) => state.auth.token);
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -365,6 +366,79 @@ const Order = () => {
           },
         }
       );
+    }
+  };
+
+  const notifyEmployeeForDelivery = async (orderId) => {
+    try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+      // Try to get token from Redux first, then fallback to localStorage
+      const authToken = token || localStorage.getItem("token");
+
+      console.log("🔍 Token from Redux:", token);
+      console.log("🔍 Token from localStorage:", localStorage.getItem("token"));
+      console.log("🔍 Using token:", authToken);
+
+      if (!authToken) {
+        toast.error(
+          "Session expired or token missing. Please logout and login again.",
+          {
+            duration: 6000,
+            style: {
+              background: "#FFE6E6",
+              color: "#D32F2F",
+              border: "1px solid #D32F2F",
+            },
+          }
+        );
+        throw new Error("Authentication required. Please login again.");
+      }
+
+      const response = await fetch(
+        `${baseUrl}/orders/notify-delivery/${orderId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to send notification");
+      }
+
+      toast.success(
+        `Delivery notification sent to ${data.employeeName} successfully! 🚚`,
+        {
+          duration: 5000,
+          style: {
+            background: "#FFF9E6",
+            color: "#D4AF37",
+            border: "1px solid #D4AF37",
+          },
+        }
+      );
+
+      // Refresh orders list
+      refetch();
+
+      // Close modal after successful notification
+      closeModal();
+    } catch (error) {
+      console.error("Failed to notify employee for delivery:", error);
+      toast.error(error.message || "Failed to send delivery notification", {
+        duration: 4000,
+        style: {
+          background: "#FFE6E6",
+          color: "#D32F2F",
+          border: "1px solid #D32F2F",
+        },
+      });
     }
   };
 
@@ -1151,10 +1225,20 @@ const Order = () => {
                   >
                     {t("close")}
                   </button>
-                  <button className="px-6 py-2 bg-gradient-to-r from-[#D4AF37] to-[#C4941F] text-[#1C1C1C] rounded-lg hover:from-[#C4941F] hover:to-[#B8851B] transition-colors font-medium flex items-center space-x-2">
-                    <FiPrinter className="w-4 h-4" />
-                    <span>{t("printInvoice")}</span>
-                  </button>
+                  {selectedOrder.status === "processing" &&
+                    selectedOrder.assignedEmployee && (
+                      <button
+                        onClick={() =>
+                          notifyEmployeeForDelivery(selectedOrder.id)
+                        }
+                        className="px-6 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-colors font-medium flex items-center space-x-2"
+                      >
+                        <FiTruck className="w-4 h-4" />
+                        <span>
+                          {t("readyForDelivery") || "Ready for Delivery"}
+                        </span>
+                      </button>
+                    )}
                 </div>
               </div>
             </div>

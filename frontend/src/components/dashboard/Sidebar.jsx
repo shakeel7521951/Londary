@@ -51,7 +51,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
 
   return (
     <motion.div
-      className="h-screen bg-gradient-to-b from-[#1C1C1C] to-[#2C2C2C] shadow-2xl flex flex-col border-r border-[#D4AF37]/20"
+      className="h-screen bg-gradient-to-b from-[#1C1C1C] to-[#2C2C2C] shadow-2xl flex flex-col border-r border-[#D4AF37]/20 overflow-hidden"
       variants={sidebarVariants}
       animate={isCollapsed ? "collapsed" : "expanded"}
       transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -81,7 +81,7 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
         </div>
       </div>
 
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4 overflow-y-auto scrollbar-thin">
         <ul className="space-y-2">
           {/* Home Page Navigation Button */}
           <motion.li whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>

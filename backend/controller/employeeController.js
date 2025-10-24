@@ -1,6 +1,9 @@
 import Employee from "../models/Employee.js";
 import Order from "../models/Order.js";
-import { sendOrderAssignmentSMS } from "../services/smsService.js";
+import {
+  sendOrderAssignmentSMS,
+  sendCollectionNotificationSMS,
+} from "../services/smsService.js";
 
 // Create new employee (Admin only)
 export const createEmployee = async (req, res) => {
@@ -191,27 +194,67 @@ export const assignOrderToEmployee = async (req, res) => {
     // Send SMS notification to employee
     const orderDetails = {
       id: order._id,
-      customerName: order.userId?.name || "Unknown Customer",
+      customerName:
+        order.customerInfo?.name || order.userId?.name || "Unknown Customer",
       serviceType: order.serviceType,
       total: order.total,
       orderDate: order.createdAt,
-      address: order.cardFrom || "Address not provided",
-      customerPhone: order.userId?.email || "Contact not provided", // Using email as phone for now
+      address:
+        order.customerInfo?.address || order.cardFrom || "Address not provided",
+      customerPhone:
+        order.customerInfo?.phoneNumber ||
+        order.userId?.phoneNumber ||
+        "Contact not provided",
     };
 
-    const smsResult = await sendOrderAssignmentSMS(
+    const employeeSmsResult = await sendOrderAssignmentSMS(
       employee.whatsappNumber,
       employee.name,
       orderDetails
     );
+
+    // Send collection notification to customer
+    const customerPhone =
+      order.customerInfo?.phoneNumber || order.userId?.phoneNumber;
+    let customerSmsResult = { success: false, error: "Not sent" };
+
+    if (customerPhone) {
+      try {
+        customerSmsResult = await sendCollectionNotificationSMS(
+          customerPhone,
+          order.customerInfo?.name || order.userId?.name || "Valued Customer",
+          orderDetails,
+          employee.name
+        );
+        console.log(
+          "✅ Customer collection notification sent:",
+          customerSmsResult
+        );
+      } catch (error) {
+        console.error(
+          "❌ Error sending collection notification to customer:",
+          error
+        );
+        customerSmsResult = {
+          success: false,
+          error: error.message || "Failed to send SMS to customer",
+        };
+      }
+    }
 
     res.status(200).json({
       success: true,
       message: "Order assigned successfully",
       employee: employee,
       order: order,
-      smsSent: smsResult.success,
-      smsMessage: smsResult.success ? "SMS notification sent" : smsResult.error,
+      smsSent: employeeSmsResult.success,
+      customerNotified: customerSmsResult.success,
+      smsMessage: employeeSmsResult.success
+        ? "SMS notification sent to employee"
+        : employeeSmsResult.error,
+      customerMessage: customerSmsResult.success
+        ? "Collection notification sent to customer"
+        : customerSmsResult.error,
     });
   } catch (error) {
     console.error("Error assigning order to employee:", error);

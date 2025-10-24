@@ -112,6 +112,17 @@ const Login = () => {
         password: formData.password,
       }).unwrap();
 
+      console.log("🔐 Login result:", result);
+      console.log("🔐 Token received:", result.token);
+
+      // Save token to localStorage as backup
+      if (result.token) {
+        localStorage.setItem("token", result.token);
+        console.log("✅ Token saved to localStorage");
+      } else {
+        console.warn("⚠️ No token in login response!");
+      }
+
       dispatch(
         setCredentials({
           user: result.user,

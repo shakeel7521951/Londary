@@ -37,7 +37,7 @@ export const dashboardApi = createApi({
             customer:
               order.customerInfo?.name || order.userId?.name || "Unknown",
             status: order.status,
-            amount: `$${order.total}`,
+            amount: `${order.total} ر.ق`,
             fullOrder: order,
           })) || []
         );
@@ -92,7 +92,7 @@ export const dashboardApi = createApi({
               id: order.orderNumber || order.id.slice(-6).toUpperCase(),
               customer: order.customerName || "Unknown",
               status: order.status,
-              amount: `$${order.total}`,
+              amount: `${order.total} ر.ق`,
               fullOrder: order,
             })) || [],
           orderStatusDistribution: data?.orderStatusDistribution || {},

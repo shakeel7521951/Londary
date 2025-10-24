@@ -37,6 +37,10 @@ const UserProfileDropdown = ({ user }) => {
   const handleLogout = async () => {
     try {
       await logoutUser().unwrap();
+
+      // Clear token from localStorage
+      localStorage.removeItem("token");
+
       dispatch(logout());
       toast.success("Logged out successfully!");
       navigate("/");

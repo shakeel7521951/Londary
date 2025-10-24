@@ -166,6 +166,25 @@ const OrderSchema = new mongoose.Schema({
       ],
       default: "",
     },
+    // Payment confirmation fields
+    paymentMethod: {
+      type: String,
+      enum: ["cash", "card", "online", ""],
+      default: "",
+    },
+    amountPaid: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+    paymentConfirmed: {
+      type: Boolean,
+      default: false,
+    },
+    paymentNote: {
+      type: String,
+      default: "",
+    },
   },
   createdAt: {
     type: Date,

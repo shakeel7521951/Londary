@@ -474,6 +474,29 @@ const resources = {
       thankYouForChoosingUs:
         "Thank you for choosing AKOYA Premium Laundry Services",
       items: "Items",
+      paymentInformation: "Payment Information",
+      paymentMethod: "Payment Method",
+      cash: "Cash",
+      card: "Card",
+      online: "Online",
+      amountPaid: "Amount Paid",
+      orderTotal: "Order Total",
+      confirmPaymentReceived:
+        "I confirm that I have paid the amount to the delivery person",
+      paymentNote: "Payment Note",
+      paymentNotePlaceholder: "Any additional notes about the payment...",
+      alreadyConfirmed: "This order has already been confirmed.",
+      failedToLoad: "Failed to load order details. Please check the link.",
+      provideFeedback: "Please provide a rating",
+      selectSatisfaction: "Please select your satisfaction level",
+      selectPaymentMethod: "Please select a payment method",
+      enterAmountPaid: "Please enter the amount paid",
+      thankYouFeedback:
+        "Thank you for your feedback! Order marked as completed.",
+      failedToSubmit: "Failed to submit confirmation",
+
+      // Order Management - Delivery
+      readyForDelivery: "Ready for Delivery",
     },
   },
   ar: {
@@ -945,6 +968,27 @@ const resources = {
       submitting: "جاري الإرسال...",
       thankYouForChoosingUs: "شكراً لاختيارك خدمات أكويا المميزة للغسيل",
       items: "العناصر",
+      paymentInformation: "معلومات الدفع",
+      paymentMethod: "طريقة الدفع",
+      cash: "نقداً",
+      card: "بطاقة",
+      online: "إلكتروني",
+      amountPaid: "المبلغ المدفوع",
+      orderTotal: "إجمالي الطلب",
+      confirmPaymentReceived: "أؤكد أنني قد دفعت المبلغ لموظف التوصيل",
+      paymentNote: "ملاحظة الدفع",
+      paymentNotePlaceholder: "أي ملاحظات إضافية حول الدفع...",
+      alreadyConfirmed: "تم تأكيد هذا الطلب مسبقاً.",
+      failedToLoad: "فشل في تحميل تفاصيل الطلب. يرجى التحقق من الرابط.",
+      provideFeedback: "يرجى تقديم التقييم",
+      selectSatisfaction: "يرجى اختيار مستوى رضاك",
+      selectPaymentMethod: "يرجى اختيار طريقة الدفع",
+      enterAmountPaid: "يرجى إدخال المبلغ المدفوع",
+      thankYouFeedback: "شكراً لملاحظاتك! تم وضع علامة على الطلب كمكتمل.",
+      failedToSubmit: "فشل في إرسال التأكيد",
+
+      // Order Management - Delivery
+      readyForDelivery: "جاهز للتوصيل",
     },
   },
 };

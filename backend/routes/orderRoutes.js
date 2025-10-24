@@ -9,6 +9,7 @@ import {
   assignOrderToEmployee,
   testSMS,
   confirmDelivery,
+  notifyEmployeeForDelivery,
 } from "../controller/orderController.js";
 import auth from "../middleware/AuthMiddleWare.js";
 
@@ -27,6 +28,7 @@ router.get("/", auth, getAllOrders);
 router.get("/:id", auth, getOrderById);
 router.put("/status/:id", auth, updateOrderStatus);
 router.put("/assign/:id", auth, assignOrderToEmployee);
+router.put("/notify-delivery/:orderId", auth, notifyEmployeeForDelivery);
 router.delete("/:id", auth, deleteOrder);
 
 // Test route - no auth for testing

@@ -487,9 +487,8 @@ export const assignOrderToEmployee = async (req, res) => {
     const { employeeId } = req.body;
 
     const Employee = (await import("../models/Employee.js")).default;
-    const { sendOrderAssignmentSMS, sendEmployeeAssignmentSMS } = await import(
-      "../services/smsService.js"
-    );
+    const { sendOrderAssignmentSMS, sendCollectionNotificationSMS } =
+      await import("../services/smsService.js");
 
     // Find employee and order
     const employee = await Employee.findById(employeeId);
@@ -548,14 +547,14 @@ export const assignOrderToEmployee = async (req, res) => {
       order.customerInfo?.phoneNumber || order.userId?.phoneNumber
     );
 
-    // Send SMS notification to employee
+    // Send SMS notification to employee (with customer phone number)
     let employeeSmsResult = { success: false, error: "Not sent" };
     if (employee.whatsappNumber) {
       try {
         employeeSmsResult = await sendOrderAssignmentSMS(
           employee.whatsappNumber, // Phone number field (legacy name)
           employee.name,
-          orderDetails
+          orderDetails // Contains customerPhone
         );
         console.log("✅ Employee SMS result:", employeeSmsResult);
       } catch (employeeError) {
@@ -573,21 +572,24 @@ export const assignOrderToEmployee = async (req, res) => {
       };
     }
 
-    // Send SMS notification to customer about employee assignment
+    // Send SMS notification to customer about collection (we're on the way, with employee phone)
     const customerPhone =
       order.customerInfo?.phoneNumber || order.userId?.phoneNumber;
     let customerSmsResult = { success: false, error: "Not sent" };
 
     if (customerPhone) {
       try {
-        customerSmsResult = await sendEmployeeAssignmentSMS(
+        customerSmsResult = await sendCollectionNotificationSMS(
           customerPhone,
           order.customerInfo?.name || order.userId?.name || "Valued Customer",
           orderDetails,
           employee.name,
-          employee.whatsappNumber // Employee contact number (legacy field name)
+          employee.whatsappNumber || "Contact admin" // Pass employee phone to customer
         );
-        console.log("✅ Customer SMS result:", customerSmsResult);
+        console.log(
+          "✅ Customer collection notification SMS result:",
+          customerSmsResult
+        );
       } catch (customerNotifyError) {
         console.error("❌ Error sending SMS to customer:", customerNotifyError);
         customerSmsResult = {
@@ -722,11 +724,66 @@ export const confirmDelivery = async (req, res) => {
       rating: rating,
       feedback: feedback || "",
       satisfactionLevel: satisfactionLevel || "",
+      paymentMethod: req.body.paymentMethod || "",
+      amountPaid: req.body.amountPaid || order.total,
+      paymentConfirmed: req.body.paymentConfirmed || true,
+      paymentNote: req.body.paymentNote || "",
     };
     order.status = "completed";
     order.updatedAt = new Date();
 
     await order.save();
+
+    // Step 1: Send payment confirmation SMS immediately
+    const customerPhone = order.customerInfo?.phoneNumber;
+    const customerName =
+      order.customerInfo?.name || order.userId?.name || "Valued Customer";
+
+    if (customerPhone) {
+      try {
+        const {
+          sendPaymentConfirmationSMS,
+          generateAndUploadReceiptImage,
+          sendDigitalReceiptSMS,
+        } = await import("../services/smsService.js");
+
+        // Send payment confirmation SMS first
+        console.log("📱 Sending payment confirmation SMS...");
+        await sendPaymentConfirmationSMS(customerPhone, customerName);
+        console.log("✅ Payment confirmation SMS sent successfully");
+
+        // Step 2: Generate receipt
+        const receiptDetails = {
+          id: order._id,
+          customerName: customerName,
+          serviceType: order.serviceType,
+          total: order.total,
+          orderDate: order.createdAt,
+          status: "completed",
+        };
+
+        console.log("🧾 Generating receipt...");
+        const receiptResult = await generateAndUploadReceiptImage(
+          receiptDetails
+        );
+
+        // Step 3: Send digital receipt with image
+        if (receiptResult.success) {
+          console.log("📧 Sending digital receipt SMS...");
+          await sendDigitalReceiptSMS(
+            customerPhone,
+            order._id.toString().slice(-8).toUpperCase(),
+            receiptResult.receiptUrl
+          );
+          console.log("✅ Digital receipt sent successfully");
+        }
+      } catch (smsError) {
+        console.error("❌ Error sending SMS notifications:", smsError);
+        // Don't fail the confirmation if SMS sending fails
+      }
+    } else {
+      console.warn("⚠️ No customer phone number found, skipping SMS");
+    }
 
     res.status(200).json({
       message: "Delivery confirmed successfully. Thank you for your feedback!",
@@ -736,6 +793,79 @@ export const confirmDelivery = async (req, res) => {
     console.error("Confirm delivery error:", error);
     res.status(500).json({
       message: "Failed to confirm delivery",
+      error: error.message,
+    });
+  }
+};
+
+// Notify employee that order is ready for delivery
+export const notifyEmployeeForDelivery = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    // Find the order and populate employee details
+    const order = await Order.findById(orderId).populate("assignedEmployee");
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Check if employee is assigned
+    if (!order.assignedEmployee) {
+      return res
+        .status(400)
+        .json({ message: "No employee assigned to this order" });
+    }
+
+    // Check if order status is appropriate for delivery
+    if (order.status !== "processing") {
+      return res.status(400).json({
+        message: `Order must be in 'processing' status to notify for delivery. Current status: ${order.status}`,
+      });
+    }
+
+    // Generate delivery confirmation link
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+    const deliveryConfirmationLink = `${FRONTEND_URL}/delivery-confirmation/${orderId}`;
+
+    // Prepare order details for SMS
+    const orderDetails = {
+      orderId: order._id,
+      customerName:
+        order.customerInfo?.name || order.userId?.name || "Customer",
+      customerPhone: order.customerInfo?.phoneNumber || "",
+      customerAddress: order.customerInfo?.address || "",
+      serviceType: order.serviceType,
+      total: order.total,
+    };
+
+    // Send SMS to employee
+    const { sendDeliveryNotificationSMS } = await import(
+      "../services/smsService.js"
+    );
+    const smsResult = await sendDeliveryNotificationSMS(
+      order.assignedEmployee.whatsappNumber,
+      order.assignedEmployee.name,
+      orderDetails,
+      deliveryConfirmationLink
+    );
+
+    if (smsResult.success) {
+      res.status(200).json({
+        message: "Delivery notification sent to employee successfully",
+        employeeName: order.assignedEmployee.name,
+        orderId: order._id,
+      });
+    } else {
+      res.status(500).json({
+        message: "Failed to send delivery notification",
+        error: smsResult.message,
+      });
+    }
+  } catch (error) {
+    console.error("Notify employee for delivery error:", error);
+    res.status(500).json({
+      message: "Failed to notify employee",
       error: error.message,
     });
   }

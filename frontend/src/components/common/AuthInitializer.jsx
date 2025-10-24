@@ -30,7 +30,8 @@ const AuthInitializer = ({ children }) => {
         })
       );
     } else if (isError && error?.status === 401) {
-      // If token is invalid, logout user
+      // If token is invalid, logout user and clear localStorage
+      localStorage.removeItem("token");
       dispatch(logout());
     }
   }, [userProfile, isError, error, dispatch]);
