@@ -500,9 +500,11 @@ const Order = () => {
       errors["customerInfo.name"] = "Customer name is required";
     }
 
-    if (!orderForm.customerInfo.email.trim()) {
-      errors["customerInfo.email"] = "Customer email is required";
-    } else if (!/\S+@\S+\.\S+/.test(orderForm.customerInfo.email)) {
+    // Email validation (optional - only validate format if provided)
+    if (
+      orderForm.customerInfo.email.trim() &&
+      !/\S+@\S+\.\S+/.test(orderForm.customerInfo.email)
+    ) {
       errors["customerInfo.email"] = "Please enter a valid email";
     }
 

@@ -117,8 +117,8 @@ const Contact = () => {
             </h3>
             <p className="text-[#2C2C2C] mb-8 leading-relaxed">
               {language === "ar"
-                ? "فريق الكونسيرج لدينا متاح لمساعدتك في أي استفسارات حول خدمات الغسيل الفاخرة لدينا. تواصل معنا بالطريقة التي تفضلها وسنرد عليك بسرعة."
-                : "Our concierge team is available to assist you with any inquiries about our premium laundry services. Reach out via your preferred method and we'll respond promptly."}
+                ? "فريق الكونسيرج لدينا متاح لمساعدتك في أي استفسارات حول خدمات الغسيل الفاخرة لدينا. تواصل معنا عبر الطريقة المفضلة لديك وسنرد عليك بسرعة."
+                : "Our concierge team is available to assist you with any inquiries about our luxury laundry services. Reach out via your preferred method and we'll respond promptly."}
             </p>
 
             <div className="space-y-6">

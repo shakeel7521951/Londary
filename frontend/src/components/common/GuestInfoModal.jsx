@@ -20,8 +20,8 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
       subtitle: "Please provide your contact details to place the order",
       nameLabel: "Full Name",
       namePlaceholder: "Enter your full name",
-      emailLabel: "Email Address",
-      emailPlaceholder: "your@email.com",
+      emailLabel: "Email Address (Optional)",
+      emailPlaceholder: "your@email.com (optional)",
       phoneLabel: "WhatsApp Number",
       phonePlaceholder: "+974XXXXXXXX (with country code)",
       addressLabel: "Delivery Address",
@@ -41,8 +41,8 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
       subtitle: "يرجى تقديم تفاصيل الاتصال الخاصة بك لتقديم الطلب",
       nameLabel: "الاسم الكامل",
       namePlaceholder: "أدخل اسمك الكامل",
-      emailLabel: "عنوان البريد الإلكتروني",
-      emailPlaceholder: "your@email.com",
+      emailLabel: "عنوان البريد الإلكتروني (اختياري)",
+      emailPlaceholder: "your@email.com (اختياري)",
       phoneLabel: "رقم الواتساب",
       phonePlaceholder: "+974XXXXXXXX (مع رمز الدولة)",
       addressLabel: "عنوان التسليم",
@@ -68,10 +68,11 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
       newErrors.name = t.required;
     }
 
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = t.required;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    // Email validation (optional - only validate format if provided)
+    if (
+      formData.email.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+    ) {
       newErrors.email = t.invalidEmail;
     }
 
@@ -248,7 +249,7 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
                   {/* Email Field */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                      {t.emailLabel} <span className="text-red-500">*</span>
+                      {t.emailLabel}
                     </label>
                     <input
                       type="email"

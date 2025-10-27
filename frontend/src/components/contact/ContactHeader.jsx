@@ -10,42 +10,42 @@ const ContactSlider = () => {
       id: 1,
       title: {
         en: "Contact Akoya Laundry",
-        ar: "اتصل بغسيل أكويا"
+        ar: "اتصل بغسيل أكويا",
       },
       subtitle: {
-        en: "Premium laundry services tailored to your needs in Doha, Qatar",
-        ar: "خدمات غسيل فاخرة مصممة حسب احتياجاتك في الدوحة، قطر"
+        en: "Luxury laundry services tailored to your needs in Doha, Qatar",
+        ar: "خدمات غسيل فاخرة مصممة حسب احتياجاتك في الدوحة، قطر",
       },
-      bgImage: "/home/exectiveCollection.jpg"
+      bgImage: "/home/exectiveCollection.jpg",
     },
     {
       id: 2,
       title: {
         en: "Professional Care",
-        ar: "رعاية احترافية"
+        ar: "رعاية احترافية",
       },
       subtitle: {
         en: "Expert fabric handling with eco-friendly detergents",
-        ar: "معالجة أقمشة احترافية باستخدام منظفات صديقة للبيئة"
+        ar: "معالجة أقمشة احترافية باستخدام منظفات صديقة للبيئة",
       },
-      bgImage: "/home/platinumCare.jpg"
+      bgImage: "/home/platinumCare.jpg",
     },
     {
       id: 3,
       title: {
         en: "Express Service",
-        ar: "خدمة سريعة"
+        ar: "خدمة سريعة",
       },
       subtitle: {
         en: "Quick turnaround without compromising quality",
-        ar: "تسليم سريع دون المساومة على الجودة"
+        ar: "تسليم سريع دون المساومة على الجودة",
       },
-      bgImage: "/home/eco.jpg"
-    }
+      bgImage: "/home/eco.jpg",
+    },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  
+
   // Auto-slide every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -59,7 +59,11 @@ const ContactSlider = () => {
   };
 
   return (
-    <div className={`relative bg-[#1C1C1C] text-white overflow-hidden h-96 min-h-[530px] flex items-center ${language === "ar" ? "rtl text-right" : ""}`}>
+    <div
+      className={`relative bg-[#1C1C1C] text-white overflow-hidden h-96 min-h-[530px] flex items-center ${
+        language === "ar" ? "rtl text-right" : ""
+      }`}
+    >
       {/* Navigation Dots */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
         {slides.map((_, index) => (
@@ -85,11 +89,11 @@ const ContactSlider = () => {
           className="absolute inset-0"
         >
           {/* Background image */}
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
-            style={{ 
+            style={{
               backgroundImage: `url(${slides[currentIndex].bgImage})`,
-              backgroundPosition: 'center'
+              backgroundPosition: "center",
             }}
           >
             <div className="absolute inset-0 bg-black/60"></div>
@@ -112,13 +116,15 @@ const ContactSlider = () => {
           className="text-center"
         >
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-light mb-6 tracking-tight">
-            {slides[currentIndex].title[language] || slides[currentIndex].title.en}
+            {slides[currentIndex].title[language] ||
+              slides[currentIndex].title.en}
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mx-auto text-[#D4AF37]">
-            {slides[currentIndex].subtitle[language] || slides[currentIndex].subtitle.en}
+            {slides[currentIndex].subtitle[language] ||
+              slides[currentIndex].subtitle.en}
           </p>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}

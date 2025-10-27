@@ -60,7 +60,7 @@ export const generateAndUploadReceipt = async (orderDetails) => {
     doc
       .fontSize(20)
       .font("Helvetica-Bold")
-      .text("AKOYA PREMIUM LAUNDRY", { align: "center" });
+      .text("AKOYA LUXURY LAUNDRY", { align: "center" });
     doc.fontSize(12).font("Helvetica").text("Receipt", { align: "center" });
     doc.moveDown();
 
@@ -85,7 +85,7 @@ export const generateAndUploadReceipt = async (orderDetails) => {
     // Footer
     doc
       .fontSize(8)
-      .text("Thank you for choosing AKOYA Premium Laundry Services", {
+      .text("Thank you for choosing AKOYA Luxury Laundry Services", {
         align: "center",
       });
 
@@ -135,10 +135,10 @@ export const generateAndUploadReceiptImage = async (orderDetails) => {
       fs.mkdirSync(tempDir, { recursive: true });
     }
 
-    // Create a compact, professional, bilingual receipt using PDFKit
+    // Create a simple, clean, professional receipt
     const doc = new PDFDocument({
       margin: 0,
-      size: [400, 620], // Compact mobile-friendly size
+      size: [380, 580], // Compact size
     });
     const pdfPath = path.join(
       __dirname,
@@ -147,124 +147,122 @@ export const generateAndUploadReceiptImage = async (orderDetails) => {
     const pdfStream = fs.createWriteStream(pdfPath);
     doc.pipe(pdfStream);
 
-    // === HEADER - BRAND SECTION ===
-    doc.rect(0, 0, 400, 85).fill("#1C1C1C");
+    // === HEADER ===
+    doc.rect(0, 0, 380, 75).fill("#1C1C1C");
 
     doc
-      .fontSize(28)
+      .fontSize(26)
       .font("Helvetica-Bold")
       .fillColor("#D4AF37")
-      .text("AKOYA", 0, 20, { align: "center", width: 400 });
+      .text("AKOYA", 0, 18, { align: "center", width: 380 });
 
     doc
-      .fontSize(11)
+      .fontSize(10)
       .font("Helvetica")
       .fillColor("#FFFFFF")
-      .text("خدمات الغسيل الفاخرة | Premium Laundry", 0, 55, {
-        align: "center",
-        width: 400,
-      });
+      .text("Luxury Laundry Services", 0, 50, { align: "center", width: 380 });
 
-    // === RECEIPT TITLE ===
+    // === TITLE ===
     doc
-      .fontSize(16)
+      .fontSize(14)
       .font("Helvetica-Bold")
       .fillColor("#1C1C1C")
-      .text("فاتورة | RECEIPT", 0, 100, { align: "center", width: 400 });
+      .text("RECEIPT", 0, 92, { align: "center", width: 380 });
 
-    // === ORDER ID BADGE ===
-    const badgeY = 130;
+    // === ORDER ID ===
     doc
-      .roundedRect(100, badgeY, 200, 30, 5)
-      .fillAndStroke("#FFF9E6", "#D4AF37");
-
-    doc
-      .fontSize(11)
-      .font("Helvetica-Bold")
-      .fillColor("#1C1C1C")
+      .fontSize(10)
+      .font("Helvetica")
+      .fillColor("#666666")
       .text(
-        `#${orderDetails.id.toString().slice(-8).toUpperCase()}`,
-        100,
-        badgeY + 9,
-        { width: 200, align: "center" }
+        `Order #${orderDetails.id.toString().slice(-8).toUpperCase()}`,
+        0,
+        115,
+        {
+          align: "center",
+          width: 380,
+        }
       );
 
-    // === CONTENT BOX ===
-    const boxX = 25;
-    const boxY = 175;
-    const boxWidth = 350;
+    // === MAIN CONTENT BOX ===
+    const margin = 30;
+    const boxWidth = 380 - margin * 2;
+    let y = 145;
 
+    // White box with border
     doc
-      .roundedRect(boxX, boxY, boxWidth, 280, 8)
-      .fillAndStroke("#FFFFFF", "#E0E0E0");
+      .roundedRect(margin, y, boxWidth, 300, 6)
+      .fillAndStroke("#FFFFFF", "#D4AF37");
 
-    let contentY = boxY + 20;
+    y += 20;
 
     // Customer Name
     doc
-      .fontSize(9)
+      .fontSize(8)
       .font("Helvetica")
-      .fillColor("#666666")
-      .text("العميل | Customer", boxX + 20, contentY, { width: 310 });
+      .fillColor("#999999")
+      .text("CUSTOMER", margin + 15, y, { width: boxWidth - 30 });
 
-    contentY += 15;
+    y += 13;
     doc
       .fontSize(11)
       .font("Helvetica-Bold")
       .fillColor("#1C1C1C")
-      .text(orderDetails.customerName, boxX + 20, contentY, { width: 310 });
+      .text(orderDetails.customerName, margin + 15, y, {
+        width: boxWidth - 30,
+      });
 
-    contentY += 25;
+    y += 23;
 
-    // Divider line
+    // Line separator
     doc
-      .strokeColor("#E0E0E0")
+      .strokeColor("#E8E8E8")
       .lineWidth(1)
-      .moveTo(boxX + 20, contentY)
-      .lineTo(boxX + boxWidth - 20, contentY)
+      .moveTo(margin + 15, y)
+      .lineTo(margin + boxWidth - 15, y)
       .stroke();
 
-    contentY += 15;
+    y += 18;
 
     // Service Type
     doc
-      .fontSize(9)
+      .fontSize(8)
       .font("Helvetica")
-      .fillColor("#666666")
-      .text("الخدمة | Service", boxX + 20, contentY, { width: 310 });
+      .fillColor("#999999")
+      .text("SERVICE", margin + 15, y, { width: boxWidth - 30 });
 
-    contentY += 15;
+    y += 13;
     doc
       .fontSize(10)
       .font("Helvetica-Bold")
       .fillColor("#1C1C1C")
       .text(
         orderDetails.serviceType.replace(/_/g, " ").toUpperCase(),
-        boxX + 20,
-        contentY,
-        { width: 310 }
+        margin + 15,
+        y,
+        { width: boxWidth - 30 }
       );
 
-    contentY += 25;
+    y += 23;
 
-    // Divider line
+    // Line separator
     doc
-      .strokeColor("#E0E0E0")
+      .strokeColor("#E8E8E8")
       .lineWidth(1)
-      .moveTo(boxX + 20, contentY)
-      .lineTo(boxX + boxWidth - 20, contentY)
+      .moveTo(margin + 15, y)
+      .lineTo(margin + boxWidth - 15, y)
       .stroke();
 
-    contentY += 15;
+    y += 18;
 
     // Date
     doc
-      .fontSize(9)
+      .fontSize(8)
       .font("Helvetica")
-      .fillColor("#666666")
-      .text("التاريخ | Date", boxX + 20, contentY, { width: 310 });
+      .fillColor("#999999")
+      .text("DATE", margin + 15, y, { width: boxWidth - 30 });
 
-    contentY += 15;
+    y += 13;
     doc
       .fontSize(10)
       .font("Helvetica")
@@ -272,107 +270,90 @@ export const generateAndUploadReceiptImage = async (orderDetails) => {
       .text(
         new Date(orderDetails.orderDate).toLocaleDateString("en-US", {
           year: "numeric",
-          month: "short",
+          month: "long",
           day: "numeric",
         }),
-        boxX + 20,
-        contentY,
-        { width: 310 }
+        margin + 15,
+        y,
+        { width: boxWidth - 30 }
       );
 
-    contentY += 30;
+    y += 30;
 
-    // === PAYMENT SECTION - HIGHLIGHTED ===
-    const payBoxY = contentY;
-    doc.roundedRect(boxX + 15, payBoxY, boxWidth - 30, 75, 6).fill("#FFF9E6");
+    // === PAYMENT SECTION ===
+    const paymentBoxY = y;
+    const paymentBoxHeight = 80;
 
-    // Payment status
+    doc
+      .roundedRect(margin + 10, paymentBoxY, boxWidth - 20, paymentBoxHeight, 5)
+      .fill("#FFF9E6");
+
+    // Status
+    doc
+      .fontSize(8)
+      .font("Helvetica")
+      .fillColor("#999999")
+      .text("STATUS", margin + 25, paymentBoxY + 15, { width: 100 });
+
+    doc
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .fillColor("#28A745")
+      .text("PAID ✓", margin + 180, paymentBoxY + 14, { width: 100 });
+
+    // Total Amount
     doc
       .fontSize(9)
       .font("Helvetica")
       .fillColor("#666666")
-      .text("الحالة | Status", boxX + 30, payBoxY + 15, { width: 140 });
-
-    doc
-      .fontSize(11)
-      .font("Helvetica-Bold")
-      .fillColor("#28A745")
-      .text("مدفوع ✓ PAID", boxX + 180, payBoxY + 13, { width: 140 });
-
-    // Total amount - Large and centered
-    doc
-      .fontSize(10)
-      .font("Helvetica")
-      .fillColor("#666666")
-      .text("المبلغ الإجمالي | Total Amount", boxX + 30, payBoxY + 38, {
-        width: 290,
+      .text("TOTAL AMOUNT", margin + 25, paymentBoxY + 40, {
+        width: boxWidth - 50,
         align: "center",
       });
 
     doc
-      .fontSize(20)
+      .fontSize(22)
       .font("Helvetica-Bold")
       .fillColor("#D4AF37")
-      .text(`${orderDetails.total} ر.ق`, boxX + 30, payBoxY + 52, {
-        width: 290,
+      .text(`${orderDetails.total} QAR`, margin + 25, paymentBoxY + 55, {
+        width: boxWidth - 50,
         align: "center",
       });
 
     // === FOOTER ===
-    let footerY = 480;
+    y = 470;
 
-    // Thank you message - bilingual
     doc
       .fontSize(9)
       .font("Helvetica")
       .fillColor("#666666")
-      .text("شكراً لاختيارك أكويا", 0, footerY, {
+      .text("Thank you for choosing AKOYA", 0, y, {
         align: "center",
-        width: 400,
+        width: 380,
       });
 
-    footerY += 12;
-    doc
-      .fontSize(9)
-      .fillColor("#666666")
-      .text("Thank you for choosing AKOYA", 0, footerY, {
-        align: "center",
-        width: 400,
-      });
+    y += 20;
 
-    footerY += 25;
-
-    // Contact info
     doc
       .fontSize(7)
       .fillColor("#999999")
-      .text("للاستفسارات | For inquiries:", 0, footerY, {
+      .text("info@akoya-laundry.qa | +974 XXXX XXXX", 0, y, {
         align: "center",
-        width: 400,
+        width: 380,
       });
 
-    footerY += 10;
-    doc
-      .fontSize(7)
-      .fillColor("#999999")
-      .text("info@akoya-laundry.qa | +974 XXXX XXXX", 0, footerY, {
-        align: "center",
-        width: 400,
-      });
+    y += 15;
 
-    footerY += 20;
-
-    // Receipt ID
     doc
       .fontSize(7)
       .fillColor("#CCCCCC")
-      .text(`Receipt ID: ${orderDetails.id}`, 0, footerY, {
+      .text(`Receipt ID: ${orderDetails.id}`, 0, y, {
         align: "center",
-        width: 400,
+        width: 380,
       });
 
-    // === BOTTOM BORDER ===
-    doc.rect(0, 615, 400, 5).fill("#D4AF37");
+    // === BOTTOM STRIPE ===
+    doc.rect(0, 575, 380, 5).fill("#D4AF37");
 
     doc.end();
 
@@ -714,7 +695,7 @@ export const sendEmployeeAssignmentSMS = async (
     }
 
     // First send the text message
-    let message = `AKOYA Premium Laundry
+    let message = `AKOYA Luxury Laundry
 
 Dear ${customerName},
 
@@ -738,7 +719,7 @@ ${confirmationLink}
     // If receipt was generated successfully, send it as an image
     if (receiptResult.success) {
       console.log(`📤 Sending receipt image to customer...`);
-      const receiptCaption = `Your receipt for Order #${orderDetails.id} - AKOYA Premium Laundry`;
+      const receiptCaption = `Your receipt for Order #${orderDetails.id} - AKOYA Luxury Laundry`;
       const mediaResult = await sendMediaSMS(
         customerPhone,
         receiptCaption,
@@ -841,7 +822,7 @@ ${messageEnglish}`;
       ? "Your order is being processed."
       : "Your order status has been updated.";
 
-  const message = `AKOYA Premium Laundry
+  const message = `AKOYA Luxury Laundry
 
 Dear ${customerName},
 
@@ -861,13 +842,13 @@ ${statusMessage}
 
 // Send welcome SMS
 export const sendWelcomeSMS = async (customerPhone, customerName) => {
-  const message = `Welcome to AKOYA Premium Laundry!
+  const message = `Welcome to AKOYA Luxury Laundry!
 
 Dear ${customerName},
 
 Thank you for registering with us. Your account has been successfully verified.
 
-You can now place orders for our premium laundry services. Order updates will be sent to this number.
+You can now place orders for our luxury laundry services. Order updates will be sent to this number.
 
 - AKOYA Team`;
 
@@ -887,7 +868,7 @@ ${customerName}، شكرًا لك، ستصلك الفاتورة قريبًا.
 💰 Payment Received & Confirmed
 ${customerName}, thank you! Your receipt will arrive shortly.
 
-- AKOYA Premium Laundry 🎨`;
+- AKOYA Luxury Laundry 🎨`;
 
   return await sendSMS(customerPhone, message);
 };
@@ -904,7 +885,7 @@ export const sendDigitalReceiptSMS = async (
 
 🧾 Here's your receipt for Order #${orderId}
 
-- AKOYA Premium Laundry 🎨`;
+- AKOYA Luxury Laundry 🎨`;
 
   return await sendMediaSMS(customerPhone, message, receiptUrl);
 };

@@ -14,7 +14,8 @@ const OrderSchema = new mongoose.Schema({
     },
     email: {
       type: String,
-      required: true,
+      required: false, // Made optional
+      default: "",
     },
     phoneNumber: {
       type: String,

@@ -626,7 +626,7 @@ const OrderPage = () => {
         language === "ar"
           ? "تغليف قياسي بأكياس بلاستيكية"
           : "Standard plastic bag packaging",
-      image: "/home/professionalCollection.jpg",
+      image: "/suit-plastic.jpeg",
     },
     {
       id: "fabric",

@@ -94,13 +94,13 @@ export const createOrder = async (req, res) => {
       };
     } else if (customerInfo) {
       // Guest order or admin-created order: use provided customer info
-      const { name, email, phoneNumber, address = "" } = customerInfo;
+      const { name, email = "", phoneNumber, address = "" } = customerInfo;
 
-      // Validate required customer info
-      if (!name || !email || !phoneNumber) {
+      // Validate required customer info (email is now optional)
+      if (!name || !phoneNumber) {
         return res.status(400).json({
           message:
-            "Customer name, email, and phoneNumber are required for guest orders",
+            "Customer name and phoneNumber are required for guest orders",
         });
       }
 
@@ -372,10 +372,10 @@ export const createOrderByAdmin = async (req, res) => {
     }
 
     // Validate customer info
-    const { name, email, phoneNumber, address = "" } = customerInfo;
-    if (!name || !email || !phoneNumber) {
+    const { name, email = "", phoneNumber, address = "" } = customerInfo;
+    if (!name || !phoneNumber) {
       return res.status(400).json({
-        message: "Customer name, email, and phoneNumber are required",
+        message: "Customer name and phoneNumber are required",
       });
     }
 
