@@ -5,10 +5,14 @@ import { sendWelcomeSMS, sendSMS } from "../services/smsService.js";
 
 export const register = async (req, res) => {
   try {
+    console.log("Register request body:", JSON.stringify(req.body));
+    console.log("Request headers content-type:", req.headers["content-type"]);
+
     const { name, email, password, phoneNumber } = req.body;
 
     // Validate phone number format
     if (!phoneNumber) {
+      console.log("Phone number missing! Body keys:", Object.keys(req.body));
       return res.status(400).json({ message: "Phone number is required" });
     }
 

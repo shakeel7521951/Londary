@@ -27,7 +27,7 @@ router.post("/app-login", appLogin); //for app
 router.post("/sign-up", register);
 router.post("/verify-user", verifyUser); // for web
 router.post("/app-verify-user", appVerifyUser); // for app
-router.post("/logout", auth, logout);
+router.post("/logout", logout); // No auth required - just clears cookie
 router.get("/my-profile", auth, myProfile);
 router.get("/check-role", auth, checkRole); // Debug endpoint for checking user role
 router.put("/update-password", auth, updatePassword);

@@ -97,8 +97,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Create the serverless handler
-const handler = serverless(app);
+// Create the serverless handler with proper binary configuration
+const handler = serverless(app, {
+  binary: ["image/*", "application/pdf"],
+  request: null,
+  response: null,
+});
 
 // Export Lambda handler with database connection
 export const main = async (event, context) => {
@@ -107,6 +111,18 @@ export const main = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   try {
+    // Debug: Log the raw event to see what API Gateway is sending
+    console.log("Lambda event path:", event.path);
+    console.log("Lambda event httpMethod:", event.httpMethod);
+    console.log("Lambda event body type:", typeof event.body);
+    console.log("Lambda event isBase64Encoded:", event.isBase64Encoded);
+    if (event.body) {
+      console.log(
+        "Lambda event body (first 200 chars):",
+        event.body.substring(0, 200)
+      );
+    }
+
     // Connect to database
     await connectToDatabase();
 

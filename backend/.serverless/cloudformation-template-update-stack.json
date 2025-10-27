@@ -171,7 +171,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/akoya-laundry-api/prod/1761603242048-2025-10-27T22:14:02.048Z/akoya-laundry-api.zip"
+          "S3Key": "serverless/akoya-laundry-api/prod/1761605493434-2025-10-27T22:51:33.434Z/akoya-laundry-api.zip"
         },
         "Handler": "lambda.main",
         "Runtime": "nodejs20.x",
@@ -190,7 +190,8 @@
             "CLOUDINARY_API_KEY": "369558565352491",
             "CLOUDINARY_API_SECRET": "IGv-oUXNhPXMjmG7_vuKbFgeXCA",
             "EMAIL_USER": "mugheesurrehman06@gmail.com",
-            "EMAIL_PASS": "rqqa bmoi nhio hbjv"
+            "EMAIL_PASS": "rqqa bmoi nhio hbjv",
+            "PORT": "4000"
           }
         },
         "Role": {
@@ -204,14 +205,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionJlJjW0YUa6veveagiHcFdm8E0ulHjbsy83tMqJTzl8": {
+    "ApiLambdaVersionjklnBl9sMNf9XKVXAI1eioMafo2GxRNDIA9GqE6lrQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "kali96uNp0WgzP7kId+rVa+vip1WrinY+Vr/2lwGotI="
+        "CodeSha256": "hzD7cCTaCwH/+20BMbd8a3ockj1C75jigtKCGpEAqiE="
       }
     },
     "ApiGatewayRestApi": {
@@ -433,7 +434,7 @@
         "ApiLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1761603219675": {
+    "ApiGatewayDeployment1761605484428": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -498,7 +499,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionJlJjW0YUa6veveagiHcFdm8E0ulHjbsy83tMqJTzl8"
+        "Ref": "ApiLambdaVersionjklnBl9sMNf9XKVXAI1eioMafo2GxRNDIA9GqE6lrQ"
       },
       "Export": {
         "Name": "sls-akoya-laundry-api-prod-ApiLambdaFunctionQualifiedArn"

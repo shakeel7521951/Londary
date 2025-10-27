@@ -156,7 +156,7 @@ const Login = () => {
         {/* Header */}
         <div className="bg-[#1C1C1C] p-6 text-center">
           <h2 className="text-2xl font-light text-[#D4AF37] tracking-wide">
-            AKOYA PREMIUM LAUNDRY
+            AKOYA LUXURY LAUNDRY
           </h2>
           <div className="mt-2 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
           <p className="mt-2 text-gray-300 text-sm">{t.signInToAccount}</p>
