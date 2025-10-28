@@ -14,9 +14,9 @@
       "timeout": 30,
       "environment": {
         "NODE_ENV": "prod",
-        "DB_URL": "mongodb+srv://mugheesurrehman06:gjRagzY5zTyRpCQs@mughees1.qnk6m.mongodb.net/akoya?retryWrites=true&w=majority&appName=Mughees1",
+        "DB_URL": "mongodb+srv://dbUser:dbUserPass@cluster0.dbitqje.mongodb.net/akoya?appName=Cluster0",
         "JWT_SECRET": "skjsdljfsjfdkjfhdskjfjkdshkfh",
-        "FRONTEND_URL": "https://akoyaluxureylaundry.com",
+        "FRONTEND_URL": "http://localhost:5173",
         "SMS_API_KEY": "q6ZVrcIRuJ7dowNxzf8g5bU2XPWh9y",
         "SMS_SENDER": "923120201709",
         "CLOUDINARY_CLOUD_NAME": "dcovfhsjn",
@@ -209,7 +209,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/akoya-laundry-api/prod/1761605493434-2025-10-27T22:51:33.434Z/akoya-laundry-api.zip"
+                "S3Key": "serverless/akoya-laundry-api/prod/1761648293270-2025-10-28T10:44:53.270Z/akoya-laundry-api.zip"
               },
               "Handler": "lambda.main",
               "Runtime": "nodejs20.x",
@@ -219,9 +219,9 @@
               "Environment": {
                 "Variables": {
                   "NODE_ENV": "prod",
-                  "DB_URL": "mongodb+srv://mugheesurrehman06:gjRagzY5zTyRpCQs@mughees1.qnk6m.mongodb.net/akoya?retryWrites=true&w=majority&appName=Mughees1",
+                  "DB_URL": "mongodb+srv://dbUser:dbUserPass@cluster0.dbitqje.mongodb.net/akoya?appName=Cluster0",
                   "JWT_SECRET": "skjsdljfsjfdkjfhdskjfjkdshkfh",
-                  "FRONTEND_URL": "https://akoyaluxureylaundry.com",
+                  "FRONTEND_URL": "http://localhost:5173",
                   "SMS_API_KEY": "q6ZVrcIRuJ7dowNxzf8g5bU2XPWh9y",
                   "SMS_SENDER": "923120201709",
                   "CLOUDINARY_CLOUD_NAME": "dcovfhsjn",
@@ -243,14 +243,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersionjklnBl9sMNf9XKVXAI1eioMafo2GxRNDIA9GqE6lrQ": {
+          "ApiLambdaVersionUMMF5B2grKk1reromigEmt7SyDl41EaiiHS4A7RLQU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "hzD7cCTaCwH/+20BMbd8a3ockj1C75jigtKCGpEAqiE="
+              "CodeSha256": "kFzhmplnf9TYvTOhz65U/8k9Xm7nFqqpmjn2Vy/EXOo="
             }
           },
           "ApiGatewayRestApi": {
@@ -308,8 +308,8 @@
                   {
                     "StatusCode": "200",
                     "ResponseParameters": {
-                      "method.response.header.Access-Control-Allow-Origin": "'https://akoyaluxureylaundry.com'",
-                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Cookie,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Origin": "'http://localhost:5173'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Cookie,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Requested-With'",
                       "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'",
                       "method.response.header.Access-Control-Allow-Credentials": "'true'"
                     },
@@ -358,8 +358,8 @@
                   {
                     "StatusCode": "200",
                     "ResponseParameters": {
-                      "method.response.header.Access-Control-Allow-Origin": "'https://akoyaluxureylaundry.com'",
-                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Cookie,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Origin": "'http://localhost:5173'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Cookie,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Requested-With'",
                       "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'",
                       "method.response.header.Access-Control-Allow-Credentials": "'true'"
                     },
@@ -472,7 +472,7 @@
               "ApiLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1761605484428": {
+          "ApiGatewayDeployment1761648282460": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -537,7 +537,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersionjklnBl9sMNf9XKVXAI1eioMafo2GxRNDIA9GqE6lrQ"
+              "Ref": "ApiLambdaVersionUMMF5B2grKk1reromigEmt7SyDl41EaiiHS4A7RLQU"
             },
             "Export": {
               "Name": "sls-akoya-laundry-api-prod-ApiLambdaFunctionQualifiedArn"
@@ -658,7 +658,9 @@
     "custom": {
       "serverless-offline": {
         "httpPort": 4000,
-        "lambdaPort": 3002
+        "lambdaPort": 3002,
+        "noPrependStageInUrl": true,
+        "useChildProcesses": true
       }
     },
     "plugins": [
@@ -675,7 +677,7 @@
               "path": "",
               "method": "any",
               "cors": {
-                "origin": "https://akoyaluxureylaundry.com",
+                "origin": "http://localhost:5173",
                 "methods": [
                   "OPTIONS",
                   "ANY"
@@ -687,10 +689,15 @@
                   "X-Amz-Date",
                   "X-Api-Key",
                   "X-Amz-Security-Token",
-                  "X-Amz-User-Agent"
+                  "X-Amz-User-Agent",
+                  "X-Requested-With"
                 ],
                 "allowCredentials": true
               },
+              "binaryMediaTypes": [
+                "image/*",
+                "application/pdf"
+              ],
               "integration": "AWS_PROXY"
             }
           },
@@ -699,7 +706,7 @@
               "path": "{proxy+}",
               "method": "any",
               "cors": {
-                "origin": "https://akoyaluxureylaundry.com",
+                "origin": "http://localhost:5173",
                 "methods": [
                   "OPTIONS",
                   "ANY"
@@ -711,10 +718,15 @@
                   "X-Amz-Date",
                   "X-Api-Key",
                   "X-Amz-Security-Token",
-                  "X-Amz-User-Agent"
+                  "X-Amz-User-Agent",
+                  "X-Requested-With"
                 ],
                 "allowCredentials": true
               },
+              "binaryMediaTypes": [
+                "image/*",
+                "application/pdf"
+              ],
               "integration": "AWS_PROXY"
             }
           }
@@ -725,7 +737,7 @@
         "timeout": 30,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersionjklnBl9sMNf9XKVXAI1eioMafo2GxRNDIA9GqE6lrQ"
+        "versionLogicalId": "ApiLambdaVersionUMMF5B2grKk1reromigEmt7SyDl41EaiiHS4A7RLQU"
       }
     },
     "configValidationMode": "warn",
@@ -766,7 +778,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/akoya-laundry-api/prod/code-artifacts",
         "artifact": "D:\\Codes Thinker\\laundry\\Londary\\backend\\.serverless\\akoya-laundry-api.zip",
-        "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761605493434-2025-10-27T22:51:33.434Z"
+        "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761648293270-2025-10-28T10:44:53.270Z"
       }
     },
     "layers": {},
@@ -775,7 +787,7 @@
   },
   "package": {
     "individually": false,
-    "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761605493434-2025-10-27T22:51:33.434Z",
+    "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761648293270-2025-10-28T10:44:53.270Z",
     "artifact": "akoya-laundry-api.zip"
   }
 }

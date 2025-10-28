@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
+// Routes
 import userRoute from "./routes/userRoutes.js";
 import orderRoute from "./routes/orderRoutes.js";
 import couponRoute from "./routes/couponRoutes.js";
@@ -19,7 +20,21 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-// CORS configuration
+// --- Fix for occasional Buffer body issue in Lambda ---
+app.use((req, res, next) => {
+  if (Buffer.isBuffer(req.body)) {
+    try {
+      const jsonString = req.body.toString("utf-8");
+      req.body = JSON.parse(jsonString);
+      console.log("✅ Decoded Buffer body into JSON");
+    } catch (err) {
+      console.warn("⚠️ Could not decode Buffer body:", err.message);
+    }
+  }
+  next();
+});
+
+// CORS
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "*",
@@ -29,7 +44,7 @@ app.use(
   })
 );
 
-// Health check endpoint
+// Health check routes
 app.get("/", (req, res) => {
   res.json({
     status: "success",
@@ -47,38 +62,38 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Database connection with caching for Lambda
+// --- Database Connection (cached for Lambda) ---
 let cachedDb = null;
 
 const connectToDatabase = async () => {
   if (cachedDb && mongoose.connection.readyState === 1) {
-    console.log("Using cached database connection");
+    console.log("✅ Using cached MongoDB connection");
     return cachedDb;
   }
 
   try {
-    console.log("Creating new database connection");
+    console.log("🔄 Creating new MongoDB connection...");
     const db = await mongoose.connect(process.env.DB_URL, {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
     cachedDb = db;
-    console.log("Database connected successfully");
+    console.log("✅ Database connected successfully");
     return db;
   } catch (error) {
-    console.error("Error connecting to database:", error);
+    console.error("❌ Error connecting to database:", error);
     throw error;
   }
 };
 
-// Routes
+// --- Routes ---
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/orders", orderRoute);
 app.use("/api/v1/coupons", couponRoute);
 app.use("/api/v1/employees", employeeRoute);
 app.use("/api/v1/dashboard", dashboardRoute);
 
-// 404 handler
+// 404 Handler
 app.use((req, res) => {
   res.status(404).json({
     status: "error",
@@ -87,9 +102,9 @@ app.use((req, res) => {
   });
 });
 
-// Error handler
+// Global Error Handler
 app.use((err, req, res, next) => {
-  console.error("Error:", err);
+  console.error("🔥 Error:", err);
   res.status(err.status || 500).json({
     status: "error",
     message: err.message || "Internal server error",
@@ -97,40 +112,25 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Create the serverless handler with proper binary configuration
+// Create serverless handler
 const handler = serverless(app, {
-  binary: ["image/*", "application/pdf"],
-  request: null,
-  response: null,
+  binary: ["image/*", "application/pdf"], // ✅ JSON is not marked as binary
 });
 
-// Export Lambda handler with database connection
+// --- Lambda Handler ---
 export const main = async (event, context) => {
-  // Important: Set callbackWaitsForEmptyEventLoop to false
-  // This allows Lambda to freeze the process immediately after sending the response
   context.callbackWaitsForEmptyEventLoop = false;
 
   try {
-    // Debug: Log the raw event to see what API Gateway is sending
-    console.log("Lambda event path:", event.path);
-    console.log("Lambda event httpMethod:", event.httpMethod);
-    console.log("Lambda event body type:", typeof event.body);
-    console.log("Lambda event isBase64Encoded:", event.isBase64Encoded);
-    if (event.body) {
-      console.log(
-        "Lambda event body (first 200 chars):",
-        event.body.substring(0, 200)
-      );
-    }
+    console.log("➡️ Event Path:", event.path);
+    console.log("➡️ Method:", event.httpMethod);
 
-    // Connect to database
     await connectToDatabase();
 
-    // Handle the request
     const result = await handler(event, context);
     return result;
   } catch (error) {
-    console.error("Lambda handler error:", error);
+    console.error("❌ Lambda Handler Error:", error);
     return {
       statusCode: 500,
       headers: {
@@ -147,5 +147,5 @@ export const main = async (event, context) => {
   }
 };
 
-// Export the app for local development
+// Export app for local development
 export { app };

@@ -51,7 +51,13 @@ functions:
               - X-Api-Key
               - X-Amz-Security-Token
               - X-Amz-User-Agent
+              - X-Requested-With
             allowCredentials: true
+          # ✅ Make sure JSON requests are NOT base64 encoded
+          binaryMediaTypes:
+            - "image/*"
+            - "application/pdf"
+
       - http:
           path: /{proxy+}
           method: ANY
@@ -65,7 +71,12 @@ functions:
               - X-Api-Key
               - X-Amz-Security-Token
               - X-Amz-User-Agent
+              - X-Requested-With
             allowCredentials: true
+          # ✅ Same binary types for all routes
+          binaryMediaTypes:
+            - "image/*"
+            - "application/pdf"
 
 plugins:
   - serverless-dotenv-plugin
@@ -75,6 +86,8 @@ custom:
   serverless-offline:
     httpPort: 4000
     lambdaPort: 3002
+    noPrependStageInUrl: true
+    useChildProcesses: true
 
 package:
   individually: false
