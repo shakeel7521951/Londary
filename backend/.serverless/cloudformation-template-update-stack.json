@@ -171,7 +171,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/akoya-laundry-api/prod/1761648293270-2025-10-28T10:44:53.270Z/akoya-laundry-api.zip"
+          "S3Key": "serverless/akoya-laundry-api/prod/1761736842870-2025-10-29T11:20:42.870Z/akoya-laundry-api.zip"
         },
         "Handler": "lambda.main",
         "Runtime": "nodejs20.x",
@@ -183,9 +183,9 @@
             "NODE_ENV": "prod",
             "DB_URL": "mongodb+srv://dbUser:dbUserPass@cluster0.dbitqje.mongodb.net/akoya?appName=Cluster0",
             "JWT_SECRET": "skjsdljfsjfdkjfhdskjfjkdshkfh",
-            "FRONTEND_URL": "http://localhost:5173",
-            "SMS_API_KEY": "q6ZVrcIRuJ7dowNxzf8g5bU2XPWh9y",
-            "SMS_SENDER": "923120201709",
+            "FRONTEND_URL": "https://akoyaluxureylaundry.com",
+            "SMS_API_KEY": "4fgm7MzpdS5ZQcIk1uqCY9HntGaP2K",
+            "SMS_SENDER": "97471378000",
             "CLOUDINARY_CLOUD_NAME": "dcovfhsjn",
             "CLOUDINARY_API_KEY": "369558565352491",
             "CLOUDINARY_API_SECRET": "IGv-oUXNhPXMjmG7_vuKbFgeXCA",
@@ -205,14 +205,14 @@
         "ApiLogGroup"
       ]
     },
-    "ApiLambdaVersionUMMF5B2grKk1reromigEmt7SyDl41EaiiHS4A7RLQU": {
+    "ApiLambdaVersiontBLw35bn3vpp7xKWdBYfoNjbDDIjlmSSbWUtgPxHbLw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ApiLambdaFunction"
         },
-        "CodeSha256": "kFzhmplnf9TYvTOhz65U/8k9Xm7nFqqpmjn2Vy/EXOo="
+        "CodeSha256": "/SYoc2aUav7NHfNp8oNykv5ziXv2hynOsfUKkGSAWH0="
       }
     },
     "ApiGatewayRestApi": {
@@ -270,7 +270,7 @@
             {
               "StatusCode": "200",
               "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'http://localhost:5173'",
+                "method.response.header.Access-Control-Allow-Origin": "'https://akoyaluxureylaundry.com'",
                 "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Cookie,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Requested-With'",
                 "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'",
                 "method.response.header.Access-Control-Allow-Credentials": "'true'"
@@ -320,7 +320,7 @@
             {
               "StatusCode": "200",
               "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'http://localhost:5173'",
+                "method.response.header.Access-Control-Allow-Origin": "'https://akoyaluxureylaundry.com'",
                 "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Cookie,X-Amz-Date,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Requested-With'",
                 "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'",
                 "method.response.header.Access-Control-Allow-Credentials": "'true'"
@@ -434,7 +434,7 @@
         "ApiLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1761648282460": {
+    "ApiGatewayDeployment1761736828179": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -499,7 +499,7 @@
     "ApiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ApiLambdaVersionUMMF5B2grKk1reromigEmt7SyDl41EaiiHS4A7RLQU"
+        "Ref": "ApiLambdaVersiontBLw35bn3vpp7xKWdBYfoNjbDDIjlmSSbWUtgPxHbLw"
       },
       "Export": {
         "Name": "sls-akoya-laundry-api-prod-ApiLambdaFunctionQualifiedArn"

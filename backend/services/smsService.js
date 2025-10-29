@@ -795,10 +795,9 @@ export const sendOrderStatusUpdateSMS = async (
 ) => {
   // Special welcome message for new orders (pending status)
   if (orderDetails.status === "pending") {
-    const messageArabic = `مرحباً ${customerName}، تم استلام طلبك بنجاح 🧺
-رقم الطلب: #${orderDetails.id}
-سيتم التواصل معك قريباً لتأكيد موعد الاستلام.
-شكرًا لاختيارك أكويا 🌿`;
+    const messageArabic = `لبيّك ${customerName}! 🧺
+استلمنا طلبك، وبيمرّ السائق إن شاء الله يستلم الملابس قريب
+رقم الطلب: #${orderDetails.id}`;
 
     const messageEnglish = `Hello ${customerName}, your order has been received 🧺
 Order ID: #${orderDetails.id}
