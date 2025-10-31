@@ -83,7 +83,7 @@ const Order = () => {
     customerInfo: {
       name: "",
       email: "",
-      phoneNumber: "",
+      phoneNumber: "+974",
       address: "",
     },
     serviceType: "wash_iron",
@@ -92,6 +92,7 @@ const Order = () => {
     steamFinish: false,
     incenseFinish: false,
     incenseType: "",
+    fragrance: "",
     perfume: "",
     oud: "",
     cardFrom: "",
@@ -142,6 +143,8 @@ const Order = () => {
           order.customerInfo?.address ||
           order.cardFrom ||
           "No address provided",
+        serviceType: order.serviceType, // Add service type
+        garments: order.garments || [], // Add garments array directly
         items:
           order.garments?.map((garment) => ({
             type: garment.type,
@@ -160,14 +163,22 @@ const Order = () => {
           ? `Card message: From ${order.cardFrom} to ${order.cardTo}`
           : "",
         assignedEmployee: order.assignedEmployee || null,
-        steamFinish: order.steamFinish,
-        incenseFinish: order.incenseFinish,
-        incenseType: order.incenseType,
-        fragrance: order.fragrance,
-        packaging: order.packaging,
-        appliedCoupon: order.appliedCoupon,
-        originalTotal: order.originalTotal,
-        discountAmount: order.discountAmount,
+        // Add all service-related fields
+        steamFinish: order.steamFinish || false,
+        incenseFinish: order.incenseFinish || false,
+        incenseType: order.incenseType || "",
+        fragrance: order.fragrance || "",
+        perfume: order.perfume || "",
+        oud: order.oud || "",
+        packaging: order.packaging || "",
+        cardFrom: order.cardFrom || "",
+        cardTo: order.cardTo || "",
+        // Add coupon and pricing fields
+        appliedCoupon: order.appliedCoupon || null,
+        originalTotal: order.originalTotal || order.total,
+        discountAmount: order.discountAmount || 0,
+        // Add delivery confirmation if available
+        deliveryConfirmation: order.deliveryConfirmation || null,
       }));
       setOrders(transformedOrders);
     }
@@ -563,6 +574,7 @@ const Order = () => {
         steamFinish: orderForm.steamFinish,
         incenseFinish: orderForm.incenseFinish,
         incenseType: orderForm.incenseType,
+        fragrance: orderForm.fragrance,
         perfume: orderForm.perfume,
         oud: orderForm.oud,
         cardFrom: orderForm.cardFrom,
@@ -577,7 +589,7 @@ const Order = () => {
         customerInfo: {
           name: "",
           email: "",
-          phoneNumber: "",
+          phoneNumber: "+974",
           address: "",
         },
         serviceType: "wash_iron",
@@ -586,6 +598,7 @@ const Order = () => {
         steamFinish: false,
         incenseFinish: false,
         incenseType: "",
+        fragrance: "",
         perfume: "",
         oud: "",
         cardFrom: "",
@@ -1128,11 +1141,175 @@ const Order = () => {
                   </div>
                 </div>
 
-                {/* Order Items */}
+                {/* Service Details Section */}
                 <div className="mb-8">
                   <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
                     <FiPackage className="w-5 h-5 mr-2 text-[#D4AF37]" />
-                    {t("orderItems")}
+                    {t("serviceDetails")}
+                  </h3>
+                  <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex justify-between">
+                        <span className="text-white/70">
+                          {t("serviceType")}:
+                        </span>
+                        <span className="font-medium text-white">
+                          {selectedOrder.serviceType
+                            ? t(
+                                selectedOrder.serviceType
+                                  .replace(/_/g, "")
+                                  .toLowerCase()
+                              )
+                            : "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white/70">
+                          {t("packagingType")}:
+                        </span>
+                        <span className="font-medium text-white">
+                          {selectedOrder.packaging
+                            ? t(`${selectedOrder.packaging}Packaging`)
+                            : "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-white/70">
+                          {t("steamFinish")}:
+                        </span>
+                        <span
+                          className={`font-medium ${
+                            selectedOrder.steamFinish
+                              ? "text-green-400"
+                              : "text-white/50"
+                          }`}
+                        >
+                          {selectedOrder.steamFinish
+                            ? t("yes") || "Yes"
+                            : t("no") || "No"}
+                        </span>
+                      </div>
+
+                      {/* Show Perfume if available */}
+                      {selectedOrder.perfume && (
+                        <div className="flex justify-between">
+                          <span className="text-white/70">
+                            {t("perfume") || "Perfume"}:
+                          </span>
+                          <span className="font-medium text-[#D4AF37]">
+                            {t(selectedOrder.perfume) || selectedOrder.perfume}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Show Oud if available */}
+                      {selectedOrder.oud && (
+                        <div className="flex justify-between">
+                          <span className="text-white/70">
+                            {t("oud") || "Oud"}:
+                          </span>
+                          <span className="font-medium text-[#D4AF37]">
+                            {t(
+                              selectedOrder.oud.replace(/_/g, "").toLowerCase()
+                            ) || selectedOrder.oud}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Show Incense Type if incense finish is enabled */}
+                      {selectedOrder.incenseFinish && (
+                        <div className="flex justify-between">
+                          <span className="text-white/70">
+                            {t("incenseType") || "Incense Type"}:
+                          </span>
+                          <span className="font-medium text-[#D4AF37]">
+                            {selectedOrder.incenseType || t("yes") || "Yes"}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Show Fragrance if available */}
+                      {selectedOrder.fragrance && (
+                        <div className="flex justify-between">
+                          <span className="text-white/70">
+                            {t("fragrance") || "Fragrance"}:
+                          </span>
+                          <span className="font-medium text-[#D4AF37]">
+                            {selectedOrder.fragrance}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fragrance & Perfumes Section */}
+                {(selectedOrder.perfume ||
+                  selectedOrder.oud ||
+                  selectedOrder.incenseType ||
+                  selectedOrder.fragrance) && (
+                  <div className="mb-8">
+                    <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                      <FiPackage className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("fragranceDetails") || "Fragrance & Perfumes"}
+                    </h3>
+                    <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {selectedOrder.perfume && (
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("perfume") || "Perfume"}:
+                            </span>
+                            <span className="font-medium text-white">
+                              {t(selectedOrder.perfume) ||
+                                selectedOrder.perfume}
+                            </span>
+                          </div>
+                        )}
+                        {selectedOrder.oud && (
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("oud") || "Oud"}:
+                            </span>
+                            <span className="font-medium text-white">
+                              {t(
+                                selectedOrder.oud
+                                  .replace(/_/g, "")
+                                  .toLowerCase()
+                              ) || selectedOrder.oud}
+                            </span>
+                          </div>
+                        )}
+                        {selectedOrder.incenseType && (
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("incenseType") || "Incense Type"}:
+                            </span>
+                            <span className="font-medium text-white">
+                              {selectedOrder.incenseType}
+                            </span>
+                          </div>
+                        )}
+                        {selectedOrder.fragrance && (
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("fragrance") || "Fragrance"}:
+                            </span>
+                            <span className="font-medium text-white">
+                              {selectedOrder.fragrance}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Garments List */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                    <FiPackage className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("garmentsList") || "Garments"}
                   </h3>
                   <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl overflow-hidden">
                     <div
@@ -1146,21 +1323,27 @@ const Order = () => {
                         <thead className="bg-[#1C1C1C] border-b border-[#D4AF37]/30">
                           <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                              {t("item")}
+                              #
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                              {t("garmentType") || "Garment Type"}
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
                               {t("quantity")}
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                              {t("service")}
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
-                              {t("price")}
-                            </th>
+                            {selectedOrder.garments?.[0]?.category && (
+                              <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+                                {t("category") || "Category"}
+                              </th>
+                            )}
                           </tr>
                         </thead>
                         <tbody className="bg-transparent divide-y divide-[#D4AF37]/10">
-                          {selectedOrder.items.map((item, index) => (
+                          {(
+                            selectedOrder.garments ||
+                            selectedOrder.items ||
+                            []
+                          ).map((item, index) => (
                             <motion.tr
                               key={index}
                               initial={{ opacity: 0, x: -20 }}
@@ -1168,6 +1351,11 @@ const Order = () => {
                               transition={{ delay: index * 0.1 }}
                               className="hover:bg-[#D4AF37]/5"
                             >
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="text-white/70">
+                                  {index + 1}
+                                </span>
+                              </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span className="font-medium text-white">
                                   {item.type}
@@ -1178,33 +1366,266 @@ const Order = () => {
                                   {item.quantity}
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 py-1 bg-[#D4AF37]/20 text-[#D4AF37] text-xs rounded-full border border-[#D4AF37]/30">
-                                  {item.service}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="font-semibold text-[#D4AF37]">
-                                  {formatCurrency(item.price, currentLanguage)}
-                                </span>
-                              </td>
+                              {item.category && (
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <span className="px-2 py-1 bg-[#D4AF37]/20 text-[#D4AF37] text-xs rounded-full border border-[#D4AF37]/30">
+                                    {item.category}
+                                  </span>
+                                </td>
+                              )}
                             </motion.tr>
                           ))}
                         </tbody>
                       </table>
                     </div>
-                    <div className="bg-[#1C1C1C]/70 px-6 py-4 border-t border-[#D4AF37]/20">
-                      <div className="flex justify-between items-center">
-                        <span className="text-lg font-semibold text-white">
-                          {t("totalAmount")}:
+                  </div>
+                </div>
+
+                {/* Card Information */}
+                {(selectedOrder.cardFrom || selectedOrder.cardTo) && (
+                  <div className="mb-8">
+                    <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                      <FiEdit className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("cardInformation") || "Card Information"}
+                    </h3>
+                    <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {selectedOrder.cardFrom && (
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("cardFrom") || "From"}:
+                            </span>
+                            <span className="font-medium text-white">
+                              {selectedOrder.cardFrom}
+                            </span>
+                          </div>
+                        )}
+                        {selectedOrder.cardTo && (
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("cardTo") || "To"}:
+                            </span>
+                            <span className="font-medium text-white">
+                              {selectedOrder.cardTo}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Pricing Breakdown */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                    <FiDollarSign className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                    {t("pricingBreakdown") || "Pricing Breakdown"}
+                  </h3>
+                  <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl p-6">
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-white/70">
+                          {t("originalTotal") || "Original Total"}:
                         </span>
-                        <span className="text-2xl font-bold text-[#D4AF37]">
-                          {formatCurrency(selectedOrder.total, currentLanguage)}
+                        <span className="font-medium text-white">
+                          {formatCurrency(
+                            selectedOrder.originalTotal || selectedOrder.total,
+                            currentLanguage
+                          )}
                         </span>
+                      </div>
+
+                      {selectedOrder.appliedCoupon?.code && (
+                        <>
+                          <div className="flex justify-between items-center">
+                            <span className="text-white/70">
+                              {t("couponApplied") || "Coupon Applied"}:
+                            </span>
+                            <span className="px-3 py-1 bg-green-500/20 text-green-400 text-sm rounded-full border border-green-500/30 font-medium">
+                              {selectedOrder.appliedCoupon.code}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("discountType") || "Discount Type"}:
+                            </span>
+                            <span className="font-medium text-white capitalize">
+                              {selectedOrder.appliedCoupon.type}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("discountAmount") || "Discount"}:
+                            </span>
+                            <span className="font-medium text-green-400">
+                              -
+                              {formatCurrency(
+                                selectedOrder.discountAmount ||
+                                  selectedOrder.appliedCoupon.discount ||
+                                  0,
+                                currentLanguage
+                              )}
+                            </span>
+                          </div>
+                        </>
+                      )}
+
+                      <div className="pt-3 border-t border-[#D4AF37]/30">
+                        <div className="flex justify-between items-center">
+                          <span className="text-lg font-semibold text-white">
+                            {t("finalTotal") || "Final Total"}:
+                          </span>
+                          <span className="text-2xl font-bold text-[#D4AF37]">
+                            {formatCurrency(
+                              selectedOrder.total,
+                              currentLanguage
+                            )}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                {/* Delivery Confirmation Details */}
+                {selectedOrder.deliveryConfirmation?.confirmedAt && (
+                  <div className="mb-8">
+                    <h3 className="text-lg font-light text-white mb-4 flex items-center tracking-wide">
+                      <FiCheckCircle className="w-5 h-5 mr-2 text-[#D4AF37]" />
+                      {t("deliveryConfirmation") || "Delivery Confirmation"}
+                    </h3>
+                    <div className="bg-gradient-to-br from-[#2C2C2C] to-[#1C1C1C] border border-[#D4AF37]/20 rounded-xl p-6">
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <span className="text-white/70">
+                            {t("confirmedAt") || "Confirmed At"}:
+                          </span>
+                          <span className="font-medium text-white">
+                            {new Date(
+                              selectedOrder.deliveryConfirmation.confirmedAt
+                            ).toLocaleString()}
+                          </span>
+                        </div>
+
+                        {selectedOrder.deliveryConfirmation.rating && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-white/70">
+                              {t("rating")}:
+                            </span>
+                            <div className="flex items-center space-x-1">
+                              {[...Array(5)].map((_, i) => (
+                                <span
+                                  key={i}
+                                  className={`text-xl ${
+                                    i <
+                                    selectedOrder.deliveryConfirmation.rating
+                                      ? "text-[#D4AF37]"
+                                      : "text-white/20"
+                                  }`}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                              <span className="ml-2 text-white font-medium">
+                                ({selectedOrder.deliveryConfirmation.rating}/5)
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        {selectedOrder.deliveryConfirmation
+                          .satisfactionLevel && (
+                          <div className="flex justify-between">
+                            <span className="text-white/70">
+                              {t("satisfactionLevel") || "Satisfaction"}:
+                            </span>
+                            <span className="font-medium text-white capitalize">
+                              {selectedOrder.deliveryConfirmation.satisfactionLevel.replace(
+                                /_/g,
+                                " "
+                              )}
+                            </span>
+                          </div>
+                        )}
+
+                        {selectedOrder.deliveryConfirmation.feedback && (
+                          <div>
+                            <span className="text-white/70 block mb-2">
+                              {t("feedback")}:
+                            </span>
+                            <div className="bg-[#1C1C1C] border border-[#D4AF37]/20 rounded-lg p-4">
+                              <p className="text-white/90">
+                                {selectedOrder.deliveryConfirmation.feedback}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+
+                        {selectedOrder.deliveryConfirmation.paymentMethod && (
+                          <div className="pt-3 border-t border-[#D4AF37]/20">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="flex justify-between">
+                                <span className="text-white/70">
+                                  {t("paymentMethod") || "Payment Method"}:
+                                </span>
+                                <span className="font-medium text-white capitalize">
+                                  {
+                                    selectedOrder.deliveryConfirmation
+                                      .paymentMethod
+                                  }
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-white/70">
+                                  {t("amountPaid") || "Amount Paid"}:
+                                </span>
+                                <span className="font-medium text-[#D4AF37]">
+                                  {formatCurrency(
+                                    selectedOrder.deliveryConfirmation
+                                      .amountPaid || selectedOrder.total,
+                                    currentLanguage
+                                  )}
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-white/70">
+                                  {t("paymentStatus") || "Payment Status"}:
+                                </span>
+                                <span
+                                  className={`font-medium ${
+                                    selectedOrder.deliveryConfirmation
+                                      .paymentConfirmed
+                                      ? "text-green-400"
+                                      : "text-red-400"
+                                  }`}
+                                >
+                                  {selectedOrder.deliveryConfirmation
+                                    .paymentConfirmed
+                                    ? t("confirmed") || "Confirmed"
+                                    : t("pending") || "Pending"}
+                                </span>
+                              </div>
+                              {selectedOrder.deliveryConfirmation
+                                .paymentNote && (
+                                <div className="flex justify-between">
+                                  <span className="text-white/70">
+                                    {t("paymentNote") || "Note"}:
+                                  </span>
+                                  <span className="font-medium text-white">
+                                    {
+                                      selectedOrder.deliveryConfirmation
+                                        .paymentNote
+                                    }
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {/* Notes */}
                 {selectedOrder.notes && (
@@ -1359,19 +1780,47 @@ const Order = () => {
                       <input
                         type="tel"
                         dir="ltr"
-                        value={orderForm.customerInfo.phoneNumber}
-                        onChange={(e) =>
+                        value={orderForm.customerInfo.phoneNumber || "+974"}
+                        onFocus={(e) => {
+                          // Ensure +974 is present when field is focused
+                          if (!e.target.value || e.target.value === "") {
+                            handleAddOrderFormChange(
+                              "customerInfo.phoneNumber",
+                              "+974"
+                            );
+                          }
+                        }}
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          // Always ensure the value starts with +974
+                          if (!value.startsWith("+974")) {
+                            value = "+974" + value.replace(/^\+?\d*/g, "");
+                          }
+                          // Prevent removing the +974 prefix
+                          if (value.length < 4) {
+                            value = "+974";
+                          }
                           handleAddOrderFormChange(
                             "customerInfo.phoneNumber",
-                            e.target.value
-                          )
-                        }
+                            value
+                          );
+                        }}
+                        onKeyDown={(e) => {
+                          // Prevent backspace/delete if cursor is at position 0-4 (within +974)
+                          const cursorPosition = e.target.selectionStart;
+                          if (
+                            (e.key === "Backspace" || e.key === "Delete") &&
+                            cursorPosition <= 4
+                          ) {
+                            e.preventDefault();
+                          }
+                        }}
                         className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
                           formErrors["customerInfo.phoneNumber"]
                             ? "border-red-500"
                             : "border-[#D4AF37]/30"
                         } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
-                        placeholder={t("phoneNumberPlaceholder")}
+                        placeholder="+974 XXXX XXXX"
                       />
                       {formErrors["customerInfo.phoneNumber"] && (
                         <p className="text-red-400 text-xs mt-1">
@@ -1574,6 +2023,9 @@ const Order = () => {
                     <div className="space-y-3">
                       {orderForm.incenseFinish && (
                         <div>
+                          <label className="block text-sm font-medium text-white/70 mb-2">
+                            {t("incenseType") || "Incense Type"}
+                          </label>
                           <input
                             type="text"
                             value={orderForm.incenseType}
@@ -1588,6 +2040,24 @@ const Order = () => {
                           />
                         </div>
                       )}
+
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">
+                          {t("fragrance") || "Fragrance"}
+                        </label>
+                        <input
+                          type="text"
+                          value={orderForm.fragrance}
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "fragrance",
+                              e.target.value
+                            )
+                          }
+                          className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
+                          placeholder={t("fragrancePlaceholder")}
+                        />
+                      </div>
 
                       <div>
                         <label className="block text-sm font-medium text-white/70 mb-2">

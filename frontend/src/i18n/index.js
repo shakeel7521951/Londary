@@ -497,6 +497,31 @@ const resources = {
 
       // Order Management - Delivery
       readyForDelivery: "Ready for Delivery",
+
+      // New Order Details Fields
+      fragranceDetails: "Fragrance & Perfumes",
+      garmentsList: "Garments",
+      garmentType: "Garment Type",
+      category: "Category",
+      cardInformation: "Card Information",
+      pricingBreakdown: "Pricing Breakdown",
+      couponApplied: "Coupon Applied",
+      discountType: "Discount Type",
+      discountAmount: "Discount",
+      yes: "Yes",
+      no: "No",
+      incenseType: "Incense Type",
+      fragrance: "Fragrance",
+      confirmedAt: "Confirmed At",
+      rating: "Rating",
+      satisfactionLevel: "Satisfaction Level",
+      feedback: "Feedback",
+      paymentStatus: "Payment Status",
+      confirmed: "Confirmed",
+      cambodianoud: "Cambodian Oud",
+      washironperfume: "Wash & Iron with Perfume",
+      washiron: "Wash & Iron",
+      dryclean: "Dry Clean",
     },
   },
   ar: {
@@ -989,6 +1014,31 @@ const resources = {
 
       // Order Management - Delivery
       readyForDelivery: "جاهز للتوصيل",
+
+      // New Order Details Fields
+      fragranceDetails: "تفاصيل العطور والبخور",
+      garmentsList: "الملابس",
+      garmentType: "نوع الملبس",
+      category: "الفئة",
+      cardInformation: "معلومات البطاقة",
+      pricingBreakdown: "تفاصيل السعر",
+      couponApplied: "تم تطبيق الكوبون",
+      discountType: "نوع الخصم",
+      discountAmount: "قيمة الخصم",
+      yes: "نعم",
+      no: "لا",
+      incenseType: "نوع البخور",
+      fragrance: "العطر",
+      confirmedAt: "تم التأكيد في",
+      rating: "التقييم",
+      satisfactionLevel: "مستوى الرضا",
+      feedback: "الملاحظات",
+      paymentStatus: "حالة الدفع",
+      confirmed: "مؤكد",
+      cambodianoud: "عود كمبودي",
+      washironperfume: "غسيل وكي مع عطر",
+      washiron: "غسيل وكي",
+      dryclean: "تنظيف جاف",
     },
   },
 };
