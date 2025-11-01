@@ -576,7 +576,7 @@ export const sendMediaSMS = async (to, caption, imageUrl) => {
   }
 };
 
-// Send order assignment SMS to employee
+// Send order assignment SMS to employee - WITH DETAILED PICKUP INSTRUCTIONS
 export const sendOrderAssignmentSMS = async (
   employeePhone,
   employeeName,
@@ -590,29 +590,167 @@ export const sendOrderAssignmentSMS = async (
     const customerName = orderDetails.customerName || "Unknown Customer";
     const customerPhone = orderDetails.customerPhone || "Not provided";
     const orderId = orderDetails.id;
-    const customerAddress =
-      orderDetails.address ||
-      orderDetails.customerAddress ||
-      "Address not provided";
 
-    // Bilingual message for employee with customer address and phone
-    const messageArabic = `📦 طلب جديد من ${customerName}
-رقم الطلب: #${orderId}
-📍 العنوان: ${customerAddress}
-📞 هاتف العميل: ${customerPhone}
-الرجاء جمع القطع في الموعد المحدد.`;
+    // Format address - handle both old string format and new structured format
+    let addressText = "";
+    if (orderDetails.address) {
+      if (typeof orderDetails.address === "string") {
+        // Old format - just use the string
+        addressText = orderDetails.address;
+      } else if (typeof orderDetails.address === "object") {
+        // New structured format
+        const addr = orderDetails.address;
+        const parts = [];
+        if (addr.buildingNumber) parts.push(`Building: ${addr.buildingNumber}`);
+        if (addr.street) parts.push(`Street: ${addr.street}`);
+        if (addr.zone) parts.push(`Zone: ${addr.zone}`);
+        if (addr.unitNumber) parts.push(`Unit: ${addr.unitNumber}`);
+        addressText = parts.join(", ") || "Address details incomplete";
+      }
+    } else {
+      addressText = orderDetails.customerAddress || "Address not provided";
+    }
 
-    const messageEnglish = `📦 New order from ${customerName}
-Order ID: #${orderId}
-📍 Address: ${customerAddress}
+    // Format garments list
+    let garmentsText = "";
+    if (orderDetails.garments && Array.isArray(orderDetails.garments)) {
+      garmentsText = orderDetails.garments
+        .map((g) => `${g.quantity}x ${g.type}`)
+        .join(", ");
+    }
+
+    // Service details
+    const serviceType = orderDetails.serviceType || "Standard Service";
+    const steamFinish = orderDetails.steamFinish ? "Yes" : "No";
+    const incenseFinish = orderDetails.incenseFinish ? "Yes" : "No";
+    const fragrance = orderDetails.fragrance || "None";
+    const packaging = orderDetails.packaging || "Standard";
+
+    // STEP-BY-STEP PICKUP INSTRUCTIONS
+
+    // Arabic message - CLEAR PICKUP INSTRUCTIONS WITH ALL DETAILS
+    const messageArabic = `� مهمة جديدة - ${employeeName}
+
+👤 العميل: ${customerName}
+📞 رقم العميل: ${customerPhone}
+🆔 رقم الطلب: #${orderId}
+
+📍 عنوان الاستلام:
+${addressText}
+
+🧺 القطع المطلوب استلامها:
+${garmentsText || "راجع التفاصيل في النظام"}
+
+⚙️ الخدمات المطلوبة:
+- نوع الخدمة: ${serviceType}
+- كي بخار: ${steamFinish}
+- بخور: ${incenseFinish}
+- عطر: ${fragrance}
+- تغليف: ${packaging}
+
+⏰ يرجى الاستلام في أقرب وقت ممكن
+✅ تأكد من جمع كل القطع
+📋 سجل أي ملاحظات خاصة من العميل`;
+
+    const messageEnglish = `� NEW PICKUP ASSIGNMENT - ${employeeName}
+
+👤 Customer: ${customerName}
 📞 Customer Phone: ${customerPhone}
-Please collect the items on time.`;
+🆔 Order ID: #${orderId}
 
-    const combinedMessage = `${messageArabic}
+📍 PICKUP ADDRESS:
+${addressText}
 
----
+🧺 ITEMS TO COLLECT:
+${garmentsText || "Check system for details"}
 
-${messageEnglish}`;
+⚙️ SERVICES REQUESTED:
+- Service Type: ${serviceType}
+- Steam Finish: ${steamFinish}
+- Incense: ${incenseFinish}
+- Fragrance: ${fragrance}
+- Packaging: ${packaging}
+
+⏰ Please collect ASAP
+✅ Ensure all items are collected
+📋 Note any special customer instructions`;
+
+    // REMOVED OLD VERSION - Using new detailed pickup message below
+    const pickupMessageAR = `🚨 مهمة استلام جديدة - ${employeeName}
+
+⚠️ يرجى الذهاب لاستلام الملابس من هذا العنوان:
+
+📍 عنوان الاستلام:
+${addressText}
+
+👤 اسم العميل: ${customerName}
+📞 رقم هاتف العميل: ${customerPhone}
+🆔 رقم الطلب: #${orderId}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🧺 القطع المطلوب استلامها من العميل:
+${garmentsText || "راجع التفاصيل في النظام"}
+
+⚙️ الخدمات المطلوبة:
+• نوع الخدمة: ${serviceType}
+• كي بخار: ${steamFinish}
+• بخور: ${incenseFinish}
+• عطر: ${fragrance}
+• تغليف: ${packaging}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+📋 تعليمات الاستلام:
+1️⃣ اتصل بالعميل قبل الوصول
+2️⃣ اذهب إلى العنوان المذكور أعلاه
+3️⃣ استلم جميع القطع المذكورة
+4️⃣ تأكد من عدد القطع
+5️⃣ سجل أي ملاحظات خاصة من العميل
+6️⃣ أحضر القطع إلى المغسلة
+
+⏰ يرجى الاستلام في أقرب وقت ممكن`;
+
+    const pickupMessageEN = `🚨 NEW PICKUP MISSION - ${employeeName}
+
+⚠️ Please go to pick up the clothes from this address:
+
+📍 PICKUP ADDRESS:
+${addressText}
+
+👤 Customer Name: ${customerName}
+📞 Customer Phone: ${customerPhone}
+🆔 Order ID: #${orderId}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🧺 ITEMS TO COLLECT FROM CUSTOMER:
+${garmentsText || "Check system for details"}
+
+⚙️ SERVICES REQUESTED:
+• Service Type: ${serviceType}
+• Steam Finish: ${steamFinish}
+• Incense: ${incenseFinish}
+• Fragrance: ${fragrance}
+• Packaging: ${packaging}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+📋 PICKUP INSTRUCTIONS:
+1️⃣ Call the customer before arrival
+2️⃣ Go to the address mentioned above
+3️⃣ Collect all items listed
+4️⃣ Verify the quantity of items
+5️⃣ Note any special customer instructions
+6️⃣ Bring the items to the laundry
+
+⏰ Please collect as soon as possible`;
+
+    const combinedMessage = `${pickupMessageAR}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+${pickupMessageEN}`;
 
     const result = await sendSMS(employeePhone, combinedMessage);
     console.log(`📧 Employee SMS result:`, result);
@@ -638,22 +776,54 @@ export const sendCollectionNotificationSMS = async (
 
     const orderId = orderDetails.id;
 
+    // Format address for customer confirmation
+    let addressText = "";
+    if (orderDetails.address) {
+      if (typeof orderDetails.address === "string") {
+        addressText = orderDetails.address;
+      } else if (typeof orderDetails.address === "object") {
+        const addr = orderDetails.address;
+        const parts = [];
+        if (addr.buildingNumber) parts.push(`Building ${addr.buildingNumber}`);
+        if (addr.street) parts.push(addr.street);
+        if (addr.zone) parts.push(`Zone ${addr.zone}`);
+        if (addr.unitNumber) parts.push(`Unit ${addr.unitNumber}`);
+        addressText = parts.join(", ");
+      }
+    }
+
     // Bilingual message for customer - we're on the way to collect
-    const messageArabic = `${customerName}، فريقنا في الطريق لاستلام القطع 🚗
-رقم الطلب: #${orderId}
+    const messageArabic = `مرحباً ${customerName} 🌟
+
+فريق أكويا في الطريق لاستلام ملابسك! 🚗
+
+🆔 رقم الطلب: #${orderId}
 👤 الموظف المسؤول: ${employeeName}
 📞 هاتف الموظف: ${employeePhone}
-سنعتني بقطعك بأفضل جودة ✨`;
+${addressText ? `📍 العنوان: ${addressText}` : ""}
 
-    const messageEnglish = `${customerName}, our team is on the way to collect your items 🚗
-Order ID: #${orderId}
+✨ سنعتني بملابسك بأفضل جودة
+📞 للاستفسار اتصل بالموظف مباشرة
+
+شكراً لاختيارك أكويا 💎`;
+
+    const messageEnglish = `Hello ${customerName} 🌟
+
+AKOYA team is on the way to collect your items! 🚗
+
+🆔 Order ID: #${orderId}
 👤 Assigned Staff: ${employeeName}
 📞 Staff Phone: ${employeePhone}
-We'll take care of your items with the best quality ✨`;
+${addressText ? `📍 Address: ${addressText}` : ""}
+
+✨ We'll take care of your items with premium quality
+📞 For any questions, contact the staff directly
+
+Thank you for choosing AKOYA 💎`;
 
     const combinedMessage = `${messageArabic}
 
----
+━━━━━━━━━━━━━━━━━━━━━━
 
 ${messageEnglish}`;
 
@@ -755,26 +925,91 @@ export const sendDeliveryNotificationSMS = async (
     );
 
     const customerName = orderDetails.customerName || "Unknown Customer";
+    const customerPhone = orderDetails.customerPhone || "Not provided";
     const orderId = orderDetails.orderId || orderDetails.id;
 
-    // Bilingual message for employee - order ready for delivery
-    const messageArabic = `🚚 الطلب الخاص بـ ${customerName} جاهز للتوصيل.
-رقم الطلب: #${orderId}
-يرجى تسليمه وأخذ التوقيع.
+    // Format address - handle both old string format and new structured format
+    let addressText = "";
+    if (orderDetails.address) {
+      if (typeof orderDetails.address === "string") {
+        addressText = orderDetails.address;
+      } else if (typeof orderDetails.address === "object") {
+        const addr = orderDetails.address;
+        const parts = [];
+        if (addr.buildingNumber) parts.push(`Building: ${addr.buildingNumber}`);
+        if (addr.street) parts.push(`Street: ${addr.street}`);
+        if (addr.zone) parts.push(`Zone: ${addr.zone}`);
+        if (addr.unitNumber) parts.push(`Unit: ${addr.unitNumber}`);
+        addressText = parts.join(", ") || "Address details incomplete";
+      }
+    } else {
+      addressText = orderDetails.customerAddress || "Address not provided";
+    }
 
-رابط التأكيد:
+    // Format garments list
+    let garmentsText = "";
+    if (orderDetails.garments && Array.isArray(orderDetails.garments)) {
+      garmentsText = orderDetails.garments
+        .map((g) => `${g.quantity}x ${g.type}`)
+        .join(", ");
+    }
+
+    const total = orderDetails.total || "0";
+
+    // Arabic message - CLEAR AND DETAILED
+    const messageArabic = `🚚 مهمة توصيل - ${employeeName}
+
+✅ الطلب جاهز للتوصيل
+
+👤 العميل: ${customerName}
+📞 رقم العميل: ${customerPhone}
+🆔 رقم الطلب: #${orderId}
+
+📍 عنوان التوصيل:
+${addressText}
+
+🧺 القطع المطلوب توصيلها:
+${garmentsText || "راجع التفاصيل في النظام"}
+
+💰 المبلغ المطلوب: ${total} QAR
+
+⚠️ تعليمات مهمة:
+✅ تأكد من تسليم جميع القطع
+✅ احصل على توقيع العميل
+✅ اجمع المبلغ (إذا لم يتم الدفع)
+✅ سجل أي ملاحظات
+
+🔗 رابط التأكيد:
 ${deliveryConfirmationLink}`;
 
-    const messageEnglish = `🚚 Order for ${customerName} is ready for delivery.
-Order ID: #${orderId}
-Please deliver and collect the signature.
+    const messageEnglish = `🚚 DELIVERY ASSIGNMENT - ${employeeName}
 
-Confirmation Link:
+✅ Order Ready for Delivery
+
+👤 Customer: ${customerName}
+📞 Customer Phone: ${customerPhone}
+🆔 Order ID: #${orderId}
+
+📍 DELIVERY ADDRESS:
+${addressText}
+
+🧺 ITEMS TO DELIVER:
+${garmentsText || "Check system for details"}
+
+💰 Amount to Collect: ${total} QAR
+
+⚠️ IMPORTANT INSTRUCTIONS:
+✅ Ensure all items are delivered
+✅ Get customer signature
+✅ Collect payment (if not paid)
+✅ Note any feedback
+
+🔗 Confirmation Link:
 ${deliveryConfirmationLink}`;
 
     const combinedMessage = `${messageArabic}
 
----
+━━━━━━━━━━━━━━━━━━━━━━
 
 ${messageEnglish}`;
 

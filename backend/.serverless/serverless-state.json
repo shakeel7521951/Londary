@@ -209,7 +209,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/akoya-laundry-api/prod/1761736842870-2025-10-29T11:20:42.870Z/akoya-laundry-api.zip"
+                "S3Key": "serverless/akoya-laundry-api/prod/1761997023380-2025-11-01T11:37:03.380Z/akoya-laundry-api.zip"
               },
               "Handler": "lambda.main",
               "Runtime": "nodejs20.x",
@@ -243,14 +243,14 @@
               "ApiLogGroup"
             ]
           },
-          "ApiLambdaVersiontBLw35bn3vpp7xKWdBYfoNjbDDIjlmSSbWUtgPxHbLw": {
+          "ApiLambdaVersionPOhZv2TvE76v5C8jywCsp1itsKjmJZOzr2NoaBjso": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ApiLambdaFunction"
               },
-              "CodeSha256": "/SYoc2aUav7NHfNp8oNykv5ziXv2hynOsfUKkGSAWH0="
+              "CodeSha256": "jKtkERBN6oZp9wR3uMzSZvhw7HhN2OXwUCujUrTIRD4="
             }
           },
           "ApiGatewayRestApi": {
@@ -472,7 +472,7 @@
               "ApiLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1761736828179": {
+          "ApiGatewayDeployment1761996937687": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -537,7 +537,7 @@
           "ApiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ApiLambdaVersiontBLw35bn3vpp7xKWdBYfoNjbDDIjlmSSbWUtgPxHbLw"
+              "Ref": "ApiLambdaVersionPOhZv2TvE76v5C8jywCsp1itsKjmJZOzr2NoaBjso"
             },
             "Export": {
               "Name": "sls-akoya-laundry-api-prod-ApiLambdaFunctionQualifiedArn"
@@ -737,7 +737,7 @@
         "timeout": 30,
         "runtime": "nodejs20.x",
         "vpc": {},
-        "versionLogicalId": "ApiLambdaVersiontBLw35bn3vpp7xKWdBYfoNjbDDIjlmSSbWUtgPxHbLw"
+        "versionLogicalId": "ApiLambdaVersionPOhZv2TvE76v5C8jywCsp1itsKjmJZOzr2NoaBjso"
       }
     },
     "configValidationMode": "warn",
@@ -778,7 +778,7 @@
         ],
         "artifactsS3KeyDirname": "serverless/akoya-laundry-api/prod/code-artifacts",
         "artifact": "D:\\Codes Thinker\\laundry\\Londary\\backend\\.serverless\\akoya-laundry-api.zip",
-        "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761736842870-2025-10-29T11:20:42.870Z"
+        "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761997023380-2025-11-01T11:37:03.380Z"
       }
     },
     "layers": {},
@@ -787,7 +787,7 @@
   },
   "package": {
     "individually": false,
-    "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761736842870-2025-10-29T11:20:42.870Z",
+    "artifactDirectoryName": "serverless/akoya-laundry-api/prod/1761997023380-2025-11-01T11:37:03.380Z",
     "artifact": "akoya-laundry-api.zip"
   }
 }
