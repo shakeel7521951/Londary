@@ -8,8 +8,13 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phoneNumber: "",
-    address: "",
+    phoneNumber: "+974",
+    address: {
+      unitNumber: "",
+      zone: "",
+      street: "",
+      buildingNumber: "",
+    },
   });
 
   const [errors, setErrors] = useState({});
@@ -26,6 +31,14 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
       phonePlaceholder: "+974XXXXXXXX (with country code)",
       addressLabel: "Delivery Address",
       addressPlaceholder: "Enter your delivery address",
+      unitNumber: "Unit Number",
+      unitNumberPlaceholder: "e.g., 101",
+      zone: "Zone",
+      zonePlaceholder: "e.g., Zone 38",
+      street: "Street",
+      streetPlaceholder: "e.g., Al Sadd Street",
+      buildingNumber: "Building Number",
+      buildingNumberPlaceholder: "e.g., 25",
       submit: "Proceed with Order",
       submitting: "Processing...",
       cancel: "Cancel",
@@ -47,6 +60,14 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
       phonePlaceholder: "+974XXXXXXXX (مع رمز الدولة)",
       addressLabel: "عنوان التسليم",
       addressPlaceholder: "أدخل عنوان التسليم الخاص بك",
+      unitNumber: "رقم الوحدة",
+      unitNumberPlaceholder: "مثال: 101",
+      zone: "المنطقة",
+      zonePlaceholder: "مثال: المنطقة 38",
+      street: "الشارع",
+      streetPlaceholder: "مثال: شارع السد",
+      buildingNumber: "رقم المبنى",
+      buildingNumberPlaceholder: "مثال: 25",
       submit: "المتابعة مع الطلب",
       submitting: "جاري المعالجة...",
       cancel: "إلغاء",
@@ -83,9 +104,18 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
       newErrors.phoneNumber = t.invalidPhone;
     }
 
-    // Address validation
-    if (!formData.address.trim()) {
-      newErrors.address = t.required;
+    // Address validation - All fields required
+    if (!formData.address.unitNumber?.trim()) {
+      newErrors["address.unitNumber"] = t.required;
+    }
+    if (!formData.address.zone?.trim()) {
+      newErrors["address.zone"] = t.required;
+    }
+    if (!formData.address.street?.trim()) {
+      newErrors["address.street"] = t.required;
+    }
+    if (!formData.address.buildingNumber?.trim()) {
+      newErrors["address.buildingNumber"] = t.required;
     }
 
     setErrors(newErrors);
@@ -94,10 +124,23 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    // Handle nested address fields
+    if (name.startsWith("address.")) {
+      const addressField = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [addressField]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
 
     // Clear error for this field when user starts typing
     if (errors[name]) {
@@ -120,8 +163,13 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
       setFormData({
         name: "",
         email: "",
-        phoneNumber: "",
-        address: "",
+        phoneNumber: "+974",
+        address: {
+          unitNumber: "",
+          zone: "",
+          street: "",
+          buildingNumber: "",
+        },
       });
       setErrors({});
       onClose();
@@ -280,8 +328,41 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
                   <input
                     type="tel"
                     name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
+                    dir="ltr"
+                    value={formData.phoneNumber || "+974"}
+                    onFocus={(e) => {
+                      // Ensure +974 is present when field is focused
+                      if (!e.target.value || e.target.value === "") {
+                        const event = {
+                          target: { name: "phoneNumber", value: "+974" },
+                        };
+                        handleChange(event);
+                      }
+                    }}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      // Always ensure the value starts with +974
+                      if (!value.startsWith("+974")) {
+                        value = "+974" + value.replace(/^\+?\d*/g, "");
+                      }
+                      // Prevent removing the +974 prefix
+                      if (value.length < 4) {
+                        value = "+974";
+                      }
+                      handleChange({
+                        target: { name: "phoneNumber", value },
+                      });
+                    }}
+                    onKeyDown={(e) => {
+                      // Prevent backspace/delete if cursor is at position 0-4 (within +974)
+                      const cursorPosition = e.target.selectionStart;
+                      if (
+                        (e.key === "Backspace" || e.key === "Delete") &&
+                        cursorPosition <= 4
+                      ) {
+                        e.preventDefault();
+                      }
+                    }}
                     placeholder={t.phonePlaceholder}
                     className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 transition-all ${
                       errors.phoneNumber
@@ -297,33 +378,102 @@ const GuestInfoModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
                   )}
                 </div>
 
-                {/* Address Field - Compact */}
+                {/* Address Fields Section */}
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-gray-700 mb-2">
                     {t.addressLabel} <span className="text-red-500">*</span>
                   </label>
-                  <textarea
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    placeholder={t.addressPlaceholder}
-                    rows="2"
-                    className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 transition-all resize-none ${
-                      errors.address
-                        ? "border-red-500 focus:ring-red-500 bg-red-50"
-                        : "border-gray-200 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white"
-                    }`}
-                    style={{
-                      scrollbarWidth: "none",
-                      msOverflowStyle: "none",
-                    }}
-                    disabled={isSubmitting}
-                  />
-                  {errors.address && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.address}
-                    </p>
-                  )}
+
+                  {/* Address Fields - Grid Layout */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Unit Number */}
+                    <div>
+                      <input
+                        type="text"
+                        name="address.unitNumber"
+                        value={formData.address.unitNumber}
+                        onChange={handleChange}
+                        placeholder={t.unitNumberPlaceholder}
+                        className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                          errors["address.unitNumber"]
+                            ? "border-red-500 focus:ring-red-500 bg-red-50"
+                            : "border-gray-200 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white"
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                      {errors["address.unitNumber"] && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors["address.unitNumber"]}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Building Number */}
+                    <div>
+                      <input
+                        type="text"
+                        name="address.buildingNumber"
+                        value={formData.address.buildingNumber}
+                        onChange={handleChange}
+                        placeholder={t.buildingNumberPlaceholder}
+                        className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                          errors["address.buildingNumber"]
+                            ? "border-red-500 focus:ring-red-500 bg-red-50"
+                            : "border-gray-200 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white"
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                      {errors["address.buildingNumber"] && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors["address.buildingNumber"]}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Street */}
+                    <div>
+                      <input
+                        type="text"
+                        name="address.street"
+                        value={formData.address.street}
+                        onChange={handleChange}
+                        placeholder={t.streetPlaceholder}
+                        className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                          errors["address.street"]
+                            ? "border-red-500 focus:ring-red-500 bg-red-50"
+                            : "border-gray-200 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white"
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                      {errors["address.street"] && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors["address.street"]}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Zone */}
+                    <div>
+                      <input
+                        type="text"
+                        name="address.zone"
+                        value={formData.address.zone}
+                        onChange={handleChange}
+                        placeholder={t.zonePlaceholder}
+                        className={`w-full px-3 py-2.5 text-sm border rounded-xl focus:outline-none focus:ring-2 transition-all ${
+                          errors["address.zone"]
+                            ? "border-red-500 focus:ring-red-500 bg-red-50"
+                            : "border-gray-200 focus:ring-[#D4AF37] focus:border-[#D4AF37] bg-white"
+                        }`}
+                        disabled={isSubmitting}
+                      />
+                      {errors["address.zone"] && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors["address.zone"]}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Action Buttons - Compact */}

@@ -90,17 +90,37 @@ export const createOrder = async (req, res) => {
         name: user.name,
         email: user.email,
         phoneNumber: user.phoneNumber,
-        address: user.address || "",
+        address: user.address || {
+          unitNumber: "",
+          zone: "",
+          street: "",
+          buildingNumber: "",
+        },
       };
     } else if (customerInfo) {
       // Guest order or admin-created order: use provided customer info
-      const { name, email = "", phoneNumber, address = "" } = customerInfo;
+      const { name, email = "", phoneNumber, address } = customerInfo;
 
       // Validate required customer info (email is now optional)
       if (!name || !phoneNumber) {
         return res.status(400).json({
           message:
             "Customer name and phoneNumber are required for guest orders",
+        });
+      }
+
+      // Validate address structure
+      if (!address || typeof address !== "object") {
+        return res.status(400).json({
+          message: "Address is required and must be an object",
+        });
+      }
+
+      const { unitNumber, zone, street, buildingNumber } = address;
+      if (!unitNumber || !zone || !street || !buildingNumber) {
+        return res.status(400).json({
+          message:
+            "All address fields are required: unitNumber, zone, street, buildingNumber",
         });
       }
 
@@ -372,7 +392,7 @@ export const createOrderByAdmin = async (req, res) => {
     }
 
     // Validate customer info
-    const { name, email = "", phoneNumber, address = "" } = customerInfo;
+    const { name, email = "", phoneNumber, address } = customerInfo;
     if (!name || !phoneNumber) {
       return res.status(400).json({
         message: "Customer name and phoneNumber are required",
@@ -385,6 +405,22 @@ export const createOrderByAdmin = async (req, res) => {
       return res.status(400).json({
         message:
           "Phone number must include country code and be in format: +1234567890",
+      });
+    }
+
+    // Validate address structure
+    if (!address || typeof address !== "object") {
+      return res.status(400).json({
+        message:
+          "Address is required and must be an object with unitNumber, zone, street, and buildingNumber",
+      });
+    }
+
+    const { unitNumber, zone, street, buildingNumber } = address;
+    if (!unitNumber || !zone || !street || !buildingNumber) {
+      return res.status(400).json({
+        message:
+          "All address fields are required: unitNumber, zone, street, buildingNumber",
       });
     }
 
@@ -525,6 +561,20 @@ export const assignOrderToEmployee = async (req, res) => {
     await order.save();
 
     // Prepare order details for SMS
+    // Format address for display (handle both object and string formats)
+    let formattedAddress = "Address not provided";
+    if (order.customerInfo?.address) {
+      if (typeof order.customerInfo.address === "object") {
+        const { unitNumber, buildingNumber, street, zone } =
+          order.customerInfo.address;
+        formattedAddress = `Unit ${unitNumber}, Building ${buildingNumber}, Street ${street}, Zone ${zone}`;
+      } else {
+        formattedAddress = order.customerInfo.address;
+      }
+    } else if (order.cardFrom) {
+      formattedAddress = order.cardFrom;
+    }
+
     const orderDetails = {
       id: order._id,
       customerName:
@@ -532,8 +582,7 @@ export const assignOrderToEmployee = async (req, res) => {
       serviceType: order.serviceType,
       total: order.total,
       orderDate: order.createdAt,
-      address:
-        order.customerInfo?.address || order.cardFrom || "Address not provided",
+      address: formattedAddress,
       customerPhone:
         order.customerInfo?.phoneNumber ||
         order.userId?.phoneNumber ||
@@ -829,12 +878,24 @@ export const notifyEmployeeForDelivery = async (req, res) => {
     const deliveryConfirmationLink = `${FRONTEND_URL}/delivery-confirmation/${orderId}`;
 
     // Prepare order details for SMS
+    // Format address for display (handle both object and string formats)
+    let customerAddress = "";
+    if (order.customerInfo?.address) {
+      if (typeof order.customerInfo.address === "object") {
+        const { unitNumber, buildingNumber, street, zone } =
+          order.customerInfo.address;
+        customerAddress = `Unit ${unitNumber}, Building ${buildingNumber}, Street ${street}, Zone ${zone}`;
+      } else {
+        customerAddress = order.customerInfo.address;
+      }
+    }
+
     const orderDetails = {
       orderId: order._id,
       customerName:
         order.customerInfo?.name || order.userId?.name || "Customer",
       customerPhone: order.customerInfo?.phoneNumber || "",
-      customerAddress: order.customerInfo?.address || "",
+      customerAddress: customerAddress,
       serviceType: order.serviceType,
       total: order.total,
     };

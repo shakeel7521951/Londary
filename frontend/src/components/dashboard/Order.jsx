@@ -84,7 +84,12 @@ const Order = () => {
       name: "",
       email: "",
       phoneNumber: "+974",
-      address: "",
+      address: {
+        unitNumber: "",
+        zone: "",
+        street: "",
+        buildingNumber: "",
+      },
     },
     serviceType: "wash_iron",
     garments: [{ type: "", quantity: 1 }],
@@ -139,10 +144,7 @@ const Order = () => {
           order.customerInfo?.phoneNumber || order.userId?.phoneNumber || "N/A",
         customerEmail:
           order.customerInfo?.email || order.userId?.email || "N/A",
-        address:
-          order.customerInfo?.address ||
-          order.cardFrom ||
-          "No address provided",
+        address: order.customerInfo?.address || null, // Keep address as object
         serviceType: order.serviceType, // Add service type
         garments: order.garments || [], // Add garments array directly
         items:
@@ -455,29 +457,45 @@ const Order = () => {
 
   // Add Order Form Handlers
   const handleAddOrderFormChange = (field, value) => {
-    if (field.includes(".")) {
-      const [parent, child] = field.split(".");
-      setOrderForm((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: value,
-        },
-      }));
-    } else {
-      setOrderForm((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    }
+    // Support nested fields (e.g. "customerInfo.address.unitNumber")
+    const path = field.split(".");
 
-    // Clear error when user starts typing
-    if (formErrors[field]) {
-      setFormErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
-    }
+    setOrderForm((prev) => {
+      // shallow clone
+      const next = { ...prev };
+
+      // walk down the path creating clones as needed
+      let cursor = next;
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = path[i];
+        // initialize nested object if missing
+        if (cursor[key] == null || typeof cursor[key] !== "object") {
+          cursor[key] = {};
+        } else {
+          // clone existing nested object to avoid mutating state
+          cursor[key] = { ...cursor[key] };
+        }
+        cursor = cursor[key];
+      }
+
+      // set the final value
+      cursor[path[path.length - 1]] = value;
+
+      return next;
+    });
+
+    // Clear error entries that match this field or nested children
+    setFormErrors((prev) => {
+      const next = { ...prev };
+      // exact match
+      if (next[field]) delete next[field];
+      // also clear any nested keys that start with this field + '.'
+      const prefix = field + ".";
+      Object.keys(next).forEach((k) => {
+        if (k.startsWith(prefix)) delete next[k];
+      });
+      return next;
+    });
   };
 
   const addGarment = () => {
@@ -530,6 +548,38 @@ const Order = () => {
         "Phone number must include country code (+1234567890)";
     }
 
+    // Address Validation - All fields required
+    const address = orderForm.customerInfo.address || {};
+    if (
+      !address.unitNumber ||
+      typeof address.unitNumber !== "string" ||
+      !address.unitNumber.trim()
+    ) {
+      errors["customerInfo.address.unitNumber"] = "Unit number is required";
+    }
+    if (
+      !address.zone ||
+      typeof address.zone !== "string" ||
+      !address.zone.trim()
+    ) {
+      errors["customerInfo.address.zone"] = "Zone is required";
+    }
+    if (
+      !address.street ||
+      typeof address.street !== "string" ||
+      !address.street.trim()
+    ) {
+      errors["customerInfo.address.street"] = "Street is required";
+    }
+    if (
+      !address.buildingNumber ||
+      typeof address.buildingNumber !== "string" ||
+      !address.buildingNumber.trim()
+    ) {
+      errors["customerInfo.address.buildingNumber"] =
+        "Building number is required";
+    }
+
     // Garments Validation
     if (orderForm.garments.length === 0) {
       errors.garments = "At least one garment is required";
@@ -565,8 +615,10 @@ const Order = () => {
 
       await createOrderByAdmin({
         customerInfo: {
-          ...orderForm.customerInfo,
+          name: orderForm.customerInfo.name,
+          email: orderForm.customerInfo.email,
           phoneNumber: normalizedPhone,
+          address: orderForm.customerInfo.address, // Send address as object
         },
         serviceType: orderForm.serviceType,
         garments: orderForm.garments,
@@ -590,7 +642,12 @@ const Order = () => {
           name: "",
           email: "",
           phoneNumber: "+974",
-          address: "",
+          address: {
+            unitNumber: "",
+            zone: "",
+            street: "",
+            buildingNumber: "",
+          },
         },
         serviceType: "wash_iron",
         garments: [{ type: "", quantity: 1 }],
@@ -1131,12 +1188,59 @@ const Order = () => {
                           {selectedOrder.customerEmail}
                         </span>
                       </div>
-                      <div className="flex items-start space-x-3">
-                        <FiMapPin className="w-4 h-4 text-[#D4AF37] mt-0.5" />
-                        <span className="text-white/70">
-                          {selectedOrder.address}
-                        </span>
-                      </div>
+
+                      {/* Address Section */}
+                      {selectedOrder.address &&
+                      typeof selectedOrder.address === "object" ? (
+                        <div className="border-t border-[#D4AF37]/10 pt-3 mt-1">
+                          <div className="flex items-start space-x-3">
+                            <FiMapPin className="w-5 h-5 text-[#D4AF37] mt-0.5 flex-shrink-0" />
+                            <div className="flex-1">
+                              <div className="text-white/90 font-medium mb-2">
+                                {t("customerAddress")}
+                              </div>
+                              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                                <div className="text-white/60">
+                                  {t("street")}:
+                                </div>
+                                <div className="text-white/90">
+                                  {selectedOrder.address.street || "-"}
+                                </div>
+
+                                <div className="text-white/60">
+                                  {t("buildingNumber")}:
+                                </div>
+                                <div className="text-white/90">
+                                  {selectedOrder.address.buildingNumber || "-"}
+                                </div>
+
+                                <div className="text-white/60">
+                                  {t("unitNumber")}:
+                                </div>
+                                <div className="text-white/90">
+                                  {selectedOrder.address.unitNumber || "-"}
+                                </div>
+
+                                <div className="text-white/60">
+                                  {t("zone")}:
+                                </div>
+                                <div className="text-white/90">
+                                  {selectedOrder.address.zone || "-"}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-start space-x-3">
+                          <FiMapPin className="w-4 h-4 text-[#D4AF37] mt-0.5" />
+                          <span className="text-white/70">
+                            {typeof selectedOrder.address === "string"
+                              ? selectedOrder.address
+                              : t("noAddressProvided")}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1828,23 +1932,132 @@ const Order = () => {
                         </p>
                       )}
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-white/70 mb-2">
-                        {t("customerAddress")}
-                      </label>
-                      <input
-                        type="text"
-                        value={orderForm.customerInfo.address}
-                        onChange={(e) =>
-                          handleAddOrderFormChange(
-                            "customerInfo.address",
-                            e.target.value
-                          )
-                        }
-                        className="w-full px-4 py-2 bg-[#1C1C1C] border border-[#D4AF37]/30 text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all"
-                        placeholder={t("enterCustomerAddress")}
-                      />
+                  {/* Address Section - 4 Required Fields */}
+                  <div className="mt-4">
+                    <h4 className="text-md font-medium text-white/90 mb-3">
+                      {t("customerAddress")} *
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">
+                          {t("unitNumber") || "Unit Number"} *
+                        </label>
+                        <input
+                          type="text"
+                          value={
+                            orderForm.customerInfo?.address?.unitNumber ?? ""
+                          }
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "customerInfo.address.unitNumber",
+                              e.target.value
+                            )
+                          }
+                          className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                            formErrors["customerInfo.address.unitNumber"]
+                              ? "border-red-500"
+                              : "border-[#D4AF37]/30"
+                          } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                          placeholder={
+                            t("unitNumberPlaceholder") || "e.g., 101"
+                          }
+                        />
+                        {formErrors["customerInfo.address.unitNumber"] && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {formErrors["customerInfo.address.unitNumber"]}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">
+                          {t("buildingNumber") || "Building Number"} *
+                        </label>
+                        <input
+                          type="text"
+                          value={
+                            orderForm.customerInfo?.address?.buildingNumber ??
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "customerInfo.address.buildingNumber",
+                              e.target.value
+                            )
+                          }
+                          className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                            formErrors["customerInfo.address.buildingNumber"]
+                              ? "border-red-500"
+                              : "border-[#D4AF37]/30"
+                          } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                          placeholder={
+                            t("buildingNumberPlaceholder") || "e.g., 25"
+                          }
+                        />
+                        {formErrors["customerInfo.address.buildingNumber"] && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {formErrors["customerInfo.address.buildingNumber"]}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">
+                          {t("street") || "Street"} *
+                        </label>
+                        <input
+                          type="text"
+                          value={orderForm.customerInfo?.address?.street ?? ""}
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "customerInfo.address.street",
+                              e.target.value
+                            )
+                          }
+                          className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                            formErrors["customerInfo.address.street"]
+                              ? "border-red-500"
+                              : "border-[#D4AF37]/30"
+                          } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                          placeholder={
+                            t("streetPlaceholder") || "e.g., Al Sadd Street"
+                          }
+                        />
+                        {formErrors["customerInfo.address.street"] && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {formErrors["customerInfo.address.street"]}
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-white/70 mb-2">
+                          {t("zone") || "Zone"} *
+                        </label>
+                        <input
+                          type="text"
+                          value={orderForm.customerInfo?.address?.zone ?? ""}
+                          onChange={(e) =>
+                            handleAddOrderFormChange(
+                              "customerInfo.address.zone",
+                              e.target.value
+                            )
+                          }
+                          className={`w-full px-4 py-2 bg-[#1C1C1C] border ${
+                            formErrors["customerInfo.address.zone"]
+                              ? "border-red-500"
+                              : "border-[#D4AF37]/30"
+                          } text-white placeholder-white/50 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all`}
+                          placeholder={t("zonePlaceholder") || "e.g., Zone 38"}
+                        />
+                        {formErrors["customerInfo.address.zone"] && (
+                          <p className="text-red-400 text-xs mt-1">
+                            {formErrors["customerInfo.address.zone"]}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

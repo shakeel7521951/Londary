@@ -30,8 +30,22 @@ const OrderSchema = new mongoose.Schema({
       },
     },
     address: {
-      type: String,
-      default: "",
+      unitNumber: {
+        type: String,
+        required: true,
+      },
+      buildingNumber: {
+        type: String,
+        required: true,
+      },
+      street: {
+        type: String,
+        required: true,
+      },
+      zone: {
+        type: String,
+        required: true,
+      },
     },
   },
   serviceType: {

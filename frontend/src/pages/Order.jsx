@@ -192,241 +192,251 @@ const OrderPage = () => {
   ];
 
   const garmentPrices = {
+    // Main garments - Table 1
     Thobe: {
-      wash_iron: 6,
-      wash_iron_perfume: 11,
+      wash_iron: 10,
+      wash_iron_perfume: 6,
       dry_clean: 10,
-      steam: 4,
+      steam: 8,
+      perfume: 8,
+    },
+    Vest: {
+      wash_iron: 6,
+      wash_iron_perfume: 4,
+      dry_clean: 5,
+      steam: 5,
       perfume: 5,
     },
     Bisht: {
       wash_iron: 40,
-      wash_iron_perfume: 45,
+      wash_iron_perfume: 25,
       dry_clean: 40,
-      steam: 4,
-      perfume: 5,
+      steam: 10,
+      perfume: 10,
     },
     Abaya: {
       wash_iron: 12,
-      wash_iron_perfume: 17,
+      wash_iron_perfume: 10,
       dry_clean: 15,
-      steam: 4,
-      perfume: 5,
+      steam: 8,
+      perfume: 8,
     },
     Taqiyah: {
-      wash_iron: 3,
-      wash_iron_perfume: 3,
-      dry_clean: 3,
-      steam: 0,
-      perfume: 0,
+      wash_iron: 2,
+      wash_iron_perfume: 0,
+      dry_clean: 2,
+      steam: 5,
+      perfume: 5,
+    },
+    "Lab Coat": {
+      wash_iron: 8,
+      wash_iron_perfume: 6,
+      dry_clean: 10,
+      steam: 9,
+      perfume: 9,
     },
     "Long Dress": {
       wash_iron: 20,
-      wash_iron_perfume: 25,
+      wash_iron_perfume: 15,
       dry_clean: 20,
-      steam: 4,
-      perfume: 5,
+      steam: 10,
+      perfume: 10,
     },
     "Short Dress": {
       wash_iron: 15,
-      wash_iron_perfume: 15,
+      wash_iron_perfume: 10,
       dry_clean: 20,
-      steam: 0,
-      perfume: 0,
+      steam: 8,
+      perfume: 8,
     },
     "Men's Suit": {
       wash_iron: 18,
-      wash_iron_perfume: 23,
-      dry_clean: 20,
-      steam: 4,
-      perfume: 5,
+      wash_iron_perfume: 12,
+      dry_clean: 21,
+      steam: 10,
+      perfume: 10,
     },
     Ghutra: {
       wash_iron: 4,
-      wash_iron_perfume: 4,
+      wash_iron_perfume: 3,
       dry_clean: 5,
-      steam: 0,
-      perfume: 0,
+      steam: 5,
+      perfume: 5,
     },
     Shela: {
       wash_iron: 6,
       wash_iron_perfume: 6,
       dry_clean: 7,
-      steam: 0,
-      perfume: 0,
+      steam: 5,
+      perfume: 5,
     },
     Jalabiya: {
       wash_iron: 10,
-      wash_iron_perfume: 15,
+      wash_iron_perfume: 6,
       dry_clean: 0,
-      steam: 4,
-      perfume: 5,
-    },
-    "Lab Coat": {
-      wash_iron: 8,
-      wash_iron_perfume: 13,
-      dry_clean: 10,
-      steam: 4,
-      perfume: 5,
-    },
-    "Military Uniform": {
-      wash_iron: 14,
-      wash_iron_perfume: 19,
-      dry_clean: 16,
-      steam: 4,
-      perfume: 5,
-    },
-    Coat: {
-      wash_iron: 13,
-      wash_iron_perfume: 18,
-      dry_clean: 23,
-      steam: 4,
-      perfume: 5,
+      steam: 8,
+      perfume: 8,
     },
     Overalls: {
       wash_iron: 8,
-      wash_iron_perfume: 13,
+      wash_iron_perfume: 4,
       dry_clean: 10,
-      steam: 4,
-      perfume: 5,
+      steam: 8,
+      perfume: 8,
+    },
+    "Military Uniform": {
+      wash_iron: 14,
+      wash_iron_perfume: 9,
+      dry_clean: 16,
+      steam: 10,
+      perfume: 10,
     },
 
-    // General clothing
-    Pajamas: {
-      wash_iron: 7,
-      wash_iron_perfume: 12,
-      dry_clean: 10,
-      steam: 4,
-      perfume: 5,
-    },
-    Scarf: {
-      wash_iron: 4,
-      wash_iron_perfume: 8,
-      dry_clean: 5,
-      steam: 3,
-      perfume: 4,
-    },
-    Shirt: {
-      wash_iron: 5,
-      wash_iron_perfume: 9,
-      dry_clean: 6,
-      steam: 3,
-      perfume: 4,
-    },
-    "Silk Blouse": {
-      wash_iron: 0,
-      wash_iron_perfume: 4,
-      dry_clean: 7,
-      steam: 3,
-      perfume: 4,
-    },
-    "T-shirt": {
-      wash_iron: 4,
-      wash_iron_perfume: 8,
-      dry_clean: 5,
-      steam: 3,
-      perfume: 4,
-    },
-    Tie: {
-      wash_iron: 4,
-      wash_iron_perfume: 4,
-      dry_clean: 5,
-      steam: 0,
-      perfume: 0,
-    },
-    Undershirt: {
-      wash_iron: 4,
-      wash_iron_perfume: 8,
-      dry_clean: 5,
-      steam: 3,
-      perfume: 4,
-    },
-    Pants: {
-      wash_iron: 4,
-      wash_iron_perfume: 8,
-      dry_clean: 5,
-      steam: 3,
-      perfume: 4,
-    },
-    Vest: {
-      wash_iron: 5,
-      wash_iron_perfume: 9,
-      dry_clean: 6,
-      steam: 3,
-      perfume: 4,
-    },
-
-    // Kids clothing
-    "Children's Abaya": {
-      wash_iron: 5,
-      wash_iron_perfume: 5,
-      dry_clean: 7,
-      steam: 0,
-      perfume: 0,
-    },
-    "Children's Thobe": {
-      wash_iron: 4,
-      wash_iron_perfume: 4,
-      dry_clean: 5,
-      steam: 0,
-      perfume: 0,
-    },
+    // Kids clothing - Table 2
     "Children's Dress": {
       wash_iron: 10,
-      wash_iron_perfume: 10,
+      wash_iron_perfume: 6,
       dry_clean: 13,
-      steam: 0,
-      perfume: 0,
+      steam: 8,
+      perfume: 8,
     },
     "Children's Jacket": {
       wash_iron: 6,
-      wash_iron_perfume: 6,
+      wash_iron_perfume: 4,
       dry_clean: 7,
-      steam: 0,
-      perfume: 0,
+      steam: 8,
+      perfume: 8,
     },
     "Children's Shirt": {
-      wash_iron: 4,
-      wash_iron_perfume: 4,
-      dry_clean: 4,
-      steam: 0,
-      perfume: 0,
+      wash_iron: 3,
+      wash_iron_perfume: 1,
+      dry_clean: 3,
+      steam: 5,
+      perfume: 5,
     },
     "Children's Suit": {
-      wash_iron: 6,
-      wash_iron_perfume: 6,
+      wash_iron: 8,
+      wash_iron_perfume: 4,
       dry_clean: 8,
-      steam: 0,
-      perfume: 0,
+      steam: 6,
+      perfume: 6,
     },
     "Children's 3-Piece Suit": {
-      wash_iron: 8,
-      wash_iron_perfume: 8,
+      wash_iron: 10,
+      wash_iron_perfume: 6,
       dry_clean: 10,
-      steam: 0,
-      perfume: 0,
+      steam: 8,
+      perfume: 8,
     },
     "Children's Pants": {
-      wash_iron: 8,
-      wash_iron_perfume: 8,
-      dry_clean: 10,
-      steam: 0,
-      perfume: 0,
+      wash_iron: 3,
+      wash_iron_perfume: 2,
+      dry_clean: 4,
+      steam: 5,
+      perfume: 5,
     },
-    "Children's Sweater": {
-      wash_iron: 4,
-      wash_iron_perfume: 4,
-      dry_clean: 5,
-      steam: 0,
-      perfume: 0,
+    "Children's T-shirt": {
+      wash_iron: 2,
+      wash_iron_perfume: 1,
+      dry_clean: 2,
+      steam: 5,
+      perfume: 5,
     },
     "School Uniform": {
       wash_iron: 8,
-      wash_iron_perfume: 8,
+      wash_iron_perfume: 0,
       dry_clean: 0,
-      steam: 0,
-      perfume: 0,
+      steam: 6,
+      perfume: 6,
     },
+
+    // General clothing - Table 3
+    Coat: {
+      wash_iron: 13,
+      wash_iron_perfume: 11,
+      dry_clean: 23,
+      steam: 10,
+      perfume: 10,
+    },
+    Pajamas: {
+      wash_iron: 7,
+      wash_iron_perfume: 4,
+      dry_clean: 10,
+      steam: 8,
+      perfume: 8,
+    },
+    Scarf: {
+      wash_iron: 3,
+      wash_iron_perfume: 2,
+      dry_clean: 4,
+      steam: 7,
+      perfume: 7,
+    },
+    Shawwāl: {
+      wash_iron: 10,
+      wash_iron_perfume: 0,
+      dry_clean: 10,
+      steam: 8,
+      perfume: 8,
+    },
+    Shirt: {
+      wash_iron: 5,
+      wash_iron_perfume: 3,
+      dry_clean: 6,
+      steam: 7,
+      perfume: 7,
+    },
+    "Silk Blouse": {
+      wash_iron: 7,
+      wash_iron_perfume: 4,
+      dry_clean: 7,
+      steam: 8,
+      perfume: 8,
+    },
+    Blouse: {
+      wash_iron: 4,
+      wash_iron_perfume: 2,
+      dry_clean: 5,
+      steam: 7,
+      perfume: 7,
+    },
+    "T-shirt": {
+      wash_iron: 3,
+      wash_iron_perfume: 2,
+      dry_clean: 5,
+      steam: 5,
+      perfume: 5,
+    },
+    Tie: {
+      wash_iron: 3,
+      wash_iron_perfume: 2,
+      dry_clean: 5,
+      steam: 5,
+      perfume: 5,
+    },
+    Undershirt: {
+      wash_iron: 2,
+      wash_iron_perfume: 1,
+      dry_clean: 2,
+      steam: 5,
+      perfume: 5,
+    },
+    Pants: {
+      wash_iron: 3,
+      wash_iron_perfume: 2,
+      dry_clean: 5,
+      steam: 5,
+      perfume: 5,
+    },
+    "Children's Abaya": {
+      wash_iron: 5,
+      wash_iron_perfume: 3,
+      dry_clean: 7,
+      steam: 5,
+      perfume: 5,
+    },
+
+    // Household items (keeping existing as not provided in new tables)
     "Small Towel": {
       wash_iron: 5,
       wash_iron_perfume: 10,
@@ -753,27 +763,30 @@ const OrderPage = () => {
       }
     });
 
-    // Add steam finishing cost
-    if (steamFinish) {
+    // Note: steamFinish is for steam ironing, which might be included in base service
+    // Not adding separately as it's not clear if it's an extra service
+    // If steam finishing needs to be charged separately, uncomment below:
+    // if (steamFinish) {
+    //   garments.forEach((garment) => {
+    //     const priceInfo = garmentPrices[garment.type];
+    //     if (priceInfo) {
+    //       total += (priceInfo.steam || 0) * garment.quantity;
+    //     }
+    //   });
+    // }
+
+    // Add incense finishing cost (تبخير - Incense steam)
+    if (incenseFinish) {
       garments.forEach((garment) => {
         const priceInfo = garmentPrices[garment.type];
         if (priceInfo) {
+          // Incense steam price is in the 'steam' property
           total += (priceInfo.steam || 0) * garment.quantity;
         }
       });
     }
 
-    // Add incense finishing cost
-    if (incenseFinish) {
-      garments.forEach((garment) => {
-        const priceInfo = garmentPrices[garment.type];
-        if (priceInfo) {
-          total += (priceInfo.incense || 0) * garment.quantity;
-        }
-      });
-    }
-
-    // Add perfume cost
+    // Add perfume cost (تعطير - Perfume)
     if (fragrance) {
       garments.forEach((garment) => {
         const priceInfo = garmentPrices[garment.type];
@@ -784,8 +797,8 @@ const OrderPage = () => {
     }
 
     // Add packaging cost
-    if (packaging === "fabric") total += 15;
-    if (packaging === "box") total += 30;
+    if (packaging === "fabric") total += 10;
+    if (packaging === "box") total += 4;
 
     return total;
   };
@@ -1664,12 +1677,12 @@ ${
                   )}
                   {option.id === "fabric" && (
                     <p className="text-[#D4AF37] text-xs sm:text-sm font-medium">
-                      +15 {language === "ar" ? "ريال" : "QAR"}
+                      +10 {language === "ar" ? "ريال" : "QAR"}
                     </p>
                   )}
                   {option.id === "box" && (
                     <p className="text-[#D4AF37] text-xs sm:text-sm font-medium">
-                      +30 {language === "ar" ? "ريال" : "QAR"}
+                      +4 {language === "ar" ? "ریال" : "QAR"}
                     </p>
                   )}
                 </div>
@@ -1916,13 +1929,8 @@ ${
             <div className="flex justify-between items-center border-b pb-2">
               <span className="text-sm">{t.steamFinishing}</span>
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">
-                  +
-                  {garments.reduce((total, g) => {
-                    const priceInfo = garmentPrices[g.type];
-                    return total + (priceInfo?.steam || 0) * g.quantity;
-                  }, 0)}{" "}
-                  {language === "ar" ? "ريال" : "QAR"}
+                <span className="text-sm font-medium text-green-600">
+                  {language === "ar" ? "مشمول" : "Included"}
                 </span>
                 <button
                   onClick={() => setSteamFinish(false)}
@@ -1957,7 +1965,7 @@ ${
                   +
                   {garments.reduce((total, g) => {
                     const priceInfo = garmentPrices[g.type];
-                    return total + (priceInfo?.incense || 0) * g.quantity;
+                    return total + (priceInfo?.steam || 0) * g.quantity;
                   }, 0)}{" "}
                   {language === "ar" ? "ريال" : "QAR"}
                 </span>
@@ -2035,9 +2043,9 @@ ${
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">
                     {packaging === "fabric" &&
-                      "+15 " + (language === "ar" ? "ريال" : "QAR")}
+                      "+10 " + (language === "ar" ? "ريال" : "QAR")}
                     {packaging === "box" &&
-                      "+30 " + (language === "ar" ? "ريال" : "QAR")}
+                      "+4 " + (language === "ar" ? "ريال" : "QAR")}
                     {packaging === "plastic" &&
                       (language === "ar" ? "مجاني" : "Free")}
                   </span>

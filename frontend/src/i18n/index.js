@@ -522,6 +522,17 @@ const resources = {
       washironperfume: "Wash & Iron with Perfume",
       washiron: "Wash & Iron",
       dryclean: "Dry Clean",
+
+      // Address Fields
+      unitNumber: "Unit Number",
+      buildingNumber: "Building Number",
+      street: "Street",
+      zone: "Zone",
+      noAddressProvided: "No address provided",
+      unitNumberPlaceholder: "e.g., 101",
+      buildingNumberPlaceholder: "e.g., 25",
+      streetPlaceholder: "e.g., Al Sadd Street",
+      zonePlaceholder: "e.g., Zone 38",
     },
   },
   ar: {
@@ -1039,6 +1050,17 @@ const resources = {
       washironperfume: "غسيل وكي مع عطر",
       washiron: "غسيل وكي",
       dryclean: "تنظيف جاف",
+
+      // Address Fields
+      unitNumber: "رقم الوحدة",
+      buildingNumber: "رقم المبنى",
+      street: "الشارع",
+      zone: "المنطقة",
+      noAddressProvided: "لم يتم توفير عنوان",
+      unitNumberPlaceholder: "مثال: 101",
+      buildingNumberPlaceholder: "مثال: 25",
+      streetPlaceholder: "مثال: شارع السد",
+      zonePlaceholder: "مثال: المنطقة 38",
     },
   },
 };
